@@ -1,0 +1,795 @@
+ ./e2e --tb=../qa_tb/boston_tb2_inventory.json --reuse-cluster --ginkgo.failFast=false --ginkgo.focus="Cluster.Ad[761/917]
+uster.AddNodes|Cluster.RemoveNodeWithPods|Cluster.Recommission|ReplicationController.NetworkPodEvacuation|Cluster.FailedNodes|Pod.CreateWithMis
+singVolume|Pod.Schedule|Volume.CheckStorageReservation|LocalVolume.NegativeTests|LocalVolume.NegativeTests"
+Environment variable DIAMANTI_TEST_DIR is not set. Setting it to /home/amruta/diamanti-test-pkg
+Default log file location : /home/amruta/diamanti-test-pkg/logs/e2e_log2019-07-12_05-44-24.log
+    DEBUG: 2019/07/12 05:44:24 Removing leading and trailing spaces from Ipmi IP of all nodes.
+    DEBUG: 2019/07/12 05:44:24 Check all nodes are ready to run test(s):
+    DEBUG: 2019/07/12 05:44:24 172.16.230.8 is ready to run test
+    DEBUG: 2019/07/12 05:44:24 172.16.230.10 is ready to run test
+    DEBUG: 2019/07/12 05:44:24 172.16.230.12 is ready to run test
+    DEBUG: 2019/07/12 05:44:41 Testbed type used is to get list of Tcs is: D10
+Running Suite: DWS e2e Suite run 1 of 1
+=======================================scntl bin]$ ./e2e --tb=../qa_tb/boston_tb2_inventory.json --reuse-cluster --ginkgo.failFast=false --ginkgo.focus="Cluster.Ad[761/917]
+uster.AddNodes|Cluster.RemoveNodeWithPods|Cluster.Recommission|ReplicationController.NetworkPodEvacuation|Cluster.FailedNodes|Pod.CreateWithMis
+singVolume|Pod.Schedule|Volume.CheckStorageReservation|LocalVolume.NegativeTests|LocalVolume.NegativeTests"
+Environment variable DIAMANTI_TEST_DIR is not set. Setting it to /home/amruta/diamanti-test-pkg
+Default log file location : /home/amruta/diamanti-test-pkg/logs/e2e_log2019-07-12_05-44-24.log
+    DEBUG: 2019/07/12 05:44:24 Removing leading and trailing spaces from Ipmi IP of all nodes.
+    DEBUG: 2019/07/12 05:44:24 Check all nodes are ready to run test(s):
+    DEBUG: 2019/07/12 05:44:24 172.16.230.8 is ready to run test
+    DEBUG: 2019/07/12 05:44:24 172.16.230.10 is ready to run test
+    DEBUG: 2019/07/12 05:44:24 172.16.230.12 is ready to run test
+    DEBUG: 2019/07/12 05:44:41 Testbed type used is to get list of Tcs is: D10
+Running Suite: DWS e2e Suite run 1 of 1
+=======================================
+Random Seed: 1562935464 - Will randomize all specs
+Will run 16 of 329 specs
+
+    DEBUG: 2019/07/12 05:44:41 Planning to run tests on following nodes :
+    DEBUG: 2019/07/12 05:44:41 172.16.230.8
+    DEBUG: 2019/07/12 05:44:41 172.16.230.10
+    DEBUG: 2019/07/12 05:44:41 172.16.230.12
+    DEBUG: 2019/07/12 05:44:41 Checking existance of loopback device(s) on all cluster nodes
+    DEBUG: 2019/07/12 05:44:52 Checking if cluster already exists 
+    DEBUG: 2019/07/12 05:44:53 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:44:54 Login to cluster
+    DEBUG: 2019/07/12 05:44:54 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:44:54 Recording timestamp of all services on all nodes
+    DEBUG: 2019/07/12 05:45:00 Updating inventory struct
+    DEBUG: 2019/07/12 05:45:01 Overwritting e2e parameter : ExpectedBasicVnicUsageCount
+    DEBUG: 2019/07/12 05:45:01 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:02 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:04 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:04 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:05 Labeled all nodes with node=node$
+
+    DEBUG: 2019/07/12 05:45:05 rpm not specified, assuming rpm to be tested is already installed on all nodes
+    DEBUG: 2019/07/12 05:45:05 Starting tests
+    DEBUG: 2019/07/12 05:45:05 Login to cluster
+    DEBUG: 2019/07/12 05:45:05 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:45:06 Checking basic Vnic usage
+    DEBUG: 2019/07/12 05:45:06 Updating inventory struct
+    DEBUG: 2019/07/12 05:45:13 Creating storage classes
+[0] 0:amruta@boscntl:~/diamanti-test-pkg/bin*                                                                         "boscntl" 23:38 12-Jul-19Seed: 1562935464 - Will randomize all specs
+Will run 16 of 329 specs
+
+    DEBUG: 2019/07/12 05:44:41 Planning to run tests on following nodes :
+    DEBUG: 2019/07/12 05:44:41 172.16.230.8
+    DEBUG: 2019/07/12 05:44:41 172.16.230.10
+    DEBUG: 2019/07/12 05:44:41 172.16.230.12
+    DEBUG: 2019/07/12 05:44:41 Checking existance of loopback device(s) on all cluster nodes
+    DEBUG: 2019/07/12 05:44:52 Checking if cluster already exists 
+    DEBUG: 2019/07/12 05:44:53 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:44:54 Login to cluster
+    DEBUG: 2019/07/12 05:44:54 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:44:54 Recording timestamp of all services on all nodes
+    DEBUG: 2019/07/12 05:45:00 Updating inventory struct
+    DEBUG: 2019/07/12 05:45:01 Overwritting e2e parameter : ExpectedBasicVnicUsageCount
+    DEBUG: 2019/07/12 05:45:01 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:02 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:04 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:04 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 05:45:05 Labeled all nodes with node=node$
+
+    DEBUG: 2019/07/12 05:45:05 rpm not specified, assuming rpm to be tested is already installed on all nodes
+    DEBUG: 2019/07/12 05:45:05 Starting tests
+    DEBUG: 2019/07/12 05:45:05 Login to cluster
+    DEBUG: 2019/07/12 05:45:05 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:45:06 Checking basic Vnic usage
+    DEBUG: 2019/07/12 05:45:06 Updating inventory struct
+    DEBUG: 2019/07/12 05:45:13 Creating storage classe
+    DEBUG: 2019/07/12 05:45:31 rpm=diamanti-cx-2.2.0-81.x86_64                                                                        [720/917]
+SSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Delete a volume while it is mounted
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:443
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 05:45:31 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 05:45:31 Login to cluster
+    DEBUG: 2019/07/12 05:45:31 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:45:32 Checking basic Vnic usage
+    DEBUG: 2019/07/12 05:45:32 Updating inventory struct
+    DEBUG: 2019/07/12 05:45:38 Creating storage classes
+[It] Delete a volume while it is mounted
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:443
+    DEBUG: 2019/07/12 05:45:55 Creating a local volume
+    DEBUG: 2019/07/12 05:45:56 Attaching the volume
+    DEBUG: 2019/07/12 05:46:02 Mounting the volume
+    DEBUG: 2019/07/12 05:46:02 Deleting the mounted volume
+    DEBUG: 2019/07/12 05:46:03 Unmounting the volume
+    DEBUG: 2019/07/12 05:46:03 output : 
+
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    ERROR: 2019/07/12 05:46:05  volume.go:700: Error failed to run commmand 'dctl  -o json volume detach test-vol -y ', output:No attachments f
+ound for volume: test-vol,  error: VolumeAttachment "test-vol" not found
+, error:
+ detaching volume, cmd:volume detach test-vol -y  out: {[78 111 32 97 116 116 97 99 104 109 101 110 116 115 32 102 111 117 110 100 32 102 111 1
+14 32 118 111 108 117 109 101 58 32 116 101 115 116 45 118 111 108 44 32 32 101 114 114 111 114 58 32 86 111 108 117 109 101 65 116 116 97 99 1
+04 109 101 110 116 32 34 116 101 115 116 45 118 111 108 34 32 110 111 116 32 102 111 117 110 100 10] 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 0}
+
+    DEBUG: 2019/07/12 05:46:49 END_TEST LocalVolume.NegativeTests Time-taken : 78.168594862
+
+• [SLOW TEST:78.169 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+ /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225                                            [679/917]
+    Delete a volume while it is mounted
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:443
+------------------------------
+SSSSSSSSSSSSSSSSSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Attach already attached volume
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:330
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 05:46:49 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 05:46:49 Login to cluster
+    DEBUG: 2019/07/12 05:46:49 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:46:50 Checking basic Vnic usage
+    DEBUG: 2019/07/12 05:46:50 Updating inventory struct
+    DEBUG: 2019/07/12 05:46:56 Creating storage classes
+[It] Attach already attached volume
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:330
+    DEBUG: 2019/07/12 05:47:14 Creating a local volume
+    DEBUG: 2019/07/12 05:47:14 Attaching the volume
+    DEBUG: 2019/07/12 05:47:20 Re-attaching volume, which is in Attached state.
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    DEBUG: 2019/07/12 05:48:20 END_TEST LocalVolume.NegativeTests Time-taken : 91.005529744
+
+• [SLOW TEST:91.006 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Attach already attached volume
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:330
+------------------------------
+SSSSSSS
+------------------------------
+Cluster.RecommissionNode Management Daily M_Cluster-1.6 when a node is decommissioned and recommissioned 
+  should be created, decommissioned, and recommissioned
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:423
+[BeforeEach] when a node is decommissioned and recommissioned                                                                         [638/917]
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:405
+    DEBUG: 2019/07/12 05:48:20 START_TEST Cluster.RecommissionNode
+[AfterEach] when a node is decommissioned and recommissioned
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:419
+    DEBUG: 2019/07/12 05:48:20 END_TEST Cluster.RecommissionNode Time-taken : 0.000714879
+
+S [SKIPPING] in Spec Setup (BeforeEach) [0.001 seconds]
+Cluster.RecommissionNode Management Daily M_Cluster-1.6
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:400
+  when a node is decommissioned and recommissioned
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:401
+    should be created, decommissioned, and recommissioned [BeforeEach]
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:423
+
+    Skipping de/recommission test for now
+
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:409
+------------------------------
+SSSSSSSSSSSSSS
+------------------------------
+Pod.CreateWithMissingVolume Management Weekly M_Pod-1.16 Create pod with missing volume. 
+  Create pod with missing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:536
+[BeforeEach] Create pod with missing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:526
+    DEBUG: 2019/07/12 05:48:20 START_TEST Pod.CreateWithMissingVolume
+    DEBUG: 2019/07/12 05:48:20 Login to cluster
+    DEBUG: 2019/07/12 05:48:20 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:48:21 Checking basic Vnic usage
+    DEBUG: 2019/07/12 05:48:21 Updating inventory struct
+    DEBUG: 2019/07/12 05:48:27 Creating storage classes
+[It] Create pod with missing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:536
+    DEBUG: 2019/07/12 05:48:44 Create fio pod with missing volume:
+    DEBUG: 2019/07/12 05:48:49 Validate if pod is in pending state or not: 
+    DEBUG: 2019/07/12 05:48:50 Pod "fio-test-pod" is in "Pending" phase.
+    DEBUG: 2019/07/12 05:48:50 Create missing volume: 
+    DEBUG: 2019/07/12 05:48:50 Create pvc
+    DEBUG: 2019/07/12 05:48:50 Created PVC successfully.
+    DEBUG: 2019/07/12 05:48:50 Wait till volume move to Attached state:
+ DEBUG: 2019/07/12 05:48:51 Volume "pvc-2b84ea3f-a499-11e9-a3ca-a4bf0164e0bf" is in "Available" state. Waiting for it to come in "A[597/917]
+state.
+    ERROR: 2019/07/12 05:57:11  util.go:212: TestFailed Timeout while waiting for pvc-2b84ea3f-a499-11e9-a3ca-a4bf0164e0bf state changing to At
+tached
+    DEBUG: 2019/07/12 05:57:11 Collecting dw-techsupport log from all test nodes
+
+    DEBUG: 2019/07/12 05:57:11 
+Getting techsupport logs for all nodes
+    DEBUG: 2019/07/12 05:57:11 Create techsupport log directory : 2019-07-12T05-57-11
+    DEBUG: 2019/07/12 05:58:33 Getting tech support for 172.16.230.10 node, to directory 2019-07-12T05-57-11
+
+    DEBUG: 2019/07/12 05:58:33 Getting tech support for 172.16.230.12 node, to directory 2019-07-12T05-57-11
+
+    DEBUG: 2019/07/12 05:58:38 Getting tech support for 172.16.230.8 node, to directory 2019-07-12T05-57-11
+
+    DEBUG: 2019/07/12 05:58:38 Creating pod log directory : pod_description_and_logs
+    DEBUG: 2019/07/12 05:58:38 Collecting pod description and logs for all the pods ...
+    DEBUG: 2019/07/12 05:58:48 Collected techsupport log location : /home/amruta/diamanti-test-pkg/bin/2019-07-12T05-57-11
+    DEBUG: 2019/07/12 05:58:48 Copying e2e log file to directory : /home/amruta/diamanti-test-pkg/bin/2019-07-12T05-57-11
+    DEBUG: 2019/07/12 05:58:48 Changing permissions of directory, so that all users can write to : 2019-07-12T05-57-11
+Testcase failed, refreshing testbed...
+    DEBUG: 2019/07/12 05:58:48 Destroying the cluster
+    DEBUG: 2019/07/12 05:58:48 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:58:49 Login to cluster
+    DEBUG: 2019/07/12 05:58:49 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:58:50 Destroying the cluster: e1d1feb8-a4a1-11e9-b09f-a4bf0164e0bf, Master node is bosserv4
+    DEBUG: 2019/07/12 05:58:50 Checking in a loop for cluster status
+    DEBUG: 2019/07/12 05:58:50 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:58:52 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:58:54 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:58:56 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:58:58 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:00 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:02 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:04 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:06 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:08 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:10 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 05:59:12 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+DEBUG: 2019/07/12 06:00:25 Rebooting all nodes.                                                                                   [544/917]
+    DEBUG: 2019/07/12 06:00:25 Doing sync on 172.16.230.8
+PolicyKit daemon disconnected from the bus.
+We are no longer a registered authentication agent.
+    DEBUG: 2019/07/12 06:00:26 Doing sync on 172.16.230.10
+    DEBUG: 2019/07/12 06:00:27 Doing sync on 172.16.230.12
+PolicyKit daemon disconnected from the bus.
+We are no longer a registered authentication agent.
+    DEBUG: 2019/07/12 06:00:28 Waiting for nodes to come up, will wait upto 800 seconds
+.......    DEBUG: 2019/07/12 06:01:54 Nodes are up, waiting for armada to start
+.....
+[AfterEach] Create pod with missing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:532
+    DEBUG: 2019/07/12 06:02:44 END_TEST Pod.CreateWithMissingVolume Time-taken : 864.55420556
+
+• Failure [864.554 seconds]
+Pod.CreateWithMissingVolume Management Weekly M_Pod-1.16
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:510
+  Create pod with missing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:511
+    Create pod with missing volume. [It]
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:536
+
+    Volume did not move to attached state:  : Timeout while waiting for pvc-2b84ea3f-a499-11e9-a3ca-a4bf0164e0bf state changing to Attached
+    Expected error:
+        <*errors.errorString | 0xc4204b8040>: {
+            s: "Timeout while waiting for pvc-2b84ea3f-a499-11e9-a3ca-a4bf0164e0bf state changing to Attached",
+        }
+        Timeout while waiting for pvc-2b84ea3f-a499-11e9-a3ca-a4bf0164e0bf state changing to Attached
+    not to have occurred
+
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/util.go:213
+------------------------------
+SSSSSSSSSSSSSSSSSSSSSSSSS
+------------------------------
+Cluster.AddNodes Management Daily M_Cluster-1.3 M_Cluster-1.4 when cluster is created with few nodes 
+  should be created and destroyed
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:134
+[BeforeEach] when cluster is created with few nodes
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:111
+    DEBUG: 2019/07/12 06:02:44 START_TEST Cluster.AddNodes
+
+[AfterEach] when cluster is created with few nodes                                                                                    [503/917]
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:130
+    DEBUG: 2019/07/12 06:02:44 END_TEST Cluster.AddNodes Time-taken : 0.000613697
+
+S [SKIPPING] in Spec Setup (BeforeEach) [0.001 seconds]
+Cluster.AddNodes Management Daily M_Cluster-1.3 M_Cluster-1.4
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:103
+  when cluster is created with few nodes
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:105
+    should be created and destroyed [BeforeEach]
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:134
+
+    Skipping for smaller testbeds
+
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:118
+------------------------------
+SSSSSSSSSSSSSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Detach a volume while it is mounted
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:410
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 06:02:44 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 06:02:44 Cluster Spec Node list is [bosserv4 bosserv5 bosserv6]
+    DEBUG: 2019/07/12 06:02:44 Getting dns domain name
+    DEBUG: 2019/07/12 06:02:44 FQDN : bostontb2.bos.diamanti.com
+    DEBUG: 2019/07/12 06:02:44 Generating certificates for the cluster: (Name: bostontb2, VIP: 172.16.230.102, FQDN: bostontb2.bos.diamanti.com
+)
+    DEBUG: 2019/07/12 06:02:44 Clean up existing certs if any:
+    DEBUG: 2019/07/12 06:02:44 Generate unique CA name with current date
+    DEBUG: 2019/07/12 06:02:44 Integrate CA name in file
+    DEBUG: 2019/07/12 06:02:44 Generate CA certs
+    DEBUG: 2019/07/12 06:02:45 Create a CSR to generate a certificate using FQDN, VIP, Cluster Name for a server certs
+    DEBUG: 2019/07/12 06:02:45 Generate server certificate:
+    DEBUG: 2019/07/12 06:02:45 Getting CertificateAuthority from /home/amruta/diamanti-test-pkg/server_certs/ca.pem file
+    DEBUG: 2019/07/12 06:02:45 Getting ServerCertificate from /home/amruta/diamanti-test-pkg/server_certs/server.pem file
+    DEBUG: 2019/07/12 06:02:45 Getting ServerPrivateKey from /home/amruta/diamanti-test-pkg/server_certs/server-key.pem file
+    DEBUG: 2019/07/12 06:02:45 Creating the cluster
+    DEBUG: 2019/07/12 06:03:00 Please import "/home/amruta/diamanti-test-pkg/server_certs/ca.pem" certificate to your client machine
+
+DEBUG: 2019/07/12 06:03:00 Sleeping for 60 sec                                                                                    [462/917]
+    DEBUG: 2019/07/12 06:04:00 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:04:01 Login to cluster
+    DEBUG: 2019/07/12 06:04:01 Polling for cluster login for 300 seconds.
+    DEBUG: 2019/07/12 06:04:01 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:04:02 Checking in a loop for cluster status
+    DEBUG: 2019/07/12 06:04:02 Found '3' nodes
+    DEBUG: 2019/07/12 06:04:02 Waitting for bosserv4 to into "Ready" state.
+    DEBUG: 2019/07/12 06:04:02 Waitting for bosserv5 to into "Ready" state.
+    DEBUG: 2019/07/12 06:04:02 Waitting for bosserv6 to into "Ready" state.
+    DEBUG: 2019/07/12 06:04:02 Creating network default
+    DEBUG: 2019/07/12 06:04:02 Creating network blue
+    DEBUG: 2019/07/12 06:04:02 Add default tag to default network
+    DEBUG: 2019/07/12 06:04:13 Labeled all nodes with node=node$
+
+    DEBUG: 2019/07/12 06:04:13 Getting cluster ID
+    DEBUG: 2019/07/12 06:04:13 Created test cluster: 577499b2-a4a5-11e9-86cf-a4bf0164e0bf
+    DEBUG: 2019/07/12 06:04:13 Deleting all LCVs, volumes, snapshots from previous cluster if any.
+    DEBUG: 2019/07/12 06:06:07 Recording timestamp of all services on all nodes
+    DEBUG: 2019/07/12 06:06:12 Overwritting e2e parameter : ExpectedBasicVnicUsageCount
+    DEBUG: 2019/07/12 06:06:13 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 06:06:13 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 06:06:15 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 06:06:15 Checking if given pods are in Running state
+    DEBUG: 2019/07/12 06:06:16 Updating inventory struct
+    DEBUG: 2019/07/12 06:06:17 Creating storage classes
+[It] Detach a volume while it is mounted
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:410
+    DEBUG: 2019/07/12 06:06:34 Creating a local volume
+    DEBUG: 2019/07/12 06:06:34 Attaching the volume
+    DEBUG: 2019/07/12 06:06:40 Mounting the volume
+    DEBUG: 2019/07/12 06:06:41 Detaching the volume while it is mounted
+    DEBUG: 2019/07/12 06:15:01 Unmounting the volume
+    DEBUG: 2019/07/12 06:15:02 output : 
+
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    ERROR: 2019/07/12 06:15:07  volume.go:700: Error failed to run commmand 'dctl  -o json volume detach test-vol -y ', output:No attachments f
+ound for volume: test-vol,  error: VolumeAttachment "test-vol" not found
+, error:
+detaching volume, cmd:volume detach test-vol -y  out: {[78 111 32 97 116 116 97 99 104 109 101 110 116 115 32 102 111 117 110 100 32 [422/917]
+14 32 118 111 108 117 109 101 58 32 116 101 115 116 45 118 111 108 44 32 32 101 114 114 111 114 58 32 86 111 108 117 109 101 65 116 116 97 99 1
+04 109 101 110 116 32 34 116 101 115 116 45 118 111 108 34 32 110 111 116 32 102 111 117 110 100 10] 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 0}
+
+    DEBUG: 2019/07/12 06:16:06 END_TEST LocalVolume.NegativeTests Time-taken : 801.828944866
+
+• [SLOW TEST:801.829 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Detach a volume while it is mounted
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:410
+------------------------------
+SSSSSSS
+------------------------------
+Cluster.FailedNodes Management Daily M_Cluster-1.20 when a node fails in a cluster created with all nodes 
+  should be created and destroyed
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:188
+[BeforeEach] when a node fails in a cluster created with all nodes
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:175
+    DEBUG: 2019/07/12 06:16:06 START_TEST Cluster.FailedNodes
+[AfterEach] when a node fails in a cluster created with all nodes
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:184
+    DEBUG: 2019/07/12 06:16:06 END_TEST Cluster.FailedNodes Time-taken : 0.000739312
+
+S [SKIPPING] in Spec Setup (BeforeEach) [0.001 seconds]
+Cluster.FailedNodes Management Daily M_Cluster-1.20
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:168
+  when a node fails in a cluster created with all nodes
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:170
+    should be created and destroyed [BeforeEach]
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:188
+
+    Skipping for smaller testbeds
+
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:179
+------------------------------
+SSSSSSSSSSSSSSSSSSS
+Cluster.RemoveNodeWithPods Management Daily M_Cluster-1.5 when a node is decommissioned and removed from a cluster                    [380/917]
+  should be created, decommissioned, and removed
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:329
+[BeforeEach] when a node is decommissioned and removed from a cluster
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:311
+    DEBUG: 2019/07/12 06:16:06 START_TEST Cluster.RemoveNodeWithPods
+[AfterEach] when a node is decommissioned and removed from a cluster
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:325
+    DEBUG: 2019/07/12 06:16:06 END_TEST Cluster.RemoveNodeWithPods Time-taken : 0.001427102
+
+S [SKIPPING] in Spec Setup (BeforeEach) [0.001 seconds]
+Cluster.RemoveNodeWithPods Management Daily M_Cluster-1.5
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:306
+  when a node is decommissioned and removed from a cluster
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:307
+    should be created, decommissioned, and removed [BeforeEach]
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:329
+
+    Skipping remove node with pods for now
+
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/cluster.go:315
+------------------------------
+SSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Create an existing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:317
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 06:16:06 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 06:16:06 Login to cluster
+    DEBUG: 2019/07/12 06:16:06 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:16:07 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:16:07 Updating inventory struct
+    DEBUG: 2019/07/12 06:16:14 Creating storage classes
+[It] Create an existing volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:317
+    DEBUG: 2019/07/12 06:16:31 Creating a local volume
+    DEBUG: 2019/07/12 06:16:31 Trying to create existing volume.
+[AfterEach] Local volume negative test cases
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242                                            [339/917]
+    ERROR: 2019/07/12 06:16:31  volume.go:700: Error failed to run commmand 'dctl  -o json volume detach test-vol -y ', output:No attachments f
+ound for volume: test-vol,  error: VolumeAttachment "test-vol" not found
+, error:
+ detaching volume, cmd:volume detach test-vol -y  out: {[78 111 32 97 116 116 97 99 104 109 101 110 116 115 32 102 111 117 110 100 32 102 111 1
+14 32 118 111 108 117 109 101 58 32 116 101 115 116 45 118 111 108 44 32 32 101 114 114 111 114 58 32 86 111 108 117 109 101 65 116 116 97 99 1
+04 109 101 110 116 32 34 116 101 115 116 45 118 111 108 34 32 110 111 116 32 102 111 117 110 100 10] 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 0}
+
+    DEBUG: 2019/07/12 06:17:07 END_TEST LocalVolume.NegativeTests Time-taken : 60.530709986
+
+• [SLOW TEST:60.531 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Create an existing volume.
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:317
+------------------------------
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Detach already detached volume
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:388
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 06:17:07 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 06:17:07 Login to cluster
+    DEBUG: 2019/07/12 06:17:07 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:17:08 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:17:08 Updating inventory struct
+    DEBUG: 2019/07/12 06:17:14 Creating storage classes
+[It] Detach already detached volume
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:388
+    DEBUG: 2019/07/12 06:17:31 Creating a local volume
+    DEBUG: 2019/07/12 06:17:32 Attaching the volume
+    DEBUG: 2019/07/12 06:17:37 Detaching the volume
+    DEBUG: 2019/07/12 06:17:39 Detaching already detached volume
+    ERROR: 2019/07/12 06:17:39  volume.go:700: Error failed to run commmand 'dctl  -o json volume detach test-vol -y ', output:No attachments found for volume: test-vol,  error: VolumeAttachment "test-vol" not found
+, error:
+ detaching volume, cmd:volume detach test-vol -y  out: {[78 111 32 97 116 116 97 99 104 109 101 110 116 115 32 102 111 117 110 100 32 102 111 1
+14 32 118 111 108 117 109 101 58 32 116 101 115 116 45 118 111 108 44 32 32 101 114 114 111 114 58 32 86 111 108 117 109 101 65 116 116 97 99 1
+04 109 101 110 116 32 34 116 101 115 116 45 118 111 108 34 32 110 111 116 32 102 111 117 110 100 10] 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 0}
+
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    ERROR: 2019/07/12 06:17:39  volume.go:700: Error failed to run commmand 'dctl  -o json volume detach test-vol -y ', output:No attachments f
+ound for volume: test-vol,  error: VolumeAttachment "test-vol" not found
+, error:
+ detaching volume, cmd:volume detach test-vol -y  out: {[78 111 32 97 116 116 97 99 104 109 101 110 116 115 32 102 111 117 110 100 32 102 111 1
+14 32 118 111 108 117 109 101 58 32 116 101 115 116 45 118 111 108 44 32 32 101 114 114 111 114 58 32 86 111 108 117 109 101 65 116 116 97 99 1
+04 109 101 110 116 32 34 116 101 115 116 45 118 111 108 34 32 110 111 116 32 102 111 117 110 100 10] 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 0}
+
+    DEBUG: 2019/07/12 06:18:36 END_TEST LocalVolume.NegativeTests Time-taken : 89.637076781
+
+• [SLOW TEST:89.637 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Detach already detached volume
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:388
+------------------------------
+SSSSSSSSSSSSSSSSSSSS
+------------------------------
+ReplicationController.NetworkPodEvacuation Weekly M_Cluster-1.12 Qos RC network pod evacuation on node failure test. 
+  RC network pod evacuation on node failure test.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1089
+[BeforeEach] RC network pod evacuation on node failure test.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1078
+    DEBUG: 2019/07/12 06:18:36 START_TEST ReplicationController.NetworkPodEvacuation
+    DEBUG: 2019/07/12 06:18:36 Login to cluster
+    DEBUG: 2019/07/12 06:18:36 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:18:37 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:18:37 Updating inventory struct
+[It] RC network pod evacuation on node failure test.                                                                                  [257/917]
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1089
+    DEBUG: 2019/07/12 06:19:01 Creating iperf server replication controller.
+    DEBUG: 2019/07/12 06:19:06 List the pods.
+    DEBUG: 2019/07/12 06:19:23 Create iperf-server service
+    DEBUG: 2019/07/12 06:19:24 Create iperf client replication controller
+    DEBUG: 2019/07/12 06:19:29 List the pods.
+    DEBUG: 2019/07/12 06:19:47 List the pods.
+    DEBUG: 2019/07/12 06:19:47 List the pods.
+    DEBUG: 2019/07/12 06:19:48 Validating network reservations, before powering off node, where iperf client rc is running: 
+    DEBUG: 2019/07/12 06:19:48 Cluster Node: bosserv4. Used vnic: 2
+    DEBUG: 2019/07/12 06:19:48 Cluster Node: bosserv5. Used vnic: 1
+    DEBUG: 2019/07/12 06:19:48 Powering off node "bosserv5", where iperf client rc is running.
+    DEBUG: 2019/07/12 06:19:48 Getting cluster quorum nodes
+    DEBUG: 2019/07/12 06:19:48 Powering OFF the node bosserv5
+    DEBUG: 2019/07/12 06:19:48 Doing sync on 172.16.230.10
+    DEBUG: 2019/07/12 06:19:50 Ensuring that bosserv5 node is unreachable: 
+    DEBUG: 2019/07/12 06:19:50 Executing ping command: ping  -c 5 -W 5 bosserv5
+    DEBUG: 2019/07/12 06:19:54 bosserv5 is pingable from local machine
+    DEBUG: 2019/07/12 06:20:04 Executing ping command: ping  -c 5 -W 5 bosserv5
+    DEBUG: 2019/07/12 06:20:13 Polling to check until node: bosserv5 goes down
+    DEBUG: 2019/07/12 06:21:29 Polling to check until node goes down
+    DEBUG: 2019/07/12 06:21:32 Waiting till iperf client rc pod evacuation.
+    DEBUG: 2019/07/12 06:28:41 List the pods.
+    DEBUG: 2019/07/12 06:29:01 List the pods.
+    DEBUG: 2019/07/12 06:29:21 List the pods.
+    DEBUG: 2019/07/12 06:29:42 List the pods.
+    DEBUG: 2019/07/12 06:30:02 List the pods.
+    DEBUG: 2019/07/12 06:30:15 List the pods.
+    DEBUG: 2019/07/12 06:30:15 Powering ON the node bosserv5
+    DEBUG: 2019/07/12 06:30:16 Node 172.16.230.10 took 1 seconds to power on
+    DEBUG: 2019/07/12 06:30:16 Checking if node bosserv5 is reachable or not: 
+    DEBUG: 2019/07/12 06:30:16 Executing ping command: ping  -c 5 -W 5 bosserv5
+    DEBUG: 2019/07/12 06:30:35 Executing ping command: ping  -c 5 -W 5 bosserv5
+    DEBUG: 2019/07/12 06:30:52 Executing ping command: ping  -c 5 -W 5 bosserv5
+    DEBUG: 2019/07/12 06:31:09 Executing ping command: ping  -c 5 -W 5 bosserv5
+    DEBUG: 2019/07/12 06:31:15 bosserv5 is pingable from local machine
+    DEBUG: 2019/07/12 06:31:15 Checking ssh port is up or not on node: bosserv5
+    DEBUG: 2019/07/12 06:31:55 Waiting for the node(s) to come up and rejoin the cluster
+    DEBUG: 2019/07/12 06:31:55 Found '3' nodes
+    DEBUG: 2019/07/12 06:31:55 Waitting for bosserv4 to into "Ready" state.
+    DEBUG: 2019/07/12 06:31:55 Waitting for bosserv5 to into "Ready" state.
+    DEBUG: 2019/07/12 06:32:27 Waitting for bosserv6 to into "Ready" state.
+    DEBUG: 2019/07/12 06:32:37 After power cycle/reboot, updating timestamp of node : bosserv5
+    DEBUG: 2019/07/12 06:32:39 Getting cluster quorum nodes
+    DEBUG: 2019/07/12 06:33:39 Updating inventory struct
+    DEBUG: 2019/07/12 06:33:40 Waiting for the node bosserv5 to come up and rejoin the cluster
+    DEBUG: 2019/07/12 06:33:40 Found '3' nodes
+    DEBUG: 2019/07/12 06:33:40 Waitting for bosserv4 to into "Ready" state.
+    DEBUG: 2019/07/12 06:33:40 Waitting for bosserv5 to into "Ready" state.
+    DEBUG: 2019/07/12 06:33:40 Waitting for bosserv6 to into "Ready" state.
+    DEBUG: 2019/07/12 06:33:40 Validate network reservations after rc pod evacuation.
+    DEBUG: 2019/07/12 06:33:41 Cluster Node: bosserv5. Used vnic: 0
+    DEBUG: 2019/07/12 06:33:41 Cluster Node: bosserv4. Used vnic: 2
+    DEBUG: 2019/07/12 06:33:41 Cluster Node: bosserv6. Used vnic: 2
+    DEBUG: 2019/07/12 06:33:41 Delete iperf client replication controller.
+    DEBUG: 2019/07/12 06:33:41 List the pods.
+    DEBUG: 2019/07/12 06:33:42 Delete iperf service.
+    DEBUG: 2019/07/12 06:33:42 Delete iperf server replication controller.
+    DEBUG: 2019/07/12 06:33:42 List the pods.
+    DEBUG: 2019/07/12 06:33:43 After pod Deletion network usage must be zero: 
+[AfterEach] RC network pod evacuation on node failure test.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1085
+• [SLOW TEST:966.801 seconds]                                                                                                         [171/917]
+ReplicationController.NetworkPodEvacuation Weekly M_Cluster-1.12 Qos
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1060
+  RC network pod evacuation on node failure test.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1061
+    RC network pod evacuation on node failure test.
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/network-pod.go:1089
+------------------------------
+SSSSSS
+------------------------------
+Volume.CheckStorageReservation Management Sanity M_Volume-1.4 Check reserved space on drive & in cluster status 
+  check the reserved space on drive by volume
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:629
+[BeforeEach] Check reserved space on drive & in cluster status
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:615
+    DEBUG: 2019/07/12 06:34:43 START_TEST Volume.CheckStorageReservation
+    DEBUG: 2019/07/12 06:34:43 Login to cluster
+    DEBUG: 2019/07/12 06:34:43 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:34:44 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:34:44 Updating inventory struct
+    DEBUG: 2019/07/12 06:34:51 Creating storage classes
+[AfterEach] Check reserved space on drive & in cluster status
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:624
+    DEBUG: 2019/07/12 06:35:07 END_TEST Volume.CheckStorageReservation Time-taken : 24.233282133
+
+S [SKIPPING] in Spec Setup (BeforeEach) [24.233 seconds]
+Volume.CheckStorageReservation Management Sanity M_Volume-1.4
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:604
+  Check reserved space on drive & in cluster status
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:606
+    check the reserved space on drive by volume [BeforeEach]
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:629
+
+    Skipping because Storage reservation doesn't match with given value
+
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:621
+------------------------------
+SSSSSSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+ Delete non existant volume.                                                                                                         [130/917]
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:309
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 06:35:07 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 06:35:07 Login to cluster
+    DEBUG: 2019/07/12 06:35:07 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:35:08 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:35:08 Updating inventory struct
+    DEBUG: 2019/07/12 06:35:15 Creating storage classes
+[It] Delete non existant volume.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:309
+    DEBUG: 2019/07/12 06:35:32 Deleting non existant volume.
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    ERROR: 2019/07/12 06:35:32  volume.go:700: Error failed to run commmand 'dctl  -o json volume detach test-vol -y ', output:No attachments f
+ound for volume: test-vol,  error: Volume "test-vol" not found
+, error:
+ detaching volume, cmd:volume detach test-vol -y  out: {[78 111 32 97 116 116 97 99 104 109 101 110 116 115 32 102 111 117 110 100 32 102 111 1
+14 32 118 111 108 117 109 101 58 32 116 101 115 116 45 118 111 108 44 32 32 101 114 114 111 114 58 32 86 111 108 117 109 101 32 34 116 101 115 
+116 45 118 111 108 34 32 110 111 116 32 102 111 117 110 100 10] 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 0}
+
+    DEBUG: 2019/07/12 06:35:32 END_TEST LocalVolume.NegativeTests Time-taken : 25.029037813
+
+• [SLOW TEST:25.029 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Delete non existant volume.
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:309
+------------------------------
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Delete volume when in use.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:291
+[BeforeEach] Local volume negative test cases
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232                                             [89/917]
+    DEBUG: 2019/07/12 06:35:32 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 06:35:32 Login to cluster
+    DEBUG: 2019/07/12 06:35:32 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:35:33 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:35:33 Updating inventory struct
+    DEBUG: 2019/07/12 06:35:40 Creating storage classes
+[It] Delete volume when in use.
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:291
+    DEBUG: 2019/07/12 06:35:57 Creating a local volume
+    DEBUG: 2019/07/12 06:35:57 Attaching the volume
+    DEBUG: 2019/07/12 06:36:03 Trying to delete volume when it is in Use
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    DEBUG: 2019/07/12 06:36:36 END_TEST LocalVolume.NegativeTests Time-taken : 63.173872262
+
+• [SLOW TEST:63.174 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Delete volume when in use.
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:291
+------------------------------
+SSSSSSSSSSSSSSSSSS
+------------------------------
+Pod.Schedule Management Daily M_Pod-1.12 pod scheduling tests 
+  Pod scheduling
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:161
+[BeforeEach] pod scheduling tests
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:151
+    DEBUG: 2019/07/12 06:36:36 START_TEST Pod.Schedule
+    DEBUG: 2019/07/12 06:36:36 Login to cluster
+    DEBUG: 2019/07/12 06:36:36 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:36:36 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:36:37 Updating inventory struct
+    DEBUG: 2019/07/12 06:36:43 Creating storage classes
+[It] Pod scheduling
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:161
+    DEBUG: 2019/07/12 06:37:01 Create Pod1
+ DEBUG: 2019/07/12 06:37:15 Create Pod2                                                                                             [48/917]
+    DEBUG: 2019/07/12 06:37:29 Check for Pod spreading
+    DEBUG: 2019/07/12 06:37:29 Create Pod to test node affinity
+    DEBUG: 2019/07/12 06:37:43 Deleting pod: testpod101
+    DEBUG: 2019/07/12 06:37:48 Deleting pod: testpod102
+    DEBUG: 2019/07/12 06:38:01 Deleting pod: testpod103
+    DEBUG: 2019/07/12 06:38:17 Make sure that blue network usage is zero
+[AfterEach] pod scheduling tests
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:157
+    DEBUG: 2019/07/12 06:38:17 END_TEST Pod.Schedule Time-taken : 101.081228464
+
+• [SLOW TEST:101.081 seconds]
+Pod.Schedule Management Daily M_Pod-1.12
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:144
+  pod scheduling tests
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:146
+    Pod scheduling
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/pod.go:161
+------------------------------
+SSSSSSSSSSSSSSSS
+------------------------------
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7 Local volume negative test cases 
+  Attach an already attached volume to another host
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:348
+[BeforeEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:232
+    DEBUG: 2019/07/12 06:38:17 START_TEST LocalVolume.NegativeTests
+    DEBUG: 2019/07/12 06:38:17 Login to cluster
+    DEBUG: 2019/07/12 06:38:17 Login commands is :  -s bostontb2.bos.diamanti.com login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:38:18 Checking basic Vnic usage
+    DEBUG: 2019/07/12 06:38:18 Updating inventory struct
+    DEBUG: 2019/07/12 06:38:24 Creating storage classes
+[It] Attach an already attached volume to another host
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:348
+    DEBUG: 2019/07/12 06:38:41 Creating a local volume
+    DEBUG: 2019/07/12 06:38:42 Attaching the volume
+    DEBUG: 2019/07/12 06:38:48 Re-attaching the volume to another node
+[AfterEach] Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:242
+    DEBUG: 2019/07/12 06:39:37 END_TEST LocalVolume.NegativeTests Time-taken : 80.192136244
+• [SLOW TEST:80.192 seconds]
+LocalVolume.NegativeTests Management Weekly S_Negative-1.0 S_Negative-1.1 S_Negative-1.2 S_Negative-1.3 S_Negative-1.5 S_Negative-1.6 S_Negativ
+e-1.7
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:222
+  Local volume negative test cases
+  /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:225
+    Attach an already attached volume to another host
+    /home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/volume.go:348
+------------------------------
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS    DEBUG: 2019/07/12 06:39:37 Running After suite ...
+    DEBUG: 2019/07/12 06:39:37 Checking existance of loopback device(s) on all cluster nodes
+    DEBUG: 2019/07/12 06:39:38 Login using bostontb2.bos.diamanti.com : command is : login -u admin -p Diamanti@111 --proxy --insecure-k8s
+    DEBUG: 2019/07/12 06:39:45 Delete storage classes
+    DEBUG: 2019/07/12 06:39:51 Bug converted to warning list is:
+
+
+Summarizing 1 Failure:
+
+[Fail] Pod.CreateWithMissingVolume Management Weekly M_Pod-1.16 Create pod with missing volume. [It] Create pod with missing volume. 
+/home/jenkins/workspace/Project15-GA-2.2.0/main/.go/src/dws/test/e2e/tests/util.go:213
+
+Ran 11 of 329 Specs in 3309.868 seconds
+FAIL! -- 10 Passed | 1 Failed | 0 Pending | 318 Skipped
+    DEBUG: 2019/07/12 06:39:51 
+    Getting techsupport logs for all nodes
+    DEBUG: 2019/07/12 06:39:51 Create techsupport log directory : 2019-07-12T06-39-51
+    DEBUG: 2019/07/12 06:41:07 Getting tech support for 172.16.230.12 node, to directory 2019-07-12T06-39-51
+
+    DEBUG: 2019/07/12 06:41:12 Getting tech support for 172.16.230.10 node, to directory 2019-07-12T06-39-51
+
+    DEBUG: 2019/07/12 06:41:22 Getting tech support for 172.16.230.8 node, to directory 2019-07-12T06-39-51
+
+    DEBUG: 2019/07/12 06:41:22 Creating pod log directory : pod_description_and_logs
+    DEBUG: 2019/07/12 06:41:22 Collecting pod description and logs for all the pods ...
+    DEBUG: 2019/07/12 06:41:33 Collected techsupport log location : /home/amruta/diamanti-test-pkg/bin/2019-07-12T06-39-51
+    DEBUG: 2019/07/12 06:41:33 Copying e2e log file to directory : /home/amruta/diamanti-test-pkg/bin/2019-07-12T06-39-51
+    DEBUG: 2019/07/12 06:41:33 Changing permissions of directory, so that all users can write to : 2019-07-12T06-39-51
+    ERROR: logging before flag.Parse: F0712 06:41:33.194921   26408 driver.go:168] At least one test failed
+
