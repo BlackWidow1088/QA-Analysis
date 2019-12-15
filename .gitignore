@@ -1,0 +1,17 @@
+/website/server/build
+/website/server/node_modules
+/website/front-end/build
+/website/front-end/node_modules
+# production
+
+# misc
+.DS_Store
+.idea
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

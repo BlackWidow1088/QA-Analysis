@@ -1,0 +1,10 @@
+features:
+1) update test case for same release or master release
+2) edit rows in test table
+3) for user: under-work 3 states: assigned, under work, completed.
+  we should know how many times each TC was reopened, etc.
+4) undo features and maintain logs for each update.
+
+5) admin approves test case and then reflects
+6) release daabase: anyone can get all the features about releases in release table
+7) 
