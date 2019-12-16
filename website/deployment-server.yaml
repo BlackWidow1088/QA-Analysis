@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-portal-deployment
+  labels:
+    name: release-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: release-portal
+  template:
+    metadata:
+      labels:
+        name: release-portal
+    spec:
+      containers:
+        - name: release-portal-container
+          image: blackwidow1088/dockernodejs:v3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5051

@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, CardBody, CardHeader, Col, Pagination, PaginationItem, PaginationLink, Row, Table, Button } from 'reactstrap';
 import { connect } from 'react-redux';
+import AppTable from '../../../components/AppTable/AppTable';
+import { TABLE_OPTIONS } from '../../../constants';
 class ReleaseTestCase extends Component {
     // "TcID": "PVC_Mirrored-3.3",
     // "TcName": "MirroringStaticProvisioning.RebootAllNodes",
@@ -69,70 +71,93 @@ class ReleaseTestCase extends Component {
         return (
             <div>
                 <Row>
-                    <Col xs="12" lg="6">
-                        <Card>
-                            <CardHeader>
-                                <i className="fa fa-align-justify"></i> Test Cases
-                                {/* <Button size="sm" color="primary" className="float-right">Edit</Button> */}
-                            </CardHeader>
-                            <CardBody>
-                                <Table responsive striped>
-                                    <thead>
-                                        <tr>
-                                            {
-                                                this.state.fields.map(item => <th>{item}</th>)
-                                            }
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            this.props.testcases && this.props.testcases.map(tc => {
-                                                return (
-                                                    <tr>
-                                                        {
-                                                            this.state.fields.map(item => {
-                                                                let value = tc[item];
-                                                                if (value && item === "Setup" || item === "Orchestration Platform") {
-                                                                    value = value.join(',');
-                                                                }
-                                                                if (item === 'TcID') {
-                                                                    return (
-
-                                                                        <td>
-                                                                            <span style={style}>
-                                                                                {tc[item]}
-                                                                            </span>
-                                                                        </td>
-
-                                                                    )
-                                                                }
-                                                                return (
-                                                                    <td>{value}</td>
-                                                                )
-                                                            })
-                                                        }
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </Table>
-                                <Pagination>
-                                    <PaginationItem disabled><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
-                                    <PaginationItem active>
-                                        <PaginationLink tag="button">1</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
-                                    <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
-                                    <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
-                                    <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
-                                </Pagination>
-                            </CardBody>
-                        </Card>
+                    <Col xs="12" sm="12" md="4" lg="3" className="rp-summary-tables">
+                        <AppTable
+                            onUpdate={(values) => this.updateDate(values)}
+                            title="Dates"
+                            currentUser={this.props.currentUser}
+                            fieldAndHeader={[
+                                { field: 'name', header: 'Name', type: 'text', restrictUpdate: true },
+                                { field: 'target', header: 'Target', type: 'date' },
+                                { field: 'actual', header: 'Actual', type: 'date' }
+                            ]}
+                            data={
+                                [
+                                    { name: 'Release', target: this.props.selectedRelease.TargetedReleaseDate, actual: this.props.selectedRelease.ActualReleaseDate },
+                                    { name: 'Code Freeze', target: this.props.selectedRelease.TargetedCodeFreezeDate, actual: this.props.selectedRelease.ActualCodeFreezeDate },
+                                    { name: 'QA Start', target: this.props.selectedRelease.TargetedQAStartDate, actual: this.props.selectedRelease.QAStartDate },
+                                ]}
+                        />
                     </Col>
                 </Row>
-            </div >
-        )
+            </div>)
+
+        // <div>
+        //     <Row>
+        //         <Col xs="12" lg="6">
+        //             <Card>
+        //                 <CardHeader>
+        //                     <i className="fa fa-align-justify"></i> Test Cases
+        //                     {/* <Button size="sm" color="primary" className="float-right">Edit</Button> */}
+        //                 </CardHeader>
+        //                 <CardBody>
+        //                     <Table responsive striped>
+        //                         <thead>
+        //                             <tr>
+        //                                 {
+        //                                     this.state.fields.map(item => <th>{item}</th>)
+        //                                 }
+        //                             </tr>
+        //                         </thead>
+        //                         <tbody>
+        //                             {
+        //                                 this.props.testcases && this.props.testcases.map(tc => {
+        //                                     return (
+        //                                         <tr>
+        //                                             {
+        //                                                 this.state.fields.map(item => {
+        //                                                     let value = tc[item];
+        //                                                     if (value && item === "Setup" || item === "Orchestration Platform") {
+        //                                                         value = value.join(',');
+        //                                                     }
+        //                                                     if (item === 'TcID') {
+        //                                                         return (
+
+        //                                                             <td>
+        //                                                                 <span style={style}>
+        //                                                                     {tc[item]}
+        //                                                                 </span>
+        //                                                             </td>
+
+        //                                                         )
+        //                                                     }
+        //                                                     return (
+        //                                                         <td>{value}</td>
+        //                                                     )
+        //                                                 })
+        //                                             }
+        //                                         </tr>
+        //                                     )
+        //                                 })
+        //                             }
+        //                         </tbody>
+        //                     </Table>
+        //                     <Pagination>
+        //                         <PaginationItem disabled><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
+        //                         <PaginationItem active>
+        //                             <PaginationLink tag="button">1</PaginationLink>
+        //                         </PaginationItem>
+        //                         <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
+        //                         <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
+        //                         <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
+        //                         <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
+        //                     </Pagination>
+        //                 </CardBody>
+        //             </Card>
+        //         </Col>
+        //     </Row>
+        // </div >
+        // )
     }
 }
 const mapStateToProps = (state, ownProps) => ({

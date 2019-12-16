@@ -50,7 +50,17 @@ function all(state = initialState.testcases, action) {
     }
 }
 
-export default combineReducers({
+export const testcaseReducer = combineReducers({
     all
 });
 
+// ////////////////////
+// Selectors //////////
+// //////////////////
+export const getTestSummary = (state) => {
+    return {
+        totalTests: state.testcase.all ? state.testcase.all.length : 0,
+        totalBugs: state.testcase.all ? state.testcase.all.filter(item => item.Bugs !== -1).length : 0,
+        totalPassed: state.testcase.all ? state.testcase.all.filter(item => item.Result === 'Pass').length : 0
+    }
+}

@@ -62,6 +62,12 @@ app.get('/api/tcinfo/:id', (req, res) => {
     }, responseDelaySlow);
 });
 
+app.get('/api/tcstatus', (req, res) => {
+    setTimeout(() => {
+        res.send(testcases);
+    }, responseDelaySlow);
+});
+
 app.get('/api/release/all', (req, res) => {
     console.log('getting releasesa');
     console.log('API- DOC');

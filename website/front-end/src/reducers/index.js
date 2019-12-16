@@ -6,9 +6,9 @@ import profiles from './profiles.reducer';
 import feed from './feed.reducer';
 
 import ui from './ui';
-import release from './release.reducer';
+import { releaseReducer as release } from './release.reducer';
 import app from './app.reducer';
-import testcase from './testcase.reducer';
+import { testcaseReducer as testcase } from './testcase.reducer';
 
 export default combineReducers({
   auth,

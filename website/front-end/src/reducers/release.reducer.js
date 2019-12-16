@@ -9,12 +9,14 @@ import { combineReducers } from 'redux';
 
 import {
     SAVE_RELEASE_BASIC_INFO,
-    DELETE_RELEASE
+    DELETE_RELEASE,
+    RELEASE_CHANGE
 } from '../actions';
 
 const initialState = {
     releases: [
-    ]
+    ],
+    current: {}
 };
 
 
@@ -34,7 +36,7 @@ function all(state = initialState.releases, action) {
             let found = false;
             let dates = [
                 'TargetedReleaseDate', 'ActualReleaseDate', 'TargetedCodeFreezeDate',
-                'UpgradeTestingStartDate', 'QAStartDate'
+                'UpgradeTestingStartDate', 'QAStartDate', 'ActualCodeFreezeDate', 'TargetedQAStartDate'
             ]
             let formattedDates = {};
             dates.forEach(item => {
@@ -77,8 +79,24 @@ function all(state = initialState.releases, action) {
             return state;
     }
 }
+function current(state = initialState.current, action) {
+    switch (action.type) {
+        case RELEASE_CHANGE:
+            return { ...state, id: action.payload.id }
+        default:
+            return state;
+    }
+}
 
-export default combineReducers({
-    all
+export const releaseReducer = combineReducers({
+    all,
+    current
 });
 
+// ////////////////////
+// Selectors //////////
+// //////////////////
+export const getCurrentRelease = (state) => {
+    let current = state.release.all.filter(item => item.ReleaseNumber === state.release.current.id)[0];
+    return current ? current : {}
+}

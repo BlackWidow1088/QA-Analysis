@@ -6,7 +6,7 @@ export const MARKER = `${process.env.PUBLIC_URL}/data/fotos/App/marker.png`;
 export const APP_RESERVED_FEED_ID = 'APP_RESERVED_FEED_ID';
 export const APP_RESERVED_USER_ID = 'APP_RESERVED_USER_ID';
 export const APP_RESERVED_USER_NAME = 'App';
-export const TOP_JOURNEY='top';
+export const TOP_JOURNEY = 'top';
 export const FOTO_CATEGORY = {
     FOOD: 'food',
     PLACE: 'place'
@@ -37,3 +37,9 @@ export const EMOJI = {
     'FEED': `${process.env.PUBLIC_URL}/general.PNG`,
     'RAIN': `${process.env.PUBLIC_URL}/rain.PNG`,
 };
+
+export const TABLE_OPTIONS = {
+    EDIT: 'EDIT',
+    DELETE: 'DELETE',
+    ADD: 'ADD'
+}

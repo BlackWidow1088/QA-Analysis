@@ -1,0 +1,12 @@
+@import '../../scss/variables';
+
+.rp-app-table-title {
+  color: $app-secondary-color;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.rp-apptable-features .table-responsive {
+  overflow-y: scroll;
+  max-height: 18rem;
+}

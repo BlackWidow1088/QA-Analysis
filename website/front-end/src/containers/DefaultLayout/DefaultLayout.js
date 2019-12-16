@@ -21,7 +21,8 @@ import {
 // routes config
 import routes from '../../routes';
 import { connect } from 'react-redux';
-import { saveReleaseBasicInfo, updateNavBar, saveTestCase } from '../../actions';
+import { saveReleaseBasicInfo, updateNavBar, saveTestCase, releaseChange } from '../../actions';
+import { getCurrentRelease } from '../../reducers/release.reducer';
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
@@ -48,6 +49,7 @@ class DefaultLayout extends Component {
             this.props.updateNavBar({ id: item.ReleaseNumber });
             this.props.saveReleaseBasicInfo({ id: item.ReleaseNumber, data: item });
           });
+          this.props.releaseChange({ id: res.data[0].ReleaseNumber });
         }, error => {
         });
     }
@@ -66,13 +68,29 @@ class DefaultLayout extends Component {
   render() {
     return (
       <div className="app">
-        <AppHeader fixed>
-          <Suspense fallback={this.loading()}>
-            <DefaultHeader onLogout={e => this.signOut(e)} />
-          </Suspense>
-        </AppHeader>
+        {/* <AppHeader fixed> */}
+        <Suspense fallback={this.loading()}>
+          <DefaultHeader
+            user={this.props.currentUser}
+            selectedReleaseNumber={this.props.selectedRelease.ReleaseNumber}
+            releases={this.props.allReleases && this.props.allReleases.map(item => item.ReleaseNumber)}
+            onReleaseChange={(release) => {
+              console.log(release);
+              if (release) {
+                this.props.releaseChange({ id: release });
+                this.props.history.push(`/release/${release}`);
+              } else {
+                this.props.releaseChange({ id: null });
+                // this.props.history.push(`/release/manage`);
+              }
+            }}
+            onLogout={e => this.signOut(e)} />
+
+
+        </Suspense>
+        {/* </AppHeader> */}
         <div className="app-body">
-          <AppSidebar fixed display="lg">
+          {/* <AppSidebar fixed display="lg">
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
@@ -80,7 +98,7 @@ class DefaultLayout extends Component {
             </Suspense>
             <AppSidebarFooter />
             <AppSidebarMinimizer />
-          </AppSidebar>
+          </AppSidebar> */}
           <main className="main">
             {/* <AppBreadcrumb appRoutes={routes} router={router} /> */}
             <Container fluid>
@@ -103,16 +121,16 @@ class DefaultLayout extends Component {
                     ) : (null);
                   })}
                   <Redirect from="/"
-                    to={this.props.allReleases[0] ? `/release/${this.props.allReleases[0].ReleaseNumber}` : `/release/manage`} />
+                    to={this.props.selectedRelease ? `/release/${this.props.selectedRelease.ReleaseNumber}` : `/release/manage`} />
                 </Switch>
               </Suspense>
             </Container>
           </main>
-          <AppAside fixed>
+          {/* <AppAside fixed>
             <Suspense fallback={this.loading()}>
               <DefaultAside />
             </Suspense>
-          </AppAside>
+          </AppAside> */}
         </div>
         {/* <AppFooter>
           <Suspense fallback={this.loading()}>
@@ -128,7 +146,8 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: state.auth.currentUser,
   navigation: state.app.navs,
   allReleases: state.release.all,
-  allTestCases: state.testcase.all
+  allTestCases: state.testcase.all,
+  selectedRelease: getCurrentRelease(state)
 })
 
-export default connect(mapStateToProps, { saveReleaseBasicInfo, updateNavBar, saveTestCase })(DefaultLayout);
+export default connect(mapStateToProps, { saveReleaseBasicInfo, updateNavBar, saveTestCase, releaseChange })(DefaultLayout);

@@ -24,7 +24,7 @@ import {
   Carousel, CarouselCaption, CarouselControl, CarouselIndicators, CarouselItem
 } from 'reactstrap';
 import { connect } from 'react-redux';
-import ReleaseBasicCard from './ReleaseBasic/ReleaseBasicCard';
+// import ReleaseBasicCard from './ReleaseSummary/ReleaseBasicCard';
 import ReleaseBuildCard from './ReleaseBuild/ReleaseBuildCard';
 import ReleaseBugCard from './ReleaseBug/ReleaseBugCard';
 import ReleaseTestCaseCard from './ReleaseTestCase/ReleaseTestCaseCard';
@@ -38,12 +38,15 @@ import ReleaseFinalInfoCard from './ReleaseFinalInfo/ReleaseFinalInfoCard';
 
 import './Release.scss';
 
-import ReleaseBasic from './ReleaseBasic/ReleaseBasic';
+import ReleaseSummary from './ReleaseSummary/ReleaseSummary';
 import ReleaseBuild from './ReleaseBuild/ReleaseBuild';
 import ReleaseFinalInfo from './ReleaseFinalInfo/ReleaseFinalInfo';
 import ReleaseCustomer from './ReleaseCustomer/ReleaseCustomer';
 import ReleaseHardwareAndSetup from './ReleaseHardwareAndSetup/ReleaseHardwareAndSetup';
 import ReleaseTestCase from './ReleaseTestCase/ReleaseTestCase';
+import Header from './components/Header';
+
+import { getCurrentRelease } from '../../reducers/release.reducer';
 // Release number
 // Targeted Release Date (M)
 // Targeted Code freeze date (M)
@@ -102,6 +105,8 @@ class Release extends Component {
   }
   componentWillReceiveProps(newProps) {
     this.id = newProps.match.params.id;
+    console.log(this.id)
+    console.log('receibed')
   }
 
   onExiting() {
@@ -145,17 +150,17 @@ class Release extends Component {
   items = [
     () => (
       <Row>
-        <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 0 })}>
-          <ReleaseBasicCard release={this.props.basicReleaseInfo} />
-        </Col>
+        {/* <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 0 })}>
+          <ReleaseBasicCard release={this.props.selectedRelease} />
+        </Col> */}
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 1 })}>
-          <ReleaseFinalInfoCard release={this.props.basicReleaseInfo} />
+          <ReleaseFinalInfoCard release={this.props.selectedRelease} />
         </Col>
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 3 })}>
-          <ReleaseBuildCard release={this.props.basicReleaseInfo} />
+          <ReleaseBuildCard release={this.props.selectedRelease} />
         </Col>
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 2 })}>
-          <ReleaseHardwareAndSetupCard release={this.props.basicReleaseInfo} />
+          <ReleaseHardwareAndSetupCard release={this.props.selectedRelease} />
         </Col>
 
       </Row>
@@ -164,18 +169,18 @@ class Release extends Component {
       <Row>
 
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 4 })}>
-          <ReleaseCustomerCard release={this.props.basicReleaseInfo} />
+          <ReleaseCustomerCard release={this.props.selectedRelease} />
         </Col>
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 5 })}>
-          <ReleaseFeatureCard release={this.props.basicReleaseInfo} />
+          <ReleaseFeatureCard release={this.props.selectedRelease} />
         </Col>
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 6 })}>
-          <ReleaseTestCaseCard release={this.props.basicReleaseInfo} />
+          <ReleaseTestCaseCard release={this.props.selectedRelease} />
         </Col>
 
 
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 7 })}>
-          <ReleaseUpgradeMetricCard release={this.props.basicReleaseInfo} />
+          <ReleaseUpgradeMetricCard release={this.props.selectedRelease} />
         </Col>
 
 
@@ -184,15 +189,15 @@ class Release extends Component {
     () => (
       <Row>
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 8 })}>
-          <ReleaseResourceInfoCard release={this.props.basicReleaseInfo} />
+          <ReleaseResourceInfoCard release={this.props.selectedRelease} />
         </Col>
 
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 9 })}>
-          <ReleaseBugCard release={this.props.basicReleaseInfo} />
+          <ReleaseBugCard release={this.props.selectedRelease} />
         </Col>
 
         <Col xs="12" sm="6" lg="3" onClick={() => this.setState({ showDetails: 10 })}>
-          <ReleasePatchCard release={this.props.basicReleaseInfo} />
+          <ReleasePatchCard release={this.props.selectedRelease} />
         </Col>
 
       </Row>
@@ -208,24 +213,32 @@ class Release extends Component {
       );
     });
     return (
-      <Router>
-        <div className="animated fadeIn">
-          <Row>
-            <Col xs="12" xl="12">
-              <Card>
-                <CardBody>
-                  <Carousel interval="500000" activeIndex={this.state.activeIndex} next={this.next} previous={this.previous} ride="carousel">
-                    {slides}
-                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
-                    <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
-                  </Carousel>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs="12" xl="12">
-              {
+      <React.Fragment>
+        {
+          this.props.selectedRelease.ReleaseNumber &&
+          <Header
+            user={this.props.currentUser}
+            selectedRelease={this.props.selectedRelease.ReleaseNumber}
+          />
+        }
+        <Router>
+          <div className="animated fadeIn">
+            {/* <Row>
+              <Col xs="12" xl="12">
+                <Card>
+                  <CardBody>
+                    <Carousel interval="500000" activeIndex={this.state.activeIndex} next={this.next} previous={this.previous} ride="carousel">
+                      {slides}
+                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
+                      <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
+                    </Carousel>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row> */}
+            <Row>
+              <Col xs="12" xl="12">
+                {/* {
                 (() => {
                   switch (this.state.showDetails) {
                     case 0: return <ReleaseBasic id={this.props.match.params.id} />
@@ -237,33 +250,42 @@ class Release extends Component {
                     default: return null
                   }
                 })()
-              }
-              {/* <Switch>
-                <Route path={`/release/${this.id}`} exact={true}>
-                  <Redirect to={`/release/${this.id}/basic`} />
-                </Route>
-                <Route path={`/release/${this.id}/basic`}><ReleaseBasic /></Route>
-                <Route path={`/release/${this.id}/build`}><ReleaseBuild /></Route>
-                <Route path={`/release/${this.id}/customer`}><ReleaseCustomer /></Route>
-                <Route path={`/release/${this.id}/hardwaresetup`}><ReleaseHardwareAndSetup /></Route>
-                <Route path={`/release/${this.id}/finalinfo`}><ReleaseFinalInfo /></Route>
-              </Switch> */}
-            </Col>
-          </Row>
-        </div>
-      </Router>
+              } */}
+                <Switch>
+
+                  <Route path={`/release/:id`} exact={true}>
+                    <Redirect to={`/release/${this.props.match.params.id}/summary`} />
+                  </Route>
+                  <Route path={`/release/:id/summary`} exact={true}>
+                    <ReleaseSummary />
+                  </Route>
+                  {/* <Route path={`/release/:id/testcase`}>
+                    <ReleaseTestCase />
+                  </Route> */}
+
+                  {/* <Route path={`/release/${this.id}/build`}><ReleaseBuild /></Route>
+                  <Route path={`/release/${this.id}/customer`}><ReleaseCustomer /></Route>
+                  <Route path={`/release/${this.id}/hardwaresetup`}><ReleaseHardwareAndSetup /></Route>
+                  <Route path={`/release/${this.id}/finalinfo`}><ReleaseFinalInfo /></Route> */}
+                </Switch>
+              </Col>
+            </Row>
+          </div>
+        </Router>
+      </React.Fragment>
     );
   }
 }
 const mapStateToProps = (state, ownProps) => ({
   currentUser: state.auth.currentUser,
-  basicReleaseInfo: state.release.all.filter(item => {
-    if (item.ReleaseNumber === ownProps.match.params.id) {
-      return true;
-    } else {
-      return false;
-    }
-  })[0] //.filter(item => item.name === ownProps.match.params.id)
+  // selectedRelease: state.release.all.filter(item => {
+  //   if (item.ReleaseNumber === ownProps.match.params.id) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // })[0], //.filter(item => item.name === ownProps.match.params.id)
+  selectedRelease: getCurrentRelease(state)
 })
 
 export default connect(mapStateToProps, {})(Release);
