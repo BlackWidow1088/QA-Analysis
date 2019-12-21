@@ -102,11 +102,10 @@ class Release extends Component {
     this.goToIndex = this.goToIndex.bind(this);
     this.onExiting = this.onExiting.bind(this);
     this.onExited = this.onExited.bind(this);
+    console.log(this.props.match.path)
   }
   componentWillReceiveProps(newProps) {
-    this.id = newProps.match.params.id;
-    console.log(this.id)
-    console.log('receibed')
+
   }
 
   onExiting() {
@@ -214,13 +213,14 @@ class Release extends Component {
     });
     return (
       <React.Fragment>
-        {
+        {/* {
           this.props.selectedRelease.ReleaseNumber &&
           <Header
             user={this.props.currentUser}
             selectedRelease={this.props.selectedRelease.ReleaseNumber}
+            changePage={({ page }) => this.setState({ showDetails: page })}
           />
-        }
+        } */}
         <Router>
           <div className="animated fadeIn">
             {/* <Row>
@@ -239,30 +239,26 @@ class Release extends Component {
             <Row>
               <Col xs="12" xl="12">
                 {/* {
-                (() => {
-                  switch (this.state.showDetails) {
-                    case 0: return <ReleaseBasic id={this.props.match.params.id} />
-                    case 1: return <ReleaseFinalInfo id={this.props.match.params.id} />
-                    case 2: return <ReleaseHardwareAndSetup id={this.props.match.params.id} />
-                    case 3: return <ReleaseBuild id={this.props.match.params.id} />
-                    case 4: return <ReleaseCustomer id={this.props.match.params.id} />
-                    case 6: return <ReleaseTestCase id={this.props.match.params.id} />
-                    default: return null
-                  }
-                })()
-              } */}
+                  (() => {
+                    switch (this.state.showDetails) {
+                      case 0: return <ReleaseSummary />
+                      // case 1: return <ReleaseFinalInfo id={this.props.match.params.id} />
+                      // case 2: return <ReleaseHardwareAndSetup id={this.props.match.params.id} />
+                      // case 3: return <ReleaseBuild id={this.props.match.params.id} />
+                      // case 4: return <ReleaseCustomer id={this.props.match.params.id} />
+                      case 1: return <ReleaseTestCase />
+                      default: return null
+                    }
+                  })()
+                } */}
                 <Switch>
-
-                  <Route path={`/release/:id`} exact={true}>
-                    <Redirect to={`/release/${this.props.match.params.id}/summary`} />
-                  </Route>
-                  <Route path={`/release/:id/summary`} exact={true}>
+                  <Route path={`/release/summary`}>
                     <ReleaseSummary />
                   </Route>
-                  {/* <Route path={`/release/:id/testcase`}>
+                  <Route path={`/release/testcase`}>
                     <ReleaseTestCase />
-                  </Route> */}
-
+                  </Route>
+                  <Redirect from='/:id' to={`/release/summary`} />
                   {/* <Route path={`/release/${this.id}/build`}><ReleaseBuild /></Route>
                   <Route path={`/release/${this.id}/customer`}><ReleaseCustomer /></Route>
                   <Route path={`/release/${this.id}/hardwaresetup`}><ReleaseHardwareAndSetup /></Route>

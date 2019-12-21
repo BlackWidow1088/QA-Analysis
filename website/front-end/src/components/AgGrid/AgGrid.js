@@ -7,9 +7,10 @@ import {
     Badge, Card, CardBody, CardHeader, Col, Pagination, PaginationItem, PaginationLink, Row, Table, Button,
     Modal, ModalHeader, ModalBody, ModalFooter, Input, FormGroup, Label
 } from 'reactstrap';
-import './AppTable.scss';
+import './AgGrid.scss';
 import { TABLE_OPTIONS } from '../../constants';
-class AppTable extends Component {
+import { AgGridReact } from 'ag-grid-react';
+class AgGrid extends Component {
     cntr = 0;
     constructor(props) {
         super(props);
@@ -18,19 +19,22 @@ class AppTable extends Component {
             edit: {},
             delete: {},
             add: [],
-            addTC: {}
+            columnDefs: [
+                { headerName: "Make", field: "make", sortable: true, filter: true },
+                { headerName: "Model", field: "model", sortable: true, filter: true },
+                { headerName: "Price", field: "price", sortable: true, filter: true }],
+            rowData: [
+                { make: "Toyota", model: "Celica", price: 35000 },
+                { make: "Ford", model: "Mondeo", price: 32000 },
+                { make: "Porsche", model: "Boxter", price: 72000 }]
         }
-    }
-    updateTC = () => {
-
     }
     reset() {
         this.setState({
             isEditing: false,
             edit: {},
             delete: {},
-            add: [],
-            addTC: {}
+            add: []
         });
     }
     toggle = () => this.setState({ modal: !this.state.modal });
@@ -108,12 +112,21 @@ class AppTable extends Component {
         )
     }
     render() {
+
+        return (
+            <div className="ag-theme-balham" style={{ height: '200px', width: '600px' }}>
+                <AgGridReact
+                    columnDefs={this.state.columnDefs}
+                    rowData={this.state.rowData}>
+                </AgGridReact>
+            </div>
+        )
         return (
             <div>
 
                 {
                     !this.props.titleless &&
-                    <div className='rp-app-table-header'>
+                    <div>
                         <span className='rp-app-table-title'>{this.props.title}</span>
 
                         {
@@ -139,22 +152,6 @@ class AppTable extends Component {
                                     </Button>
                                 : null
                         }
-                    </div>
-                }
-                {
-                    this.props.addTestCase &&
-                    <div>
-                        {
-                            this.props.fieldAndHeader.map((item, index) =>
-                                <Input
-                                    type="text"
-                                    key={index}
-                                    onChange={(e) => this.setState({ addTC: { ...this.state.addTC, [item.field]: e.target.value } })}
-                                    placeholder={'Add ' + item.header}
-                                    value={this.state.addTC[item.field] ? this.state.addTC[item.field] : item.header}
-                                />)
-                        }
-
                     </div>
                 }
 
@@ -195,7 +192,6 @@ class AppTable extends Component {
                                                         ) ?
                                                             <td>
                                                                 <Input
-                                                                    className={col.field === 'key' ? 'rp-app-table-key' : ''}
                                                                     type={this.props.exceptionTypeForRowIndex && this.props.exceptionTypeForRowIndex[rowIndex] ? this.props.exceptionTypeForRowIndex[rowIndex] : col.type}
                                                                     key={rowIndex + colIndex}
                                                                     onChange={(e) => this.setState({ edit: { ...this.state.edit, [rowIndex]: { ...row, [col.field]: e.target.value } } })}
@@ -203,7 +199,7 @@ class AppTable extends Component {
                                                                     value={this.state.edit[rowIndex] ? this.state.edit[rowIndex][col.field] : row[col.field]}
                                                                 />
                                                             </td> :
-                                                            <td className={col.field === 'key' ? 'rp-app-table-key' : ''}>{row[col.field]}</td>)
+                                                            <td>{row[col.field]}</td>)
                                                 )
                                             }
                                             {
@@ -288,7 +284,7 @@ class AppTable extends Component {
                         Are you sure you want to make the changes?
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={() => this.props.addTestCase ? this.updateTC() : this.update()}>Ok</Button>{' '}
+                        <Button color="primary" onClick={() => this.update()}>Ok</Button>{' '}
                         <Button color="secondary" onClick={() => this.toggle()}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
@@ -297,4 +293,4 @@ class AppTable extends Component {
     }
 }
 
-export default AppTable;
+export default AgGrid;

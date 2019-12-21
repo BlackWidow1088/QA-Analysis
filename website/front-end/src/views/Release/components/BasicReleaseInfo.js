@@ -27,7 +27,7 @@ class BasicReleaseInfo extends Component {
                 </CardHeader>
                     <CardBody>
                         <FormGroup row className="my-0">
-                            <Col xs="3">
+                            <Col xs="12" lg="3">
                                 <FormGroup>
                                     <Label htmlFor="targetReleaseDate">Release Date</Label>
                                     {
@@ -37,7 +37,7 @@ class BasicReleaseInfo extends Component {
                                     }
                                 </FormGroup>
                             </Col>
-                            <Col xs="3">
+                            <Col xs="12" lg="3">
                                 <FormGroup>
                                     <Label htmlFor="targetCodeFreezeDate">Code Freeze Date</Label>
                                     {
@@ -47,7 +47,7 @@ class BasicReleaseInfo extends Component {
                                     }
                                 </FormGroup>
                             </Col>
-                            <Col xs="3">
+                            <Col xs="12" lg="3">
                                 <FormGroup>
                                     <Label htmlFor="targetQATestingDate">QA Testing Date</Label>
                                     {
@@ -57,7 +57,7 @@ class BasicReleaseInfo extends Component {
                                     }
                                 </FormGroup>
                             </Col>
-                            <Col xs="3">
+                            <Col xs="12" lg="3">
                                 <FormGroup>
                                     <Label htmlFor="targetUpgradeTestingDate">Upgrade Testing Date</Label>
                                     {
@@ -70,7 +70,44 @@ class BasicReleaseInfo extends Component {
                         </FormGroup>
                     </CardBody>
                 </Card>
-                <Card>
+                <div>
+                    <Row>
+                        <Col xs="12" lg="3">
+                            <FormGroup>
+                                <Label htmlFor="Operating System">Operating System</Label>
+                                {
+                                    <Input type="text" id="Operating" name="Operating" onChange={(e) => this.props.handleUpdate({ FinalOS: e.target.value })} />
+                                }
+                            </FormGroup>
+                        </Col>
+                        <Col xs="12" lg="3">
+                            <FormGroup>
+                                <Label htmlFor="UBoot Number">UBoot Number</Label>
+                                {
+
+                                    <Input type="text" id="UbootVersion" name="UbootVersion" onChange={(e) => this.props.handleUpdate({ UbootVersion: e.target.value })} />
+                                }
+                            </FormGroup>
+                        </Col>
+                        <Col xs="12" lg="3">
+                            <FormGroup>
+                                <Label htmlFor="Docker Core RPM Number">Docker Core RPM Number</Label>
+                                {
+
+                                    <Input type="text" id="FinalDockerCore" name="FinalDockerCore" onChange={(e) => this.props.handleUpdate({ FinalDockerCore: e.target.value })} />
+                                }
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                </div>
+
+                {/* 
+                { key: 'Operating System', value: this.props.selectedRelease.FinalOS },
+                                            { key: 'Docker Core RPM Number', value: this.props.selectedRelease.FinalDockerCore },
+                                            { key: 'UBoot Number', value: this.props.selectedRelease.UbootVersion },
+                                            { key: 'Build Number', value: this.props.selectedRelease.BuildNumber ? this.props.selectedRelease.BuildNumber : '' },
+                                            { key: 'Customers', value: this */}
+                {/* <Card>
                     <CardHeader>
                         Actual Dates of Release
                                         </CardHeader>
@@ -118,8 +155,8 @@ class BasicReleaseInfo extends Component {
                             </Col>
                         </FormGroup>
                     </CardBody>
-                </Card>
-                <Row>
+                </Card> */}
+                {/* <Row>
                     <Col md="6" lg="6">
                         <Label htmlFor="risksRedFlags">Risks/Red Flags</Label>
                         {
@@ -143,7 +180,7 @@ class BasicReleaseInfo extends Component {
                         }
                     </Col>
 
-                </Row>
+                </Row> */}
             </div>
         );
     }

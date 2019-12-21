@@ -5,6 +5,7 @@ const express = require('express');
 const jsonfile = require('jsonfile')
 let releases = [];
 let testcases = [];
+let tcstatus = [];
 releases = jsonfile.readFileSync('./releases.json');
 // function (err, releases)
 //  {
@@ -16,6 +17,11 @@ releases = jsonfile.readFileSync('./releases.json');
 
 // })
 testcases = jsonfile.readFileSync('./testcases.json');
+testcases = testcases.splice(100);
+tcstatus = jsonfile.readFileSync('./tcstatus.json');
+tcggr = {
+    'domain': { 'StoragePVC': { 'Pass': 100, 'Fail': 200, 'Total': 400 } }, 'domaintotal': { 'Pass': 300, 'Fail': '300', 'Total': 1000 }
+}
 //  function (err, tc) {
 //     if (err) {
 //         console.log('error reading testcases')
@@ -25,12 +31,12 @@ testcases = jsonfile.readFileSync('./testcases.json');
 //     console.log(releases);
 //     console.log(testcases);
 // })
-console.log(releases);
-console.log(testcases);
+// console.log(releases);
+// console.log(testcases);
 const app = express();
 const responseDelayQuick = 10;
-const responseDelayModerate = 1000;
-const responseDelaySlow = 3000;
+const responseDelayModerate = 100;
+const responseDelaySlow = 300;
 
 app.use(express.json());
 app.use('/', express.static('./build'));
@@ -54,19 +60,26 @@ app.post('/api/usrinfo', (req, res) => {
     }, responseDelaySlow);
 });
 
-app.get('/api/tcinfo/:id', (req, res) => {
+app.get('/api/tcinfo/:releaseid', (req, res) => {
     console.log('API- DOC');
-    setTimeout(() => {
-        let tc = testcases.filter(item => item.TcID === req.params.id)[0];
-        res.send(tc);
-    }, responseDelaySlow);
-});
-
-app.get('/api/tcstatus', (req, res) => {
     setTimeout(() => {
         res.send(testcases);
     }, responseDelaySlow);
 });
+
+app.get('/api/tcaggr/:releaseid', (req, res) => {
+    setTimeout(() => {
+        res.send(tcaggr);
+    }, responseDelaySlow);
+});
+// app.post('/api/tcstatus', (req, res) => {
+//     console.log('data from test update');
+//     setTimeout(() => {
+//         releases.push(req.body);
+//         jsonfile.writeFileSync('./testcases.json', releases);
+//         res.send({ status: 'OK' });
+//     }, responseDelaySlow);
+// });
 
 app.get('/api/release/all', (req, res) => {
     console.log('getting releasesa');
@@ -125,7 +138,6 @@ app.delete('/api/release/:id', (req, res) => {
         res.send({ status: 'OK' });
     }, responseDelaySlow);
 });
-
 console.log('Mock Invar listening on port 5051');
 const server = app.listen('5051');
 

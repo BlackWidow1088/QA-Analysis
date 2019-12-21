@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import './Header.scss';
 const propTypes = {
     children: PropTypes.node,
@@ -34,15 +34,24 @@ class Header extends Component {
                             (
                                 <Col xs="3" md="2" lg="1" className={id === this.state.selected ? 'rp-rh-selected-item' : 'rp-release-header-item'}
                                     onClick={() => {
+                                        this.props.changePage({ page: id })
                                         this.setState({ selected: id })
-                                        item.path && this.props.history.push(`/release/${this.props.match.params.id}/${item.path}`)
-                                    }}>
+
+                                        // item.path && this.props.navigation.navigate('release/' + item.path, { id: this.props.match.params.id })
+                                        // && this.props.history.push(`/release/${item.path}/${this.props.match.params.id}`
+
+
+                                    }}
+                                >
+                                    {/* <Link to={'/' + item.path + '/' + this.props.match.params.id}>
+                                      
+                                    </Link> */}
                                     {item.name}
                                 </Col>)
                         )
                     }
                 </Row>
-            </div>
+            </div >
             // </React.Fragment>
         );
     }

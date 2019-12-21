@@ -187,8 +187,10 @@ export const UPDATE_NAV = 'UPDATE_NAV';
 export const REMOVE_FROM_NAV = 'REMOVE_FROM_NAV';
 export const DELETE_RELEASE = 'DELETE_RELEASE';
 export const SAVE_TEST_CASE = 'SAVE_TEST_CASE';
+export const SAVE_TEST_CASE_STATUS = 'SAVE_TEST_CASE_STATUS';
 export const DELETE_TEST_CASE = 'DELETE_TEST_CASE';
 export const RELEASE_CHANGE = 'RELEASE_CHANGE';
+export const SAVE_SINGLE_TEST_CASE = 'SAVE_SINGLE_TEST_CASE';
 
 export const logInRequest = payload => ({
   type: LOG_IN_REQUEST,
@@ -228,11 +230,19 @@ export const saveTestCase = payload => ({
   type: SAVE_TEST_CASE,
   payload
 });
+export const saveTestCaseStatus = payload => ({
+  type: SAVE_TEST_CASE_STATUS,
+  payload
+})
 export const deleteTestCase = payload => ({
   type: DELETE_TEST_CASE,
   payload
 })
 export const releaseChange = payload => ({
   type: RELEASE_CHANGE,
+  payload
+})
+export const saveSingleTestCase = payload => ({
+  type: SAVE_SINGLE_TEST_CASE,
   payload
 })

@@ -21,7 +21,7 @@ import {
 // routes config
 import routes from '../../routes';
 import { connect } from 'react-redux';
-import { saveReleaseBasicInfo, updateNavBar, saveTestCase, releaseChange } from '../../actions';
+import { saveReleaseBasicInfo, releaseChange, saveTestCase, saveTestCaseStatus } from '../../actions';
 import { getCurrentRelease } from '../../reducers/release.reducer';
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
@@ -46,51 +46,54 @@ class DefaultLayout extends Component {
       axios.get(`/api/release/all`)
         .then(res => {
           res.data.forEach(item => {
-            this.props.updateNavBar({ id: item.ReleaseNumber });
+            // this.props.updateNavBar({ id: item.ReleaseNumber });
             this.props.saveReleaseBasicInfo({ id: item.ReleaseNumber, data: item });
+            // axios.get(`/api/tcaggr/${item.ReleaseNumber}`)
+            //   .then(res => {
+            //     // res.data.forEach(item => {
+            //     console.log('for ', item.ReleaseNumber)
+            //     console.log(res.data)
+            //     this.props.saveTestCaseStatus({ data: res.data, id: item.ReleaseNumber });
+            //     // });
+            //   }, error => {
+            //   });
           });
-          this.props.releaseChange({ id: res.data[0].ReleaseNumber });
+          if (res.data[0]) {
+            this.props.releaseChange({ id: res.data[0].ReleaseNumber });
+          }
+
         }, error => {
         });
-    }
-    if (this.props.allTestCases.length === 0) {
-      axios.get(`/api/tcstatus`)
-        .then(res => {
-          res.data.forEach(item => {
-            console.log('teceived item ', item);
-            this.props.saveTestCase({ id: item.TcID, data: item });
-          });
-        }, error => {
-        });
+
     }
   }
 
   render() {
     return (
       <div className="app">
-        {/* <AppHeader fixed> */}
-        <Suspense fallback={this.loading()}>
-          <DefaultHeader
-            user={this.props.currentUser}
-            selectedReleaseNumber={this.props.selectedRelease.ReleaseNumber}
-            releases={this.props.allReleases && this.props.allReleases.map(item => item.ReleaseNumber)}
-            onReleaseChange={(release) => {
-              console.log(release);
-              if (release) {
-                this.props.releaseChange({ id: release });
-                this.props.history.push(`/release/${release}`);
-              } else {
-                this.props.releaseChange({ id: null });
-                // this.props.history.push(`/release/manage`);
-              }
-            }}
-            onLogout={e => this.signOut(e)} />
+        <AppHeader fixed>
+          <Suspense fallback={this.loading()}>
+            <DefaultHeader
+              user={this.props.currentUser}
+              selectedReleaseNumber={this.props.selectedRelease.ReleaseNumber}
+              releases={this.props.allReleases && this.props.allReleases.map(item => item.ReleaseNumber)}
+              onReleaseChange={(release) => {
+                console.log(release);
+                if (release) {
+                  this.props.releaseChange({ id: release });
+                  this.props.history.push(`/release/${release}`);
+                } else {
+                  this.props.releaseChange({ id: null });
+                  // this.props.history.push(`/release/manage`);
+                }
+              }}
+              onLogout={e => this.signOut(e)} />
 
 
-        </Suspense>
-        {/* </AppHeader> */}
+          </Suspense>
+        </AppHeader>
         <div className="app-body">
-          {/* <AppSidebar fixed display="lg">
+          <AppSidebar fixed display="lg">
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
@@ -98,7 +101,7 @@ class DefaultLayout extends Component {
             </Suspense>
             <AppSidebarFooter />
             <AppSidebarMinimizer />
-          </AppSidebar> */}
+          </AppSidebar>
           <main className="main">
             {/* <AppBreadcrumb appRoutes={routes} router={router} /> */}
             <Container fluid>
@@ -121,16 +124,16 @@ class DefaultLayout extends Component {
                     ) : (null);
                   })}
                   <Redirect from="/"
-                    to={this.props.selectedRelease ? `/release/${this.props.selectedRelease.ReleaseNumber}` : `/release/manage`} />
+                    to={`/release/summary`} />
                 </Switch>
               </Suspense>
             </Container>
           </main>
-          {/* <AppAside fixed>
+          <AppAside fixed>
             <Suspense fallback={this.loading()}>
               <DefaultAside />
             </Suspense>
-          </AppAside> */}
+          </AppAside>
         </div>
         {/* <AppFooter>
           <Suspense fallback={this.loading()}>
@@ -146,8 +149,7 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: state.auth.currentUser,
   navigation: state.app.navs,
   allReleases: state.release.all,
-  allTestCases: state.testcase.all,
   selectedRelease: getCurrentRelease(state)
 })
 
-export default connect(mapStateToProps, { saveReleaseBasicInfo, updateNavBar, saveTestCase, releaseChange })(DefaultLayout);
+export default connect(mapStateToProps, { saveReleaseBasicInfo, releaseChange, saveTestCase, saveTestCaseStatus })(DefaultLayout);

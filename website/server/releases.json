@@ -1,1 +1,230 @@
-[{"ReleaseNumber":"2.3.0","BuildNumberList":["1","2","3","4","5","6","7"],"HardwareSupport":["BOS","NYNJ","SAN-DIEGO"],"SetupsUsed":["autotb1","autotb2","scaletb"],"QAStartDate":"2015-01-09T00:00:00.000Z","TargetedReleaseDate":"2015-06-10T00:00:00.000Z","ActualReleaseDate":"2015-06-09T00:00:00.000Z","TargetedCodeFreezeDate":"2015-05-10T00:00:00.000Z","UpgradeTestingStartDate":"2015-05-01T00:00:00.000Z","UpgradeMetrics":["2.1.0","2.2.0"],"Customers":["Duke","Google"],"FinalBuild":"6","FinalOS":"Centos 7.6","FinalDockerCore":"7","UbootVersion":"U-Boot 1.1.4-g1c8343c8-dirty (Feb 28 2014 - 13:56:54)","RedFlagsRisks":"Backup controller not working","AutomationSyncUp":"Backup controller automation skipped as backup controller is not working properly. CSI drive plugin not getting changed after execution of script. Pods attached to volumes with xfs filesystem are crashing again and again. volume subpath not supported from 2.2.0 because of change in Centos kernel version, which used to support volume subpath.","TargetedQAStartDate":"2019-12-10T00:00:00.000Z","ActualCodeFreezeDate":"2019-12-10T00:00:00.000Z","Features":[{"Name":"first","JiraID":"1","Description":"descr1"},{"Name":"second","JiraID":"","Description":"descr2"}]},{"ReleaseNumber":"2.2.0","BuildNumberList":["1","2","3","4","5","6","7","8","9","10"],"HardwareSupport":["OPENSHIFT"],"SetupsUsed":["octb1","scaletb"],"QAStartDate":"2015-01-01T23:55:59.342380Z","TargetedReleaseDate":"2015-06-01T23:55:59.342380Z","ActualReleaseDate":"2015-06-05T23:55:59.342380Z","TargetedCodeFreezeDate":"2015-05-30T23:55:59.342380Z","UpgradeTestingStartDate":"2015-06-01T00:00:00.342380Z","UpgradeMetrics":[],"Customers":["IBM"],"FinalBuild":"10","FinalOS":"Redhat14.0","FinalDockerCore":"10","UbootVersion":"U-Boot 1.1.4-g1c8343c8-dirty (Feb 28 2014 - 13:56:54)","RedFlagsRisks":"Networking not supported.","AutomationSyncUp":"Networking management is done by OS itself, in openshift. So networking will not be supported by diamanti. Networking automation dropped. QoS related to networking dropped."},{"ReleaseNumber":"master"}]
+[{
+    "ReleaseNumber": "2.3.0",
+    "BuildNumberList": ["1", "2", "3", "4", "5", "6", "7"],
+    "HardwareSupport": ["BOS", "NYNJ", "SAN-DIEGO"],
+    "SetupsUsed": ["autotb1", "autotb2", "scaletb"],
+    "QAStartDate": "2015-01-09T00:00:00.000Z",
+    "TargetedReleaseDate": "2015-06-10T00:00:00.000Z",
+    "ActualReleaseDate": "2015-06-09T00:00:00.000Z",
+    "TargetedCodeFreezeDate": "2015-05-10T00:00:00.000Z",
+    "UpgradeTestingStartDate": "2015-05-07T00:00:00.000Z",
+    "UpgradeMetrics": ["2.1.0", "2.2.0"],
+    "Customers": ["Duke", "Google"],
+    "FinalBuild": "6",
+    "FinalOS": "Centos 7.6",
+    "FinalDockerCore": "9",
+    "UbootVersion": "U-Boot 1.1.4-g1c8343c8-dirty (Feb 28 2014 - 13:56:54)",
+    "RedFlagsRisks": "Backup controller not working",
+    "AutomationSyncUp": "Backup controller automation skipped as backup controller is not working properly. CSI drive plugin not getting changed after execution of script. Pods attached to volumes with xfs filesystem are crashing again and again. volume subpath not supported from 2.2.0 because of change in Centos kernel version, which used to support volume subpath.",
+    "TargetedQAStartDate": "2019-12-10T00:00:00.000Z",
+    "ActualCodeFreezeDate": "2019-12-10T00:00:00.000Z",
+    "Features": [{
+        "Name": "F1",
+        "JiraID": "1",
+        "Description": "descr1"
+    }, {
+        "Name": "F2",
+        "JiraID": "",
+        "Description": "descr2"
+    }],
+    "TcAggregate": {
+        "all": {
+            "Tested": {
+                "auto": {
+                    "Pass": 1000,
+                    "Fail": 2000,
+                    "Skipped": 0
+                },
+                "manual": {
+                    "Pass": 1000,
+                    "Fail": 2000,
+                    "Skipped": 0
+                }
+            },
+            "NotTested": 4000,
+            "NotApplicable": 0
+        },
+        "domain": {
+            "StoragePVC": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "StorageMirrored-Tests": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "Storage-Tests": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "StorageRemote-Tests": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "StorageSnapshot-Tests": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "NetworkTestCases": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "ManagementTestCases": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "Rbac": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "NVMECompliance": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            },
+            "MultizoneCluster": {
+                "Tested": {
+                    "auto": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    },
+                    "manual": {
+                        "Pass": 50,
+                        "Fail": 100,
+                        "Skipped": 0
+                    }
+                },
+                "NotTested": 400,
+                "NotApplicable": 0
+            }
+        }
+    }
+}, {
+    "ReleaseNumber": "2.2.0",
+    "BuildNumberList": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    "HardwareSupport": ["OPENSHIFT"],
+    "SetupsUsed": ["octb1", "scaletb"],
+    "QAStartDate": "2015-01-01T23:55:59.342380Z",
+    "TargetedReleaseDate": "2015-06-01T23:55:59.342380Z",
+    "ActualReleaseDate": "2015-06-05T23:55:59.342380Z",
+    "TargetedCodeFreezeDate": "2015-05-30T23:55:59.342380Z",
+    "UpgradeTestingStartDate": "2015-06-01T00:00:00.342380Z",
+    "UpgradeMetrics": [],
+    "Customers": ["IBM"],
+    "FinalBuild": "10",
+    "FinalOS": "Redhat14.0",
+    "FinalDockerCore": "10",
+    "UbootVersion": "U-Boot 1.1.4-g1c8343c8-dirty (Feb 28 2014 - 13:56:54)",
+    "RedFlagsRisks": "Networking not supported.",
+    "AutomationSyncUp": "Networking management is done by OS itself, in openshift. So networking will not be supported by diamanti. Networking automation dropped. QoS related to networking dropped."
+}, {
+    "ReleaseNumber": "master"
+}]

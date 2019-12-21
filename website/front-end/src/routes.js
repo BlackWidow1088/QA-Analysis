@@ -31,21 +31,26 @@ const Alerts = React.lazy(() => import('./views/Notifications/Alerts'));
 const Badges = React.lazy(() => import('./views/Notifications/Badges'));
 const Modals = React.lazy(() => import('./views/Notifications/Modals'));
 const Colors = React.lazy(() => import('./views/Theme/Colors'));
-const Typography = React.lazy(() => import('./views/Theme/Typography'));
+const Typography = React.lazy(() => import('./views/Theme/Typography'))
 const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/Users'));
 const User = React.lazy(() => import('./views/Users/User'));
 
-const Release = React.lazy(() => import('./views/Release/Release'));
+const ReleaseSummary = React.lazy(() => import('./views/Release/ReleaseSummary/ReleaseSummary'));
 const ManageRelease = React.lazy(() => import('./views/Release/ManageRelease'));
-const TestCase = React.lazy(() => import('./views/TestCase/TestCase'));
+const ReleaseTestCase = React.lazy(() => import('./views/Release/ReleaseTestCase/ReleaseTestCase'));
+const ReleaseQAStrategy = React.lazy(() => import('./views/Release/ReleaseQAStrategy/ReleaseQAStrategy'));
+const AddTestCase = React.lazy(() => import('./views/AddTestCase/AddTestCase'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Release Portal' },
-  // { path: '/release/manage', exact: true, name: 'Manage', component: ManageRelease },
-  { path: '/release/:id', name: 'Release', component: Release },
-  // { path: '/testcase/:id', exact: true, name: 'TestCase', component: TestCase },
+
+  { path: '/release/summary', name: 'Summary', exact: true, component: ReleaseSummary },
+  { path: '/release/qastatus', name: 'Test Case', exact: true, component: ReleaseTestCase },
+  { path: '/release/manage', exact: true, name: 'Manage', component: ManageRelease },
+  // { path: '/release/qastrategy', name: 'QA Strategy', exact: true, component: ReleaseQAStrategy },
+
   // { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   // { path: '/theme', exact: true, name: 'Theme', component: Colors },
   // { path: '/theme/colors', name: 'Colors', component: Colors },
