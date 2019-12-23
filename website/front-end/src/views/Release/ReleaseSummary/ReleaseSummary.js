@@ -196,6 +196,9 @@ class ReleaseSummary extends Component {
 
     componentDidMount() {
         this.reset();
+        axios.get('/rest/features/' + this.props.selectedRelease.ReleaseNumber).then(res => console.log(res.data), err => {
+            console.log('err ', err);
+        })
     }
     edit() {
         this.setState({ isEditing: true });
@@ -438,6 +441,7 @@ class ReleaseSummary extends Component {
     render() {
         return (
             <div>
+                {/* <Button onClick={(e) => this.call()}>Click</Button> */}
                 <Row>
                     <Col xs="12" sm="12" md="5" lg="5" className="rp-summary-tables">
                         {
@@ -468,10 +472,12 @@ class ReleaseSummary extends Component {
                                 {
 
                                     [
-                                        { key: 'Operating System', value: this.props.selectedRelease.FinalOS, field: 'FinalOS' },
-                                        { key: 'Docker Core RPM Number', value: this.props.selectedRelease.FinalDockerCore, field: 'FinalDockerCore' },
-                                        { key: 'Build Number', field: 'BuildNumber', value: this.props.selectedRelease.BuildNumber ? this.props.selectedRelease.BuildNumber : '' },
-
+                                        { key: 'Target Date', field: 'TargetedReleaseDate', value: this.props.selectedRelease.TargetedReleaseDate, type: 'date' },
+                                        { key: 'Actual Date', field: 'ActualReleaseDate', value: this.props.selectedRelease.ActualReleaseDate, type: 'date' },
+                                        { key: 'Server Type Supported', field: 'ServerType', value: this.props.selectedRelease.ServerType ? this.props.selectedRelease.ServerType.join(',') : '' },
+                                        { key: 'Card Type Supported', field: 'CardType', value: this.props.selectedRelease.CardType ? this.props.selectedRelease.CardType.join(',') : '' },
+                                        { key: 'Customers', field: 'Intended Customers', value: this.props.selectedRelease.Customers ? this.props.selectedRelease.Customers.join(',') : '' },
+                                        { key: 'Total Features', field: 'Total Features', value: this.props.selectedRelease.Customers ? this.props.selectedRelease.Customers.join(',') : '' },
                                     ].map((item, index) => {
                                         return (
                                             <tr>
@@ -497,13 +503,12 @@ class ReleaseSummary extends Component {
                                 }
                             </tbody>
                         </Table>
-                        <div className='rp-rs-hw-support'>Hardware Support</div>
+                        {/* <div className='rp-rs-hw-support'>Hardware Support</div>
                         <Table scroll responsive style={{ overflow: 'scroll', }}>
                             <tbody>
                                 {
                                     [
-                                        { key: 'Server Type', field: 'ServerType', value: this.props.selectedRelease.ServerType ? this.props.selectedRelease.ServerType.join(',') : '' },
-                                        { key: 'Card Type', field: 'CardType', value: this.props.selectedRelease.CardType ? this.props.selectedRelease.CardType.join(',') : '' },
+                                       
                                     ].map((item, index) => {
                                         return (
                                             <tr>
@@ -528,17 +533,19 @@ class ReleaseSummary extends Component {
                                     })
                                 }
                             </tbody>
-                        </Table>
+                        </Table> */}
                         <Button className='rp-any-button' size='sm' onClick={() => this.setState({ basic: { ...this.state.basic, open: !this.state.basic.open } })}>{this.state.basic.open ? 'Less' : 'More'} </Button>
                         <Collapse isOpen={this.state.basic.open}>
                             <Table scroll responsive style={{ overflow: 'scroll', }}>
                                 <tbody>
                                     {
                                         [
+                                            { key: 'Operating System', value: this.props.selectedRelease.FinalOS, field: 'FinalOS' },
+                                            { key: 'Final Build Number', field: 'BuildNumber', value: this.props.selectedRelease.BuildNumber ? this.props.selectedRelease.BuildNumber : '' },
+
                                             { key: 'UBoot Number', value: this.props.selectedRelease.UbootVersion, field: 'UbootVersion' },
-                                            { key: 'Customers', field: 'Customers', value: this.props.selectedRelease.Customers ? this.props.selectedRelease.Customers.join(',') : '' },
-                                            { key: 'Target Date', field: 'TargetedReleaseDate', value: this.props.selectedRelease.TargetedReleaseDate, type: 'date' },
-                                            { key: 'Actual Date', field: 'ActualReleaseDate', value: this.props.selectedRelease.ActualReleaseDate, type: 'date' },
+                                            { key: 'Docker Core RPM Number', value: this.props.selectedRelease.FinalDockerCore, field: 'FinalDockerCore' },
+
                                         ].map((item, index) => {
                                             return (
                                                 <tr>
