@@ -96,8 +96,154 @@ export const testcaseReducer = combineReducers({
 // ////////////////////
 // Selectors //////////
 // //////////////////
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
+export const getEachTCStatusScenario = ({ data, domain, all }) => {
+    if (!data) {
+        return;
+    }
+    let doughnuts = [];
+    let cardTypes = {};
+    data.forEach(item => {
+        if (cardTypes[item.CardType]) {
+            cardTypes[item.CardType].push(item);
+        } else {
+            cardTypes[item.CardType] = [item];
+        }
+    });
 
+    Object.keys(cardTypes).forEach(cardType => {
+        let scenarios = {};
+        all.forEach(item => {
+            if (scenarios[item.SubDomain]) {
+                scenarios[item.SubDomain].Total += 1;
+            } else {
+                scenarios[item.SubDomain] = { Pass: 0, Fail: 0, Skip: 0, Total: 1, Tested: 0 }
+            }
+        })
+        cardTypes[cardType].forEach(item => {
+            if (scenarios[item.SubDomain]) {
+                if (scenarios[item.SubDomain].Result === 'Pass') {
+                    scenarios[item.SubDomain].Pass += 1
+                } else if (scenarios[item.SubDomain].Result === 'Fail') {
+                    scenarios[item.SubDomain].Fail += 1
+                } else {
+                    scenarios[item.SubDomain].Skip += 1
+                }
+                scenarios[item.SubDomain].Tested += 1;
+            } else {
+                console.log('DATA IS INVALID');
+            }
+        });
+        // {
+        //     "id": 8, "TcName": "RbacStaticProvision.PodWithLSAndValidateIOPSWithMultipleQosforLocalNRemoteAuth",
+        //         "Build": "2.3.0-48", "Result": "Pass", "Bugs": "-1",
+        //             "Date": "2019-12-21", "Domain": "StoragePVC", "SubDomain": "PVC_Rbac", "TcID": "PVC_Rbac_S-1.0"
+        // },
+        let doughnut = { data: { labels: [], datasets: [] }, title: cardType };
+        let labels = [];
+        let datasets = [
+            {
+                label: 'Pass',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            },
+            {
+                label: 'Skip',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            },
+            {
+                label: 'Fail',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            },
+            {
+                label: 'Not Tested',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            }
+        ];
+        for (let i = 0; i < datasets.length; i++) {
+            Object.keys(scenarios).forEach((item, index) => {
+                datasets[i].backgroundColor.push(colors[i]);
+                datasets[i].hoverBackgroundColor.push(colors[i]);
+            })
+        }
+
+        Object.keys(scenarios).forEach((item, index) => {
+            let pass = scenarios[item].Pass;
+            let skip = scenarios[item].Skip;
+            let fail = scenarios[item].Fail;
+            let nottested = scenarios[item].Total - scenarios[item].Tested;
+            let total = scenarios[item].Total;
+            labels.push(item + ' (' + total + ')');
+            datasets[0].data.push(pass);
+            datasets[1].data.push(skip);
+            datasets[2].data.push(fail);
+            datasets[3].data.push(nottested);
+            // datasets[0].backgroundColor.push(colors[index]);
+            // datasets[1].backgroundColor.push(colors[index]);
+            // datasets[2].backgroundColor.push(colors[index]);
+
+
+            // doughnuts.push({
+            //     data: {
+            //         labels: [
+            //             'Not Tested (' + nottested + ')',
+            //             'Auto Tested (' + auto + ')',
+            //             'Manual Tested (' + manual + ')',
+            //         ],
+            //         datasets: [
+            //             {
+            //                 data: [
+            //                     nottested,
+            //                     auto,
+            //                     manual
+            //                 ],
+            //                 backgroundColor: [
+            //                     '#FF6384',
+            //                     '#36A2EB',
+            //                     '#FFCE56',
+            //                     // '#B5801D',
+            //                 ],
+            //                 hoverBackgroundColor: [
+            //                     '#FF6384',
+            //                     '#36A2EB',
+            //                     '#FFCE56',
+            //                     // '#B5801D',
+            //                 ],
+            //             }],
+            //     }, title: item
+            // })
+        });
+        doughnut.data.labels = labels;
+        doughnut.data.datasets = datasets;
+        doughnuts.push(doughnut);
+        // if (doughnuts.length) {
+        //     doughnuts.sort(function (a, b) {
+        //         if (b.data.datasets[0].data[0] !== a.data.datasets[0].data[0]) return b.data.datasets[0].data[0] - a.data.datasets[0].data[0];
+        //         if (b.data.datasets[0].data[1] !== a.data.datasets[0].data[1]) return b.data.datasets[0].data[1] - a.data.datasets[0].data[1];
+        //         if (b.data.datasets[0].data[2] !== a.data.datasets[0].data[2]) return b.data.datasets[0].data[2] - a.data.datasets[0].data[2];
+        //         if (b.data.datasets[0].data[3] !== a.data.datasets[0].data[3]) return b.data.datasets[0].data[3] - a.data.datasets[0].data[3];
+
+        //     });
+        // }
+
+    });
+    return doughnuts;
+}
 const colors = [
+
+    '#36A2EB',
+    '#FFCE56',
+    '#B5801D',
+    '#FF6384',
     '#B5801D',
     '#B959E9',
     '#6A58E6',

@@ -49,7 +49,7 @@ const routes = [
   { path: '/release/summary', name: 'Summary', exact: true, component: ReleaseSummary },
   { path: '/release/qastatus', name: 'Test Case', exact: true, component: ReleaseTestCase },
   { path: '/release/manage', exact: true, name: 'Manage', component: ManageRelease },
-  // { path: '/release/qastrategy', name: 'QA Strategy', exact: true, component: ReleaseQAStrategy },
+  { path: '/release/qastrategy', name: 'QA Strategy', exact: true, component: ReleaseQAStrategy },
 
   // { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   // { path: '/theme', exact: true, name: 'Theme', component: Colors },

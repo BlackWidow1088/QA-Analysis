@@ -577,9 +577,9 @@ class ReleaseSummary extends Component {
                 <Row>
                     <Col xs="12" sm="12" md="5" lg="5" className="rp-summary-tables">
                         <div className='rp-app-table-header'>
-                            {/* <Link to={'/release/qastrategy'}> */}
-                            <span className='rp-app-table-title'>QA Strategy</span>
-                            {/* </Link> */}
+                            <Link to={'/release/qastrategy'}>
+                                <span className='rp-app-table-title'>QA Strategy</span>
+                            </Link>
                             {
                                 this.props.currentUser && this.props.currentUser.isAdmin && this.state.qaStrategy.editOptions && this.state.qaStrategy.editOptions.length ?
                                     this.state.qaStrategy.editing ?
@@ -601,16 +601,16 @@ class ReleaseSummary extends Component {
                         {
 
                         }
-                        {/* <Link to={'/release/qastrategy'}> */}
-                        <div className="chart-wrapper">
-                            <Doughnut data={this.props.tcStrategy} />
-                        </div>
-                        {/* </Link> */}
+                        <Link to={'/release/qastrategy'}>
+                            <div className="chart-wrapper">
+                                <Doughnut data={this.props.tcStrategy} />
+                            </div>
+                        </Link>
                         <Table scroll responsive style={{ overflow: 'scroll', }}>
                             <tbody>
                                 {
                                     [
-
+                                        { key: 'Setups Used', field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.join(',') : '' },
                                         { key: 'Engineers Employed', field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount : 0 },
                                         { key: 'QA Start Date', field: 'QAStartDate', value: this.props.selectedRelease.QAStartDate, type: 'date' },
                                         { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: this.props.selectedRelease.TargetedCodeFreezeDate, type: 'date' },

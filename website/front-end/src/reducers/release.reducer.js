@@ -389,7 +389,7 @@ export const getTCStatusForUISubDomains = (release, domain) => {
             let pass = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.manual.Pass
             let fail = release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.manual.Fail
             let Skip = release.TcAggregate.domain[item].Tested.auto.Skip + release.TcAggregate.domain[item].Tested.manual.Skip
-            let nottested = release.TcAggregate.domain[item].NotTested + release.TcAggregate.domain[item].NotTested
+            let nottested = release.TcAggregate.domain[item].NotTested
             doughnuts.push({
                 data: {
                     labels: [
@@ -433,51 +433,6 @@ export const getTCStatusForUISubDomains = (release, domain) => {
         });
     }
 
-    return doughnuts;
-}
-export const getTCStatusDomains = (state, id) => {
-    let doughnuts = [];
-    return doughnuts;
-    let release = state.release.all.filter(item => item.ReleaseNumber === id)[0];
-    if (!release) {
-        return;
-    }
-    if (!release.TcAggregate) {
-        return;
-    }
-    if (release) {
-        let tcs = release.TcAggregate.uidomain;
-        if (tcs) {
-            Object.keys(tcs).forEach(item => {
-                doughnuts.push({
-                    data: {
-                        labels: [
-                            'Fail (' + tcs[item].automated.Fail + ')',
-                            'Pass (' + tcs[item].automated.Pass + ')',
-                            'Not Automated (' + (tcs[item].total.nonautomated) + ')',
-                        ],
-                        datasets: [
-                            {
-                                data: [
-                                    tcs[item].automated.Fail, tcs[item].automated.Pass, tcs[item].total.nonautomated
-                                ],
-                                backgroundColor: [
-                                    '#FF6384',
-                                    '#36A2EB',
-                                    '#FFCE56',
-                                ],
-                                hoverBackgroundColor: [
-                                    '#FF6384',
-                                    '#36A2EB',
-                                    '#FFCE56',
-                                ],
-                            }],
-                    },
-                    title: item
-                })
-            })
-        }
-    }
     return doughnuts;
 }
 
@@ -566,6 +521,380 @@ export const getDomainStatus = (state, id) => {
 
 }
 
-export const getSubDomainStatus = (state, id) => {
+// const bar = {
+//     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+//     datasets: [
+//       {
+//         label: 'My First dataset',
+//         backgroundColor: 'rgba(255,99,132,0.2)',
+//         borderColor: 'rgba(255,99,132,1)',
+//         borderWidth: 1,
+//         hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+//         hoverBorderColor: 'rgba(255,99,132,1)',
+//         data: [65, 59, 80, 81, 56, 55, 40],
+//       },
+//     ],
+//   };
+export const getTCStrategyForUISubDomains = (release, domain) => {
+    if (!release) {
+        return;
+    }
+    if (!release.TcAggregate) {
+        return;
+    }
+    let doughnuts = [{ data: { labels: [], datasets: [] }, title: domain }];
+    let labels = [];
+    let datasets = [
+        {
+            label: 'Auto',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        },
+        {
+            label: 'Manual',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        },
+        {
+            label: 'Not Tested',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        }
+    ];
+    for (let i = 0; i < datasets.length; i++) {
+        Object.keys(release.TcAggregate.domain).forEach((item, index) => {
+            if (domain === release.TcAggregate.domain[item].tag) {
+                datasets[i].backgroundColor.push(colors[i]);
+                datasets[i].hoverBackgroundColor.push(colors[i]);
+            }
+        })
+    }
+
+    Object.keys(release.TcAggregate.domain).forEach((item, index) => {
+        if (domain === release.TcAggregate.domain[item].tag) {
+            let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
+            let manual = release.TcAggregate.domain[item].Tested.manual.Pass + release.TcAggregate.domain[item].Tested.manual.Fail + release.TcAggregate.domain[item].Tested.manual.Skip;
+            let nottested = release.TcAggregate.domain[item].NotTested
+            let total = auto + manual + nottested;
+            labels.push(item + ' (' + total + ')');
+            datasets[0].data.push(auto);
+            datasets[1].data.push(manual);
+            datasets[2].data.push(nottested);
+
+            // datasets[0].backgroundColor.push(colors[index]);
+            // datasets[1].backgroundColor.push(colors[index]);
+            // datasets[2].backgroundColor.push(colors[index]);
+
+
+            // doughnuts.push({
+            //     data: {
+            //         labels: [
+            //             'Not Tested (' + nottested + ')',
+            //             'Auto Tested (' + auto + ')',
+            //             'Manual Tested (' + manual + ')',
+            //         ],
+            //         datasets: [
+            //             {
+            //                 data: [
+            //                     nottested,
+            //                     auto,
+            //                     manual
+            //                 ],
+            //                 backgroundColor: [
+            //                     '#FF6384',
+            //                     '#36A2EB',
+            //                     '#FFCE56',
+            //                     // '#B5801D',
+            //                 ],
+            //                 hoverBackgroundColor: [
+            //                     '#FF6384',
+            //                     '#36A2EB',
+            //                     '#FFCE56',
+            //                     // '#B5801D',
+            //                 ],
+            //             }],
+            //     }, title: item
+            // })
+        }
+    });
+    doughnuts[0].data.labels = labels;
+    doughnuts[0].data.datasets = datasets;
+
+    // if (doughnuts.length) {
+    //     doughnuts.sort(function (a, b) {
+    //         if (b.data.datasets[0].data[0] !== a.data.datasets[0].data[0]) return b.data.datasets[0].data[0] - a.data.datasets[0].data[0];
+    //         if (b.data.datasets[0].data[1] !== a.data.datasets[0].data[1]) return b.data.datasets[0].data[1] - a.data.datasets[0].data[1];
+    //         if (b.data.datasets[0].data[2] !== a.data.datasets[0].data[2]) return b.data.datasets[0].data[2] - a.data.datasets[0].data[2];
+    //         if (b.data.datasets[0].data[3] !== a.data.datasets[0].data[3]) return b.data.datasets[0].data[3] - a.data.datasets[0].data[3];
+
+    //     });
+    // }
+
+    return doughnuts;
+}
+
+export const getTCStrategyForUIDomains = (release) => {
+    if (!release) {
+        return;
+    }
+    if (!release.TcAggregate) {
+        return;
+    }
+    let doughnuts = [];
+    let storageAuto = release.TcAggregate.uidomain['Storage'].Tested.auto.Pass + release.TcAggregate.uidomain['Storage'].Tested.auto.Fail + release.TcAggregate.uidomain['Storage'].Tested.auto.Skip;
+    let storageManual = release.TcAggregate.uidomain['Storage'].Tested.manual.Pass + release.TcAggregate.uidomain['Storage'].Tested.manual.Fail + release.TcAggregate.uidomain['Storage'].Tested.manual.Skip;
+    let storageNotTested = release.TcAggregate.uidomain['Storage'].NotTested;
+
+    let networkAuto = release.TcAggregate.uidomain['Network'].Tested.auto.Pass + release.TcAggregate.uidomain['Network'].Tested.auto.Fail + release.TcAggregate.uidomain['Network'].Tested.auto.Skip;
+    let networkManual = release.TcAggregate.uidomain['Network'].Tested.manual.Pass + release.TcAggregate.uidomain['Network'].Tested.manual.Fail + release.TcAggregate.uidomain['Network'].Tested.manual.Skip;
+    let networkNotTested = release.TcAggregate.uidomain['Network'].NotTested;
+
+
+    let managementAuto = release.TcAggregate.uidomain['Management'].Tested.auto.Pass + release.TcAggregate.uidomain['Management'].Tested.auto.Fail + release.TcAggregate.uidomain['Management'].Tested.auto.Skip;
+    let managementManual = release.TcAggregate.uidomain['Management'].Tested.manual.Pass + release.TcAggregate.uidomain['Management'].Tested.manual.Fail + release.TcAggregate.uidomain['Management'].Tested.manual.Skip;
+    let managementNotTested = release.TcAggregate.uidomain['Management'].NotTested;
+
+    let othersAuto = release.TcAggregate.uidomain['Others'].Tested.auto.Pass + release.TcAggregate.uidomain['Others'].Tested.auto.Fail + release.TcAggregate.uidomain['Others'].Tested.auto.Skip;
+    let othersManual = release.TcAggregate.uidomain['Others'].Tested.manual.Pass + release.TcAggregate.uidomain['Others'].Tested.manual.Fail + release.TcAggregate.uidomain['Others'].Tested.manual.Skip;
+    let othersNotTested = release.TcAggregate.uidomain['Others'].NotTested;
+
+    let each = [
+        {
+            auto: storageAuto, manual: storageManual, NotTested: storageNotTested,
+            total: storageAuto + storageManual + storageNotTested
+        },
+        {
+            auto: networkAuto, manual: networkManual, NotTested: networkNotTested,
+            total: networkAuto + networkManual + networkNotTested
+        },
+        {
+            auto: managementAuto, manual: managementManual, NotTested: managementNotTested,
+            total: managementAuto + managementManual + managementNotTested
+        },
+        {
+            auto: othersAuto, manual: othersManual, NotTested: othersNotTested,
+            total: othersAuto + othersManual + othersNotTested
+        },
+    ]
+
+    // alldomains.forEach((item, index) => {
+    doughnuts.push({
+        data: {
+            labels: [
+                // 'Not Tested (' + each[index].NotTested + ')',
+                // 'Auto (' + each[index].auto + ')',
+                // 'Manual (' + each[index].manual + ')',
+                'Storage (' + each[0].total + ')',
+                'Network (' + each[1].total + ')',
+                'Management (' + each[2].total + ')',
+                'Others (' + each[3].total + ')',
+            ],
+            datasets: [
+                {
+                    label: 'Auto',
+                    data: [
+                        each[0].auto,
+                        each[1].auto,
+                        each[2].auto,
+                        each[3].auto
+                        // each[index].NotTested,
+                        // each[index].auto,
+                        // each[index].manual,
+                    ],
+                    backgroundColor: [
+                        // '#FF6384',
+                        '#36A2EB',
+                        '#36A2EB',
+                        '#36A2EB',
+                        '#36A2EB',
+                        // '#FFCE56',
+                        // '#B5801D',
+                    ],
+                    hoverBackgroundColor: [
+                        // '#FF6384',
+                        '#36A2EB',
+                        '#36A2EB',
+                        '#36A2EB',
+                        '#36A2EB',
+                        // '#FFCE56',
+                        // '#B5801D',
+                    ],
+                },
+                {
+                    label: 'Manual',
+                    data: [
+                        each[0].manual,
+                        each[1].manual,
+                        each[2].manual,
+                        each[3].manual
+                        // each[index].NotTested,
+                        // each[index].auto,
+                        // each[index].manual,
+                    ],
+                    backgroundColor: [
+                        '#FFCE56',
+                        '#FFCE56',
+                        '#FFCE56',
+                        '#FFCE56',
+                        // '#910727',
+                        // '#F1E956',
+                        // '#821F49',
+                        // '#B5801D',
+                    ],
+                    hoverBackgroundColor: [
+                        '#FFCE56',
+                        '#FFCE56',
+                        '#FFCE56',
+                        '#FFCE56',
+                        // '#910727',
+                        // '#F1E956',
+                        // '#821F49',
+                        // '#B5801D',
+                    ],
+                },
+                {
+                    label: 'Not Tested',
+                    data: [
+                        each[0].NotTested,
+                        each[1].NotTested,
+                        each[2].NotTested,
+                        each[3].NotTested
+                        // each[index].NotTested,
+                        // each[index].auto,
+                        // each[index].manual,
+                    ],
+                    backgroundColor: [
+                        '#FF6384',
+                        '#FF6384',
+                        '#FF6384',
+                        '#FF6384',
+                        // '#910727',
+                        // '#F1E956',
+                        // '#821F49',
+                        // '#B5801D',
+                    ],
+                    hoverBackgroundColor: [
+                        '#FF6384',
+                        '#FF6384',
+                        '#FF6384',
+                        '#FF6384',
+                        // '#910727',
+                        // '#F1E956',
+                        // '#821F49',
+                        // '#B5801D',
+                    ],
+                },
+            ],
+        }, title: 'Domains'
+    })
+    // })
+    return doughnuts;
 
 }
+
+
+const colors = [
+    '#B5801D',
+    '#B959E9',
+    '#6A58E6',
+    '#EEF3E6',
+    '#D1EF67',
+    '#BACEAB',
+    '#A2AC6A',
+    '#05ED9D',
+    '#1AABCD',
+    '#99812E',
+    '#60C3DF',
+    '#C7CC4D',
+    '#910727',
+    '#F1E956',
+    '#821F49',
+    '#069D8B',
+    '#9BE914',
+    '#2E270D',
+    '#07A345',
+    '#FE3D1D',
+    '#BB00F1',
+    '#3DFD87',
+    '#AF31CA',
+    '#96568A',
+    '#5B5013',
+    '#A660F8',
+    '#549609',
+    '#29CBB4',
+    '#7E31BB',
+    '#01C5AF',
+    '#4786E1',
+    '#D04616',
+    '#CA5B9F',
+    '#F07444',
+    '#292FAB',
+    '#CD50B2',
+    '#EFACF6',
+    '#B6BCD4',
+    '#D8285A',
+    '#474AD7',
+    '#910E7E',
+    '#ADED5A',
+    '#77CE6E',
+    '#E8C05C',
+    '#F04B07',
+    '#2E06D7',
+    '#70469D',
+    '#1F1E7D',
+    '#278A44',
+    '#7A6BA2',
+    '#EA981D',
+    '#24C5D5',
+    '#781BC3',
+    '#1ECD0D',
+    '#AE4854',
+    '#4F5783',
+    '#77765B',
+    '#7AC913',
+    '#716C1C',
+    '#E73582',
+    '#D2713F',
+    '#33B5E6',
+    '#61981E',
+    '#D182FA',
+    '#D278F3',
+    '#ED594F',
+    '#B5C841',
+    '#23EA2A',
+    '#09EBF8',
+    '#9A5815',
+    '#688DF9',
+    '#12A11D',
+    '#A1F43F',
+    '#4807C2',
+    '#DC5D83',
+    '#2D0AEE',
+    '#101463',
+    '#3E47E6',
+    '#AE93BF',
+    '#DF1BF0',
+    '#EFAE92',
+    '#C8EEEF',
+    '#B310F4',
+    '#F69351',
+    '#24E9FF',
+    '#3C878E',
+    '#D7CAD6',
+    '#A30A3D',
+    '#827A4E',
+    '#FA9128',
+    '#0F34A6',
+    '#92C7DE',
+    '#0CA169',
+    '#F8E5D8',
+    '#135CCC',
+    '#56FB95',
+    '#25E867',
+    '#83626A',
+    '#6093D0',
+    '#ED5C5E'
+]

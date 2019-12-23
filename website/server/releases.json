@@ -15,7 +15,7 @@
     "FinalDockerCore": "9",
     "UbootVersion": "U-Boot 1.1.4-g1c8343c8-dirty (Feb 28 2014 - 13:56:54)",
     "RedFlagsRisks": "Backup controller not working",
-    "AutomationSyncUp": "Backup controller automation skipped as backup controller is not working properly. CSI drive plugin not getting changed after execution of script. Pods attached to volumes with xfs filesystem are crashing again and again. volume subpath not supported from 2.2.0 because of change in Centos kernel version, which used to support volume subpath.",
+    "AutomationSyncUp": "Backup controller automation Skip as backup controller is not working properly. CSI drive plugin not getting changed after execution of script. Pods attached to volumes with xfs filesystem are crashing again and again. volume subpath not supported from 2.2.0 because of change in Centos kernel version, which used to support volume subpath.",
     "TargetedQAStartDate": "2019-12-10T00:00:00.000Z",
     "ActualCodeFreezeDate": "2019-12-10T00:00:00.000Z",
     "Features": [{
@@ -27,18 +27,21 @@
         "JiraID": "",
         "Description": "descr2"
     }],
+    "QAStrategyAggregate": {
+
+    },
     "TcAggregate": {
         "all": {
             "Tested": {
                 "auto": {
                     "Pass": 1000,
                     "Fail": 2000,
-                    "Skipped": 0
+                    "Skip": 0
                 },
                 "manual": {
                     "Pass": 1000,
                     "Fail": 2000,
-                    "Skipped": 0
+                    "Skip": 0
                 }
             },
             "NotTested": 4000,
@@ -50,12 +53,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -66,12 +69,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -82,12 +85,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -98,12 +101,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -114,12 +117,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -130,12 +133,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -146,12 +149,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -162,12 +165,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -178,12 +181,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,
@@ -194,12 +197,12 @@
                     "auto": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     },
                     "manual": {
                         "Pass": 50,
                         "Fail": 100,
-                        "Skipped": 0
+                        "Skip": 0
                     }
                 },
                 "NotTested": 400,

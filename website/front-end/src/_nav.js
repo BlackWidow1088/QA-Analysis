@@ -17,11 +17,11 @@ export default {
       //   },
       // ]
     },
-    // {
-    //   name: 'QA Strategy',
-    //   url: '/release/qastrategy',
-    //   icon: 'icon-speedometer',
-    // },
+    {
+      name: 'QA Strategy',
+      url: '/release/qastrategy',
+      icon: 'icon-speedometer',
+    },
     {
       name: 'QA Status',
       url: '/release/qastatus',
