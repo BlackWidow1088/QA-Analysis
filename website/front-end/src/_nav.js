@@ -6,7 +6,7 @@ export default {
     //   icon: 'icon-speedometer',
     // },
     {
-      name: 'Release Summary',
+      name: 'Dashboard',
       url: '/release/summary',
       icon: 'icon-speedometer',
       // children: [
