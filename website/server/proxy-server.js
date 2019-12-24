@@ -7,6 +7,7 @@ var http = require('http');
 var httpProxy = require('http-proxy');
 
 var APP_URL = 'http://localhost:3000';
+// var APP_URL = 'http://localhost:5051';
 
 // var DJANGOURL = '/api/tcinfo'
 // // var DATA_URL = 'http://172.16.19.57:8000';
@@ -60,6 +61,8 @@ try {
         } catch (err) {
             console.log('err in web ', err);
         }
+    }, function (err) {
+        console.log('problem connecting')
     });
 
     console.log('listening on port 5050');

@@ -114,7 +114,15 @@ class DefaultHeader extends Component {
               <DropdownItem><i className="fa fa-file"></i> Projects<Badge color="primary">42</Badge></DropdownItem>
               <DropdownItem divider />
               <DropdownItem><i className="fa fa-shield"></i> Lock Account</DropdownItem> */}
-              <DropdownItem><i className="fa fa-lock"></i> Logout</DropdownItem>
+              {
+                this.props.user &&
+                <DropdownItem onClick={() => this.props.onLogout()}><i className="fa fa-lock"></i> Logout</DropdownItem>
+              }
+              {
+                !this.props.user &&
+                <DropdownItem onClick={() => this.props.onLogout()}><i className="fa fa-lock"></i> Login</DropdownItem>
+              }
+
             </DropdownMenu>
           </UncontrolledDropdown>
         </Nav>

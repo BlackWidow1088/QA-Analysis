@@ -64,13 +64,15 @@ export const cardChartOpts1 = {
 
 // Card Chart 2
 export const cardChartData2 = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: ['02 Dec 2019', '09 Dec 2019', '16 Dec 2019', '23 Dec 2019', '30 Dec 2019'],
     datasets: [
         {
-            label: 'My First dataset',
-            backgroundColor: brandInfo,
-            borderColor: 'rgba(255,255,255,.55)',
-            data: [1, 18, 9, 17, 34, 22, 11],
+            label: 'Weekly Progress',
+            backgroundColor: 'transparent',
+            // borderColor: 'rgba(255,255,255,.55)',
+            borderColor: brandInfo,
+            borderWidth: 5,
+            data: [1, 18, 9, 17, 34],
         },
     ],
 };
@@ -78,7 +80,7 @@ export const cardChartDataPurple = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
         {
-            label: 'My First dataset',
+            label: 'Weekly Progress',
             backgroundColor: brandPurple,
             borderColor: 'rgba(255,255,255,.55)',
             data: [1, 18, 9, 17, 34, 22, 11],
@@ -93,27 +95,35 @@ export const cardChartOpts2 = {
     maintainAspectRatio: false,
     legend: {
         display: false,
+        // display: true
     },
     scales: {
         xAxes: [
             {
-                gridLines: {
-                    color: 'transparent',
-                    zeroLineColor: 'transparent',
-                },
+                gridLines: {},
+                // gridLines: {
+                //     color: '#00742b',
+                //     zeroLineColor: '#00742b',
+                // },
                 ticks: {
                     fontSize: 2,
-                    fontColor: 'transparent',
+                    fontColor: '#00742b',
                 },
 
             }],
         yAxes: [
             {
-                display: false,
+                gridLines: {},
+                // gridLines: {
+                //     color: '#00742b',
+                //     zeroLineColor: '#00742b',
+                // },
+                // display: false,
                 ticks: {
-                    display: false,
-                    min: Math.min.apply(Math, cardChartData2.datasets[0].data) - 5,
+                    display: true,
+                    min: 0,
                     max: Math.max.apply(Math, cardChartData2.datasets[0].data) + 5,
+                    fontColor: '#00742b',
                 },
             }],
     },

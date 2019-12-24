@@ -191,7 +191,9 @@ export const SAVE_TEST_CASE_STATUS = 'SAVE_TEST_CASE_STATUS';
 export const DELETE_TEST_CASE = 'DELETE_TEST_CASE';
 export const RELEASE_CHANGE = 'RELEASE_CHANGE';
 export const SAVE_SINGLE_TEST_CASE = 'SAVE_SINGLE_TEST_CASE';
-
+export const SAVE_FEATURES = 'SAVE_FEATURES';
+export const SAVE_BUGS = 'SAVE_BUGS';
+export const SAVE_SINGLE_FEATURE = 'SAVE_SINGLE_FEATURE';
 export const logInRequest = payload => ({
   type: LOG_IN_REQUEST,
   payload,
@@ -244,5 +246,18 @@ export const releaseChange = payload => ({
 })
 export const saveSingleTestCase = payload => ({
   type: SAVE_SINGLE_TEST_CASE,
+  payload
+})
+
+export const saveFeatures = payload => ({
+  type: SAVE_FEATURES,
+  payload
+})
+export const saveBugs = payload => ({
+  type: SAVE_BUGS,
+  payload
+})
+export const saveSingleFeature = payload => ({
+  type: SAVE_SINGLE_FEATURE,
   payload
 })

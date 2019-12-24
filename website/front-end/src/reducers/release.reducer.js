@@ -48,7 +48,7 @@ function getAggregate(release) {
                         "Pass": 0,
                         "Fail": 0,
                         "Skip": 0
-                    }
+                    },
                 },
                 "NotTested": 0,
                 "NotApplicable": 0
@@ -71,12 +71,22 @@ function getAggregate(release) {
                     "Pass": 0,
                     "Fail": 0,
                     "Skip": 0
-                }
+                },
             },
             "NotTested": 0,
             "NotApplicable": 0
         };
     }
+    release.TcAggregate.all.TotalTested = release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.auto.Fail +
+        release.TcAggregate.all.Tested.manual.Pass + release.TcAggregate.all.Tested.manual.Fail;
+    release.TcAggregate.all.Skip = release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip
+    release.TcAggregate.all.Blocked = 0;
+
+    // Object.keys(release.TcAggregate.domain).forEach(item => {
+    //     release.TcAggregate.domain[item].TotalTested = 0;
+    //     release.TcAggregate.domain[item].Blocked = 0;
+    // })
+
     release.TcAggregate.uidomain = {};
     alldomains.forEach((item, index) => {
         release.TcAggregate.uidomain[item] = {
@@ -90,7 +100,7 @@ function getAggregate(release) {
                     "Pass": 0,
                     "Fail": 0,
                     "Skip": 0
-                }
+                },
             },
             "NotTested": 0,
             "NotApplicable": 0
@@ -109,7 +119,9 @@ function getAggregate(release) {
             release.TcAggregate.uidomain[domainDetail[item].name].Tested.manual.Fail += relDomain[item].Tested.manual.Fail;
             release.TcAggregate.uidomain[domainDetail[item].name].Tested.manual.Skip += relDomain[item].Tested.manual.Skip;
 
-            release.TcAggregate.uidomain[domainDetail[item].name].NotTested += relDomain[item].NotTested;
+
+            release.TcAggregate.uidomain[domainDetail[item].name].Tested.total =
+                release.TcAggregate.uidomain[domainDetail[item].name].NotTested += relDomain[item].NotTested;
             release.TcAggregate.uidomain[domainDetail[item].name].NotApplicable += relDomain[item].NotApplicable;
         } else {
             release.TcAggregate.domain[item].tag = "Others";
@@ -220,8 +232,8 @@ export const getTCForStatus = (state, id) => {
         labels: [
             'Fail (' + (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) + ')',
             'Pass (' + (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) + ')',
-            'Skip (' + (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) + ')',
-            'Not Tested (' + release.TcAggregate.all.NotTested + ')',
+            'Blocked (' + (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) + ')',
+            'Yet to be Tested (' + release.TcAggregate.all.NotTested + ')',
         ],
         datasets: [
             {
@@ -245,12 +257,59 @@ export const getTCForStatus = (state, id) => {
                 ],
             }],
     };
+    let total = (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) +
+        (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) +
+        (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) +
+        release.TcAggregate.all.NotTested
     console.log('data for tc status');
     console.log(data);
-    return data;
+    return {
+        data,
+        total
+    }
 }
 
 export const getTCForStrategy = (state, id) => {
+    let release = state.release.all.filter(item => item.ReleaseNumber === id)[0];
+    if (!release) {
+        return;
+    }
+    if (!release.TcAggregate) {
+        return;
+    }
+    // let data = {
+    //     labels: [
+    //         'Total Test (' + release.TcAggregate.all.TotalTested + ')',
+    //         'Skipped (' + release.TcAggregate.all.Skip + ')',
+    //         'Not Applicable (' + release.TcAggregate.all.NotApplicable + ')'
+    //     ],
+    //     datasets: [
+    //         {
+    //             data: [
+    //                 release.TcAggregate.all.TotalTested,
+    //                 release.TcAggregate.all.Skip,
+    //                 release.TcAggregate.all.NotApplicable,
+    //             ],
+    //             backgroundColor: [
+    //                 '#FF6384',
+    //                 '#36A2EB',
+    //                 '#FFCE56',
+    //             ],
+    //             hoverBackgroundColor: [
+    //                 '#FF6384',
+    //                 '#36A2EB',
+    //                 '#FFCE56',
+    //             ],
+    //         }],
+    // };
+    return {
+        totalTests: release.TcAggregate.all.TotalTested + release.TcAggregate.all.NotTested + release.TcAggregate.all.Skip + release.TcAggregate.all.NotApplicable,
+        skipped: release.TcAggregate.all.Skip,
+        notApplicable: release.TcAggregate.all.NotApplicable,
+        needToRun: release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail
+    };
+}
+export const getTCForTestMetrics = (state, id) => {
     let release = state.release.all.filter(item => item.ReleaseNumber === id)[0];
     if (!release) {
         return;
@@ -303,9 +362,10 @@ export const getTCForStrategy = (state, id) => {
                 ],
             }],
     };
+    let total = storage + network + management + others;
     console.log('data for tc strategy');
     console.log(data);
-    return data;
+    return { data, total };
 }
 
 export const getTCStatusForUIDomains = (release) => {
@@ -345,7 +405,7 @@ export const getTCStatusForUIDomains = (release) => {
                 labels: [
                     'Fail (' + each[index].Fail + ')',
                     'Pass (' + each[index].Pass + ')',
-                    'Skip (' + each[index].Skip + ')',
+                    'Blocked (' + each[index].Skip + ')',
                     'Not Tested (' + each[index].NotTested + ')',
                 ],
                 datasets: [
@@ -395,7 +455,7 @@ export const getTCStatusForUISubDomains = (release, domain) => {
                     labels: [
                         'Fail (' + fail + ')',
                         'Pass (' + pass + ')',
-                        'Skip (' + Skip + ')',
+                        'Blocked (' + Skip + ')',
                         'Not Tested (' + nottested + ')',
                     ],
                     datasets: [

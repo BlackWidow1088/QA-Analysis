@@ -232,6 +232,7 @@ class Sunburst extends React.Component {
             gSlices.exit().remove();
 
             const key = this.props.key_member
+            let cntr = 0;
             gSlices.append("path")
                 .attr('class', (d) => {
                     const cursor = (!d.parent || !d.children) ? ' cursor-pointer' : ' cursor-pointer'
@@ -239,7 +240,11 @@ class Sunburst extends React.Component {
                     return `sunburst-main-arc${cursor} ${evenodd}`
                 }).attr('id', (d, i) => {
                     return key ? `mainArc-${d.data[key]}` : `mainArc-${i}`
-                }).style("fill", (d) => d.parent ? this._colorize(d) : "white")
+                }).style("fill", (d) => {
+
+                    // return d.parent ? this._colorize(d) : "white"
+                    return d.parent ? this._colorize(d) : "white"
+                })
                 .on('click', function (node) {
                     this._onClick(node)
                     let act = true;

@@ -1,13 +1,25 @@
 export default {
   items: [
+    // {
+    //   name: 'Manage Release',
+    //   url: '/release/manage',
+    //   icon: 'icon-speedometer',
+    // },
     {
-      name: 'Manage Release',
-      url: '/release/manage',
+      name: 'Release Summary',
+      url: '/release/summary',
       icon: 'icon-speedometer',
+      // children: [
+      //   {
+      //     name: 'Manage Release',
+      //     url: '/release/manage',
+      //     icon: 'icon-puzzle',
+      //   },
+      // ]
     },
     {
-      name: 'Summary',
-      url: '/release/summary',
+      name: 'Release Status',
+      url: '/release/status',
       icon: 'icon-speedometer',
       // children: [
       //   {
@@ -25,6 +37,11 @@ export default {
     {
       name: 'QA Status',
       url: '/release/qastatus',
+      icon: 'icon-speedometer',
+    },
+    {
+      name: 'Test Metrics',
+      url: '/release/testmetrics',
       icon: 'icon-speedometer',
     },
     // {

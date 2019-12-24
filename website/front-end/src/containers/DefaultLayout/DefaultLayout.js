@@ -21,7 +21,7 @@ import {
 // routes config
 import routes from '../../routes';
 import { connect } from 'react-redux';
-import { saveReleaseBasicInfo, releaseChange, saveTestCase, saveTestCaseStatus } from '../../actions';
+import { saveReleaseBasicInfo, releaseChange, saveTestCase, saveTestCaseStatus, logInSuccess } from '../../actions';
 import { getCurrentRelease } from '../../reducers/release.reducer';
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
@@ -42,6 +42,7 @@ class DefaultLayout extends Component {
     this.props.history.push('/login')
   }
   componentDidMount() {
+    // this.props.logInSuccess({ isAdmin: true });
     if (this.props.allReleases.length === 0) {
       axios.get(`/api/release/all`)
         .then(res => {
@@ -107,10 +108,10 @@ class DefaultLayout extends Component {
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
-                  {
+                  {/* {
                     !this.props.currentUser &&
                     <Redirect to="/login" />
-                  }
+                  } */}
                   {routes.map((route, idx) => {
                     return route.component ? (
                       <Route
@@ -152,4 +153,4 @@ const mapStateToProps = (state, ownProps) => ({
   selectedRelease: getCurrentRelease(state)
 })
 
-export default connect(mapStateToProps, { saveReleaseBasicInfo, releaseChange, saveTestCase, saveTestCaseStatus })(DefaultLayout);
+export default connect(mapStateToProps, { logInSuccess, saveReleaseBasicInfo, releaseChange, saveTestCase, saveTestCaseStatus })(DefaultLayout);

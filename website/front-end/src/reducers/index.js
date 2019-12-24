@@ -9,7 +9,8 @@ import ui from './ui';
 import { releaseReducer as release } from './release.reducer';
 import app from './app.reducer';
 import { testcaseReducer as testcase } from './testcase.reducer';
-
+import { featureReducer as feature } from './feature.reducer';
+import { bugReducer as bug } from './bug.reducer';
 export default combineReducers({
   auth,
   posts,
@@ -18,5 +19,7 @@ export default combineReducers({
   ui,
   release,
   app,
-  testcase
+  testcase,
+  feature,
+  bug
 });

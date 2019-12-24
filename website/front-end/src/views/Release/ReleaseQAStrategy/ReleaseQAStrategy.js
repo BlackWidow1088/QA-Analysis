@@ -20,6 +20,8 @@ import './ReleaseQAStrategy.scss'
 // import sunburst from '../../../reducers/domains.js'
 import Sunburst from '../components/Sunburst';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import { Carousel, CarouselCaption, CarouselControl, CarouselIndicators, CarouselItem } from 'reactstrap';
+
 const options = {
     tooltips: {
         enabled: false,
@@ -27,31 +29,26 @@ const options = {
     },
     maintainAspectRatio: false
 }
+
+const data = [
+    { date: 'Nov 2019', QARateOfProgress: 40, tcTotal: 2000, tcSkipped: 200, tcNA: 100, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
+    { date: 'Oct 2019', QARateOfProgress: 50, tcTotal: 1000, tcSkipped: 200, tcNA: 100, SetupsUsed: ['autotb5', 'auto8', 'atuo10'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
+    { date: 'Sept 2019', QARateOfProgress: 60, tcTotal: 500, tcSkipped: 50, tcNA: 200, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
+]
 class ReleaseQAStrategy extends Component {
     constructor(props) {
         super(props);
         this.state = {
             addTC: {},
-            open: false,
+            open: {},
             width: window.screen.availWidth > 1700 ? 500 : 380,
-            doughnuts: getTCStrategyForUIDomains(this.props.selectedRelease),
-            qaStrategy: {},
+            basic: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false },
+            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, EngineerCount: false } },
             domainSelected: false,
-            domains: getTCStatusForSunburst(this.props.selectedRelease),
+            items: []
         }
     }
     componentDidMount() {
-    }
-    getTcs() {
-        if (this.state.domainSelected) {
-            axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}/tcinfo/domain/${this.state.domainSelected}`)
-                .then(res => {
-                    console.log('for ', this.props.selectedRelease.ReleaseNumber)
-                    console.log(res.data)
-                    this.props.saveTestCase({ data: res.data, id: this.props.selectedRelease.ReleaseNumber });
-                }, error => {
-                })
-        }
     }
     toggle = () => this.setState({ modal: !this.state.modal });
     save() {
@@ -114,193 +111,63 @@ class ReleaseQAStrategy extends Component {
         return (
             <div>
                 <Row>
-                    <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
-                        <div className='rp-app-table-header'>
-                            <span className='rp-app-table-title'>Test Case Distribution (Domain Wise)</span>
-                        </div>
-                        <Row>
+                    {
 
-                            <Col xs="11" sm="11" md="11" lg="4">
-                                <div style={{ marginLeft: '1rem', marginTop: '1rem' }}>
-                                    <Sunburst
-                                        tooltip={false}
-                                        onClick={(node) => this.sunburstClick(node)}
-                                        data={this.state.domains}
-                                        width={this.state.width}
-                                        height={this.state.width}
-                                        count_member="size"
-                                        labelFunc={(node) => node.data.name}
-                                    />
+                        data.map((each, i) =>
+                            <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
+                                <div className='rp-app-table-header'>
+                                    <span className='rp-app-table-title'>{each.date}</span>
                                 </div>
-                            </Col>
-                            <Col xs="11" sm="11" md="11" lg="8">
-                                <Row style={{ marginLeft: '0.5rem' }}>
-                                    {
-                                        this.state.doughnuts &&
-                                        this.state.doughnuts.map((item, index) => {
-                                            if (index < 4) {
+
+                                <Table scroll responsive style={{ overflow: 'scroll', }}>
+                                    <tbody>
+                                        {
+                                            [
+                                                { key: 'Expected rate of Progress per week', field: 'QARateOfProgress', value: each.QARateOfProgress },
+                                                { key: 'Test Cases Run', restrictEdit: true, field: 'run', value: each.tcTotal },
+                                                { key: 'Test Cases Skipped', restrictEdit: true, field: 'skip', value: each.tcSkipped },
+                                                { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: each.tcNA },
+
+                                                { key: 'Setups Used', restrictEdit: true, field: 'SetupsUsed', value: each.SetupsUsed.length },
+                                                { key: 'Engineers', field: 'EngineerCount', value: each.Engineer.length },
+                                                { key: 'QA Start Date', field: 'QAStartDate', value: each.startdate },
+                                                { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: each.freezedate },
+                                                { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: each.upgrade.length },
+
+                                            ].map((item, index) => {
                                                 return (
-                                                    <Col>
-                                                        <div className="chart-wrapper" style={{ minHeight: '400px' }}>
-                                                            {/* <Doughnut data={item.data} /> */}
-                                                            <Bar data={item.data} options={options} />
-                                                        </div>
-                                                        <div className='rp-tc-dougnut-text'>
-                                                            {item && item.title}
-                                                        </div>
-                                                    </Col>
+                                                    <tr>
+                                                        <React.Fragment>
+
+                                                            <td className='rp-app-table-key'>{item.key}</td>
+
+                                                            <td>{item.value}</td>
+
+                                                        </React.Fragment>
+
+                                                    </tr>
                                                 )
-                                            }
-
-                                        })
-                                    }
-                                </Row>
-                            </Col>
-                        </Row>
-                        {/* <Row>
-                            {
-                                this.state.doughnuts &&
-                                this.state.doughnuts.length >= 4 &&
-                                this.state.doughnuts.map((item, index) => {
-                                    if (index >= 4) {
-                                        return (<Col xs="12" sm="12" md="4" lg="4">
-                                            <div className="chart-wrapper">
-                                                <Doughnut data={item.data} />
-                                            </div>
-                                            <div className='rp-tc-dougnut-text'>
-                                                {item && item.title}
-                                            </div>
-                                        </Col>)
-                                    }
-                                })
-                            }
-                        </Row> */}
-                    </Col>
-                </Row>
-                {
-                    this.state.domainSelected &&
-                    <div>
-                        <div>
-                            <Button style={{ marginTop: '0.5rem', marginLeft: '0.5rem' }} className='rp-any-button' onClick={() => this.setState({ open: !this.state.open })}>{this.state.open ? 'Close' : 'Create Test Case'}</Button>
-                        </div>
-                        <Collapse isOpen={this.state.open}>
-                            <Row style={{ marginLeft: '1rem', marginTop: '0.2rem' }}>
-                                <Col xs="12" sm="12" lg="10" className="rp-summary-tables" >
-                                    <div className='rp-app-table-header'>
-                                        <span className='rp-app-table-title'>Add Test Case</span>
-                                        <Button title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.confirmToggle()} >
-                                            <i className="fa fa-check-square-o"></i>
-                                        </Button>
+                                            })
+                                        }
+                                    </tbody>
+                                </Table>
+                                {
+                                    !this.state.open[each.date] &&
+                                    <div style={{ textAlign: 'center' }}>
+                                        <i className="fa fa-angle-down rp-rs-down-arrow" onClick={() => this.setState({ open: { ...this.state.open, [each.date]: !this.state.open[each.date] } })}></i>
                                     </div>
-
-                                    <Row>
-                                        <Col xs="12" sm="12" md="5" lg="5">
-                                            <Table scroll responsive style={{ overflow: 'scroll', }}>
-                                                <tbody>
-                                                    {
-                                                        [
-                                                            { field: 'Domain', header: 'Domain *', type: 'text' },
-                                                            { field: 'SubDomain', header: 'Sub Domain *', type: 'text' },
-                                                            { field: 'Setup', header: 'Setup', type: 'text' },
-                                                            { field: 'TcID', header: 'Tc ID *', type: 'text', },
-                                                            { field: 'TcName', header: 'Tc Name', type: 'text', restrictWidth: false },
-                                                            { field: 'Scenario', header: 'Scenario', type: 'text' },
-                                                            { field: 'OrchestrationPlatform', header: 'Orchestration Platform', type: 'text' },
-                                                            { field: 'Status', header: 'Status', type: 'text' }
-                                                        ].map((item, index) => (
-                                                            <tr>
-                                                                <td className='rp-app-table-key'>{item.header}</td>
-                                                                <td>
-                                                                    {
-                                                                        item.field === 'Domain' &&
-                                                                        <td className='rp-app-table-key'>{this.state.domainSelected}</td>
-                                                                    }
-                                                                    {
-                                                                        item.field !== 'Domain' &&
-                                                                        <Input
-                                                                            type="text"
-                                                                            key={index}
-                                                                            onChange={(e) => this.setState({ addTC: { ...this.state.addTC, [item.field]: e.target.value } })}
-                                                                            placeholder={'Add ' + item.header}
-                                                                            value={this.state.addTC[item.field]}
-                                                                        />
-                                                                    }
-
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                    }
-                                                </tbody>
-                                            </Table>
-                                        </Col>
-                                        <Col xs="12" sm="12" md="5" lg="5">
-                                            <Table scroll responsive style={{ overflow: 'scroll', }}>
-                                                <tbody>
-                                                    {
-                                                        [
-
-                                                            { field: 'Description', header: 'Description', type: 'text' },
-                                                            { field: 'ExpectedBehaviour', header: 'Expected Behaviour', type: 'text' },
-                                                            { field: 'Notes', header: 'Notes', type: 'text' },
-
-                                                        ].map((item, index) => (
-                                                            <tr>
-                                                                <td className='rp-app-table-key'>{item.header}</td>
-                                                                <td>
-                                                                    <Input
-                                                                        type="textarea"
-                                                                        key={index}
-                                                                        onChange={(e) => this.setState({ addTC: { ...this.state.addTC, [item.field]: e.target.value } })}
-                                                                        placeholder={'Add ' + item.header}
-                                                                        value={this.state.addTC[item.field]}
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                    }
-                                                </tbody>
-                                            </Table>
-                                        </Col>
-                                    </Row>
-
-                                </Col>
-                            </Row>
-                        </Collapse>
-                    </div>
-                }
-                {
-                    this.state.domainSelected &&
-                    <Row>
-                        <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
-
-                            <AppTable
-                                // onUpdate={(values) => this.updateTestCase(values)}
-                                // editOptions={this.props.currentUser && this.props.currentUser.isAdmin ? [TABLE_OPTIONS.ADD] : []}
-                                title={`Test cases`}
-                                currentUser={this.props.currentUser}
-                                fieldAndHeader={[
-                                    { field: 'Domain', header: 'Domain', type: 'text', },
-                                    { field: 'SubDomain', header: 'Sub Domain', type: 'text' },
-                                    { field: 'Setup', header: 'Setup', type: 'text' },
-                                    { field: 'TcID', header: 'Tc ID', type: 'text', },
-                                    { field: 'TcName', header: 'Tc Name', type: 'text', restrictWidth: false, },
-                                    { field: 'Scenario', header: 'Scenario', type: 'text' },
-                                    // { field: 'Description', header: 'Description', type: 'text', restrictWidth: false },
-                                    // { field: 'ExpectedBehaviour', header: 'Expected Behaviour', type: 'text', restrictWidth: false },
-                                    // { field: 'Notes', header: 'Notes', type: 'text' },
-                                    { field: 'OrchestrationPlatform', header: 'Orchestration Platform', type: 'text' },
-                                    { field: 'Status', header: 'Status', type: 'text' }
-                                ]}
-                                data={
-                                    this.props.selectedTC
                                 }
-                                restrictHeight="rp-app-table-medium"
-                                addOnTop={true}
-                            />
+                                {
+                                    this.state.open[each.date] &&
+                                    <div style={{ textAlign: 'center' }}>
+                                        <i className="fa fa-angle-up rp-rs-down-arrow" onClick={() => this.setState({ open: { ...this.state.open, [each.date]: !this.state.open[each.date] } })}></i>
+                                    </div>
+                                }
+                            </Col>
+                        )
 
-                        </Col>
-                    </Row>
-                }
+                    }
+                </Row>
 
                 <Modal isOpen={this.state.modal} toggle={() => this.toggle()}>
                     <ModalHeader toggle={() => this.toggle()}>Confirmation</ModalHeader>
@@ -312,7 +179,8 @@ class ReleaseQAStrategy extends Component {
                         <Button color="secondary" onClick={() => this.toggle()}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
-            </div >)
+            </div >
+        )
     }
 }
 const mapStateToProps = (state, ownProps) => ({
