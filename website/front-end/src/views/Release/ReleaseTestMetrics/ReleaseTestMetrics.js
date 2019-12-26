@@ -9,11 +9,12 @@ import {
 } from 'reactstrap';
 import { connect } from 'react-redux';
 import AppTable from '../../../components/AppTable/AppTable';
-import { getCurrentRelease } from '../../../reducers/release.reducer';
+import { getCurrentRelease, getTCStrategyForUISubDomainsScenario } from '../../../reducers/release.reducer';
 import {
     getTCStrategyForUIDomains, getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst,
     getTCStrategyForUISubDomainsDistribution, getTCStrategyForUIDomainsDistribution
 } from '../../../reducers/release.reducer';
+import { getEachTCStrategyScenario } from '../../../reducers/testcase.reducer';
 import { TABLE_OPTIONS } from '../../../constants';
 import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { AgGridReact } from 'ag-grid-react';
@@ -28,8 +29,10 @@ const options = {
         enabled: false,
         custom: CustomTooltips
     },
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    // legend: { labels: { fontSize: '14px', fontColor: 'black' } }
 }
+
 class ReleaseTestMetrics extends Component {
     constructor(props) {
         super(props);
@@ -112,12 +115,29 @@ class ReleaseTestMetrics extends Component {
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
-                .then(res => {
-                    this.props.saveTestCase({ id: this.props.selectedRelease.ReleaseNumber, data: res.data })
-                    this.setState({ domainSelected: node.data.name })
+                .then(all => {
+                    if (all && all.data.length) {
+                        axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcstatus/domain/' + node.data.name)
+                            .then(res => {
+                                this.props.saveTestCase({ id: this.props.selectedRelease.ReleaseNumber, data: res.data })
+                                this.setState({ domainSelected: node.data.name, doughnuts: getEachTCStrategyScenario({ data: res.data, domain: node.data.name, all: all.data, release: this.props.selectedRelease }) })
+                            }, error => {
+
+                            });
+                    }
+                    // console.log(res.data);
+                    // console.log('from domains')
+                    // console.log(node.data.name);
+                    // this.props.saveTestCase({ id: this.props.selectedRelease.ReleaseNumber, data: res.data })
+                    // this.setState({
+                    //     domainSelected: node.data.name, doughnuts: getTCStrategyForUISubDomainsScenario(
+                    //         this.props.selectedRelease, 'Storage', node.data.name, res.data
+                    //     )
+                    // })
                 }, error => {
 
                 })
+
             return false;
         }
         return true;
@@ -146,36 +166,41 @@ class ReleaseTestMetrics extends Component {
                                 </div>
                             </Col>
                             <Col xs="11" sm="11" md="11" lg="8">
-                                <Row style={{ marginLeft: '0.5rem' }}>
-                                    {
-                                        this.state.doughnutsDist &&
-                                        this.state.doughnutsDist.map((item, index) => {
+                                {
+                                    !this.state.domainSelected &&
+                                    <Row style={{ marginLeft: '0.5rem' }}>
+                                        {
+                                            this.state.doughnutsDist &&
+                                            this.state.doughnutsDist.map((item, index) => {
 
-                                            return (
-                                                <Col>
-                                                    <div className="chart-wrapper" style={{ minHeight: '400px' }}>
-                                                        {/* <Doughnut data={item.data} /> */}
-                                                        <Bar data={item.data} options={options} />
-                                                    </div>
-                                                    <div className='rp-tc-dougnut-text'>
-                                                        {item && item.title}
-                                                    </div>
-                                                </Col>
-                                            )
+                                                return (
+                                                    <Col>
+                                                        <div className="chart-wrapper" style={{ minHeight: '400px' }}>
+                                                            {/* <Doughnut data={item.data} /> */}
+                                                            <Bar data={item.data} options={options} />
+                                                        </div>
+                                                        <div className='rp-tc-dougnut-text'>
+                                                            {item && item.title}
+                                                        </div>
+                                                    </Col>
+                                                )
 
 
-                                        })
-                                    }
-                                </Row>
+                                            })
+                                        }
+                                    </Row>
+                                }
+
                                 <Row style={{ marginLeft: '0.5rem' }}>
                                     {
                                         this.state.doughnuts &&
                                         this.state.doughnuts.map((item, index) => {
 
                                             return (
+                                                !item.hide &&
                                                 <Col>
                                                     <div className="chart-wrapper" style={{ minHeight: '400px' }}>
-                                                        {/* <Doughnut data={item.data} /> */}
+
                                                         <Bar data={item.data} options={options} />
                                                     </div>
                                                     <div className='rp-tc-dougnut-text'>
