@@ -10,7 +10,7 @@ import {
 import { connect } from 'react-redux';
 import AppTable from '../../../components/AppTable/AppTable';
 import { getCurrentRelease } from '../../../reducers/release.reducer';
-import { getTCStrategyForUIDomains, getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst } from '../../../reducers/release.reducer';
+import { alldomains, getTCStatusForSunburst } from '../../../reducers/release.reducer';
 import { TABLE_OPTIONS } from '../../../constants';
 import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { AgGridReact } from 'ag-grid-react';
@@ -35,14 +35,19 @@ class ReleaseStatus extends Component {
             open: false,
             width: window.screen.availWidth > 1700 ? 500 : 380,
             featureOpen: true,
-            bugOpen: false
+            buildOpen: false,
+            bugOpen: false,
+            graphsOpen: false
         }
     }
     componentDidMount() {
         if (!this.props.singleFeature.fields) {
-            if (this.props.feature.issues) {
+            if (this.props.feature && this.props.feature.issues) {
                 this.getFeatureDetails(this.props.feature.issues[0].self)
             }
+        }
+        if (this.props.statusPage) {
+            this.setState({ ...this.state, ...this.props.statusPage });
         }
     }
 
@@ -344,7 +349,8 @@ const mapStateToProps = (state, ownProps) => ({
     selectedTC: state.testcase.all[state.release.current.id],
     feature: state.feature.all[state.release.current.id],
     bug: state.bug.all[state.release.current.id],
-    singleFeature: state.feature.single
+    singleFeature: state.feature.single,
+    statusPage: state.app.statusPage
 })
 export default connect(mapStateToProps, { saveSingleFeature })(ReleaseStatus);
 

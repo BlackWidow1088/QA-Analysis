@@ -10,7 +10,7 @@ import {
 import { connect } from 'react-redux';
 import AppTable from '../../../components/AppTable/AppTable';
 import { getCurrentRelease } from '../../../reducers/release.reducer';
-import { getTCStrategyForUIDomains, getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst } from '../../../reducers/release.reducer';
+import { getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst } from '../../../reducers/release.reducer';
 import { TABLE_OPTIONS } from '../../../constants';
 import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { AgGridReact } from 'ag-grid-react';
@@ -33,7 +33,7 @@ const options = {
 const data = [
     { date: 'Nov 2019', QARateOfProgress: 40, tcTotal: 2000, tcSkipped: 200, tcNA: 100, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
     { date: 'Oct 2019', QARateOfProgress: 50, tcTotal: 1000, tcSkipped: 200, tcNA: 100, SetupsUsed: ['autotb5', 'auto8', 'atuo10'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
-    { date: 'Sept 2019', QARateOfProgress: 60, tcTotal: 500, tcSkipped: 50, tcNA: 200, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
+    // { date: 'Sept 2019', QARateOfProgress: 60, tcTotal: 500, tcSkipped: 50, tcNA: 200, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
 ]
 class ReleaseQAStrategy extends Component {
     constructor(props) {
@@ -86,33 +86,64 @@ class ReleaseQAStrategy extends Component {
         }
         this.toggle();
     }
-    sunburstClick(node) {
-        console.log('clicked node');
-        console.log(node);
-        if (alldomains.includes(node.data.name)) {
-            this.setState({ doughnuts: getTCStrategyForUISubDomains(this.props.selectedRelease, node.data.name), domainSelected: false })
-        }
-        if (node.data.name === 'domains') {
-            this.setState({ doughnuts: getTCStrategyForUIDomains(this.props.selectedRelease), domainSelected: false })
-        }
-        if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
-            axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
-                .then(res => {
-                    this.props.saveTestCase({ id: this.props.selectedRelease.ReleaseNumber, data: res.data })
-                    this.setState({ domainSelected: node.data.name })
-                }, error => {
-
-                })
-            return false;
-        }
-        return true;
-    }
     render() {
         return (
             <div>
                 <Row>
-                    {
+                    <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
+                        <div className='rp-app-table-header'>
+                            <span className='rp-app-table-title'>Dec 2019</span>
+                        </div>
+                        <Table scroll responsive style={{ overflow: 'scroll', }}>
+                            <tbody>
+                                {
+                                    [
+                                        { key: 'Expected rate of Progress per week', field: 'QARateOfProgress', value: this.props.selectedRelease.QARateOfProgress ? this.props.selectedRelease.QARateOfProgress : 0 },
+                                        { key: 'Test Cases', restrictEdit: true, field: 'run', value: this.props.tcStrategy ? this.props.tcStrategy.totalTests : 0 },
+                                        { key: 'Test Cases Skipped', restrictEdit: true, field: 'skip', value: this.props.tcStrategy ? this.props.tcStrategy.skipped : 0 },
+                                        { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: this.props.tcStrategy ? this.props.tcStrategy.notApplicable : 0 },
 
+                                        { key: 'Setups Used', restrictEdit: true, field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.length : 0 },
+                                        { key: 'Engineers', field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount : 0 },
+                                        { key: 'QA Start Date', field: 'QAStartDate', value: this.props.selectedRelease.QAStartDate, type: 'date' },
+                                        { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: this.props.selectedRelease.TargetedCodeFreezeDate, type: 'date' },
+                                        { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: this.props.selectedRelease.UpgradeMetrics ? this.props.selectedRelease.UpgradeMetrics.length : '' },
+
+                                    ].map((item, index) => {
+                                        return (
+                                            <tr>
+                                                <React.Fragment>
+
+                                                    <td className='rp-app-table-key'>{item.key}</td>
+                                                    <td>
+                                                        {item.value}
+                                                        {
+                                                            item.field === 'QARateOfProgress' && <span>%</span>
+                                                        }
+                                                        {
+                                                            item.field === 'QARateOfProgress' &&
+                                                            <div>
+                                                                <div className="progress-group">
+                                                                    <div className="progress-group-bars">
+                                                                        <Progress className="progress-xs" color="warning" value={this.props.selectedRelease[item.field]} />
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+
+                                                    </td>
+                                                </React.Fragment>
+
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </Table>
+                    </Col>
+                    {
                         data.map((each, i) =>
                             <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
                                 <div className='rp-app-table-header'>
@@ -141,8 +172,22 @@ class ReleaseQAStrategy extends Component {
 
                                                             <td className='rp-app-table-key'>{item.key}</td>
 
-                                                            <td>{item.value}</td>
+                                                            <td>{item.value}
+                                                                {
+                                                                    item.field === 'QARateOfProgress' && <span>%</span>
+                                                                }
+                                                                {
+                                                                    item.field === 'QARateOfProgress' &&
+                                                                    <div>
+                                                                        <div className="progress-group">
+                                                                            <div className="progress-group-bars">
+                                                                                <Progress className="progress-xs" color="warning" value={this.props.selectedRelease[item.field]} />
 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </td>
                                                         </React.Fragment>
 
                                                     </tr>

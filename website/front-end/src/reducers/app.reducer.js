@@ -9,11 +9,13 @@ import { combineReducers } from 'redux';
 import navigation from '../_nav';
 import {
     UPDATE_NAV,
-    REMOVE_FROM_NAV
+    REMOVE_FROM_NAV,
+    RELEASE_STATUS_PAGE
 } from '../actions';
 
 const initialState = {
-    navigation: navigation
+    navigation: navigation,
+    statusPage: null
 };
 
 
@@ -53,8 +55,18 @@ function navs(state = initialState.navigation, action) {
             return state;
     }
 }
+function statusPage(state = initialState.statusPage, action) {
+    switch (action.type) {
+        case RELEASE_STATUS_PAGE:
+            return { ...action.payload };
+
+        default:
+            return state;
+    }
+}
 
 export default combineReducers({
-    navs
+    navs,
+    statusPage
 });
 

@@ -10,7 +10,10 @@ import {
 import { connect } from 'react-redux';
 import AppTable from '../../../components/AppTable/AppTable';
 import { getCurrentRelease } from '../../../reducers/release.reducer';
-import { getTCStrategyForUIDomains, getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst } from '../../../reducers/release.reducer';
+import {
+    getTCStrategyForUIDomains, getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst,
+    getTCStrategyForUISubDomainsDistribution, getTCStrategyForUIDomainsDistribution
+} from '../../../reducers/release.reducer';
 import { TABLE_OPTIONS } from '../../../constants';
 import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { AgGridReact } from 'ag-grid-react';
@@ -34,6 +37,7 @@ class ReleaseTestMetrics extends Component {
             addTC: {},
             open: false,
             width: window.screen.availWidth > 1700 ? 500 : 380,
+            doughnutsDist: getTCStrategyForUIDomainsDistribution(this.props.selectedRelease),
             doughnuts: getTCStrategyForUIDomains(this.props.selectedRelease),
             qaStrategy: {},
             domainSelected: false,
@@ -93,10 +97,18 @@ class ReleaseTestMetrics extends Component {
         console.log('clicked node');
         console.log(node);
         if (alldomains.includes(node.data.name)) {
-            this.setState({ doughnuts: getTCStrategyForUISubDomains(this.props.selectedRelease, node.data.name), domainSelected: false })
+            this.setState({
+                doughnuts: getTCStrategyForUISubDomains(this.props.selectedRelease, node.data.name),
+                doughnutsDist: getTCStrategyForUISubDomainsDistribution(this.props.selectedRelease, node.data.name),
+                domainSelected: false
+            })
         }
         if (node.data.name === 'domains') {
-            this.setState({ doughnuts: getTCStrategyForUIDomains(this.props.selectedRelease), domainSelected: false })
+            this.setState({
+                doughnuts: getTCStrategyForUIDomains(this.props.selectedRelease),
+                doughnutsDist: getTCStrategyForUIDomainsDistribution(this.props.selectedRelease),
+                domainSelected: false
+            })
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
@@ -116,7 +128,7 @@ class ReleaseTestMetrics extends Component {
                 <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
                         <div className='rp-app-table-header'>
-                            <span className='rp-app-table-title'>Test Case Distribution (Domain Wise)</span>
+                            <span className='rp-app-table-title'>Test Case Distribution </span>
                         </div>
                         <Row>
 
@@ -136,21 +148,42 @@ class ReleaseTestMetrics extends Component {
                             <Col xs="11" sm="11" md="11" lg="8">
                                 <Row style={{ marginLeft: '0.5rem' }}>
                                     {
+                                        this.state.doughnutsDist &&
+                                        this.state.doughnutsDist.map((item, index) => {
+
+                                            return (
+                                                <Col>
+                                                    <div className="chart-wrapper" style={{ minHeight: '400px' }}>
+                                                        {/* <Doughnut data={item.data} /> */}
+                                                        <Bar data={item.data} options={options} />
+                                                    </div>
+                                                    <div className='rp-tc-dougnut-text'>
+                                                        {item && item.title}
+                                                    </div>
+                                                </Col>
+                                            )
+
+
+                                        })
+                                    }
+                                </Row>
+                                <Row style={{ marginLeft: '0.5rem' }}>
+                                    {
                                         this.state.doughnuts &&
                                         this.state.doughnuts.map((item, index) => {
-                                            if (index < 4) {
-                                                return (
-                                                    <Col>
-                                                        <div className="chart-wrapper" style={{ minHeight: '400px' }}>
-                                                            {/* <Doughnut data={item.data} /> */}
-                                                            <Bar data={item.data} options={options} />
-                                                        </div>
-                                                        <div className='rp-tc-dougnut-text'>
-                                                            {item && item.title}
-                                                        </div>
-                                                    </Col>
-                                                )
-                                            }
+
+                                            return (
+                                                <Col>
+                                                    <div className="chart-wrapper" style={{ minHeight: '400px' }}>
+                                                        {/* <Doughnut data={item.data} /> */}
+                                                        <Bar data={item.data} options={options} />
+                                                    </div>
+                                                    <div className='rp-tc-dougnut-text'>
+                                                        {item && item.title}
+                                                    </div>
+                                                </Col>
+                                            )
+
 
                                         })
                                     }
@@ -178,6 +211,7 @@ class ReleaseTestMetrics extends Component {
                     </Col>
                 </Row>
                 {
+                    this.props.currentUser && this.props.currentUser.isAdmin &&
                     this.state.domainSelected &&
                     <div>
                         <div>

@@ -595,6 +595,221 @@ export const getDomainStatus = (state, id) => {
 //       },
 //     ],
 //   };
+
+export const getTCStrategyForUISubDomainsDistribution = (release, domain) => {
+    if (!release) {
+        return;
+    }
+    if (!release.TcAggregate) {
+        return;
+    }
+    let doughnuts = [{ data: { labels: [], datasets: [] }, title: domain + ' (as per Sub-Domains)' }];
+    let labels = [];
+    let datasets = [
+        {
+            label: 'Total',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        },
+        // {
+        //     label: 'Manual',
+        //     data: [],
+        //     backgroundColor: [],
+        //     hoverBackgroundColor: []
+        // },
+        // {
+        //     label: 'Not Tested',
+        //     data: [],
+        //     backgroundColor: [],
+        //     hoverBackgroundColor: []
+        // }
+    ];
+    for (let i = 0; i < datasets.length; i++) {
+        Object.keys(release.TcAggregate.domain).forEach((item, index) => {
+            if (domain === release.TcAggregate.domain[item].tag) {
+                datasets[i].backgroundColor.push(colors[index]);
+                datasets[i].hoverBackgroundColor.push(colors[index]);
+            }
+        })
+    }
+    let allTotal = 0;
+    Object.keys(release.TcAggregate.domain).forEach((item, index) => {
+        if (domain === release.TcAggregate.domain[item].tag) {
+            let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
+            let manual = release.TcAggregate.domain[item].Tested.manual.Pass + release.TcAggregate.domain[item].Tested.manual.Fail + release.TcAggregate.domain[item].Tested.manual.Skip;
+            let nottested = release.TcAggregate.domain[item].NotTested
+            let total = auto + manual + nottested;
+            labels.push(item + ' (' + total + ')');
+            datasets[0].data.push(total);
+            allTotal += total;
+            // datasets[1].data.push(manual);
+            // datasets[2].data.push(nottested);
+        }
+    });
+    datasets[0].label = 'Total (' + allTotal + ')';
+    doughnuts[0].data.labels = labels;
+    doughnuts[0].data.datasets = datasets;
+    return doughnuts;
+}
+export const getTCStrategyForUIDomainsDistribution = (release) => {
+    if (!release) {
+        return;
+    }
+    if (!release.TcAggregate) {
+        return;
+    }
+    let doughnuts = [];
+    let storageAuto = release.TcAggregate.uidomain['Storage'].Tested.auto.Pass + release.TcAggregate.uidomain['Storage'].Tested.auto.Fail + release.TcAggregate.uidomain['Storage'].Tested.auto.Skip;
+    let storageManual = release.TcAggregate.uidomain['Storage'].Tested.manual.Pass + release.TcAggregate.uidomain['Storage'].Tested.manual.Fail + release.TcAggregate.uidomain['Storage'].Tested.manual.Skip;
+    let storageNotTested = release.TcAggregate.uidomain['Storage'].NotTested;
+
+    let networkAuto = release.TcAggregate.uidomain['Network'].Tested.auto.Pass + release.TcAggregate.uidomain['Network'].Tested.auto.Fail + release.TcAggregate.uidomain['Network'].Tested.auto.Skip;
+    let networkManual = release.TcAggregate.uidomain['Network'].Tested.manual.Pass + release.TcAggregate.uidomain['Network'].Tested.manual.Fail + release.TcAggregate.uidomain['Network'].Tested.manual.Skip;
+    let networkNotTested = release.TcAggregate.uidomain['Network'].NotTested;
+
+
+    let managementAuto = release.TcAggregate.uidomain['Management'].Tested.auto.Pass + release.TcAggregate.uidomain['Management'].Tested.auto.Fail + release.TcAggregate.uidomain['Management'].Tested.auto.Skip;
+    let managementManual = release.TcAggregate.uidomain['Management'].Tested.manual.Pass + release.TcAggregate.uidomain['Management'].Tested.manual.Fail + release.TcAggregate.uidomain['Management'].Tested.manual.Skip;
+    let managementNotTested = release.TcAggregate.uidomain['Management'].NotTested;
+
+    let othersAuto = release.TcAggregate.uidomain['Others'].Tested.auto.Pass + release.TcAggregate.uidomain['Others'].Tested.auto.Fail + release.TcAggregate.uidomain['Others'].Tested.auto.Skip;
+    let othersManual = release.TcAggregate.uidomain['Others'].Tested.manual.Pass + release.TcAggregate.uidomain['Others'].Tested.manual.Fail + release.TcAggregate.uidomain['Others'].Tested.manual.Skip;
+    let othersNotTested = release.TcAggregate.uidomain['Others'].NotTested;
+
+    let each = [
+        {
+            auto: storageAuto, manual: storageManual, NotTested: storageNotTested,
+            total: storageAuto + storageManual + storageNotTested
+        },
+        {
+            auto: networkAuto, manual: networkManual, NotTested: networkNotTested,
+            total: networkAuto + networkManual + networkNotTested
+        },
+        {
+            auto: managementAuto, manual: managementManual, NotTested: managementNotTested,
+            total: managementAuto + managementManual + managementNotTested
+        },
+        {
+            auto: othersAuto, manual: othersManual, NotTested: othersNotTested,
+            total: othersAuto + othersManual + othersNotTested
+        },
+    ]
+
+    // alldomains.forEach((item, index) => {
+    doughnuts.push({
+        data: {
+            labels: [
+                // 'Not Tested (' + each[index].NotTested + ')',
+                // 'Auto (' + each[index].auto + ')',
+                // 'Manual (' + each[index].manual + ')',
+                'Storage (' + each[0].total + ')',
+                'Network (' + each[1].total + ')',
+                'Management (' + each[2].total + ')',
+                'Others (' + each[3].total + ')',
+            ],
+            datasets: [
+                {
+                    label: 'Total (' + (each[0].total + each[1].total + each[2].total + each[3].total) + ')',
+                    data: [
+                        each[0].total,
+                        each[1].total,
+                        each[2].total,
+                        each[3].total
+                        // each[index].NotTested,
+                        // each[index].auto,
+                        // each[index].manual,
+                    ],
+                    backgroundColor: [
+                        // '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#FF6384',
+                        '#B5801D',
+                        // '#FFCE56',
+                        // '#B5801D',
+                    ],
+                    hoverBackgroundColor: [
+                        // '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#FF6384',
+                        '#B5801D',
+                        // '#FFCE56',
+                        // '#B5801D',
+                    ],
+                },
+                // {
+                //     label: 'Manual',
+                //     data: [
+                //         each[0].manual,
+                //         each[1].manual,
+                //         each[2].manual,
+                //         each[3].manual
+                //         // each[index].NotTested,
+                //         // each[index].auto,
+                //         // each[index].manual,
+                //     ],
+                //     backgroundColor: [
+                //         '#FFCE56',
+                //         '#FFCE56',
+                //         '#FFCE56',
+                //         '#FFCE56',
+                //         // '#910727',
+                //         // '#F1E956',
+                //         // '#821F49',
+                //         // '#B5801D',
+                //     ],
+                //     hoverBackgroundColor: [
+                //         '#FFCE56',
+                //         '#FFCE56',
+                //         '#FFCE56',
+                //         '#FFCE56',
+                //         // '#910727',
+                //         // '#F1E956',
+                //         // '#821F49',
+                //         // '#B5801D',
+                //     ],
+                // },
+                // {
+                //     label: 'Not Tested',
+                //     data: [
+                //         each[0].NotTested,
+                //         each[1].NotTested,
+                //         each[2].NotTested,
+                //         each[3].NotTested
+                //         // each[index].NotTested,
+                //         // each[index].auto,
+                //         // each[index].manual,
+                //     ],
+                //     backgroundColor: [
+                //         '#FF6384',
+                //         '#FF6384',
+                //         '#FF6384',
+                //         '#FF6384',
+                //         // '#910727',
+                //         // '#F1E956',
+                //         // '#821F49',
+                //         // '#B5801D',
+                //     ],
+                //     hoverBackgroundColor: [
+                //         '#FF6384',
+                //         '#FF6384',
+                //         '#FF6384',
+                //         '#FF6384',
+                //         // '#910727',
+                //         // '#F1E956',
+                //         // '#821F49',
+                //         // '#B5801D',
+                //     ],
+                // },
+            ],
+        }, title: 'as per Domains'
+    })
+
+    // })
+    return doughnuts;
+}
 export const getTCStrategyForUISubDomains = (release, domain) => {
     if (!release) {
         return;
@@ -602,7 +817,7 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
     if (!release.TcAggregate) {
         return;
     }
-    let doughnuts = [{ data: { labels: [], datasets: [] }, title: domain }];
+    let doughnuts = [{ data: { labels: [], datasets: [] }, title: domain + ' (as per Work)' }];
     let labels = [];
     let datasets = [
         {
@@ -632,7 +847,9 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
             }
         })
     }
-
+    let autoTotal = 0;
+    let manualTotal = 0;
+    let notTestedTotal = 0;
     Object.keys(release.TcAggregate.domain).forEach((item, index) => {
         if (domain === release.TcAggregate.domain[item].tag) {
             let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
@@ -641,8 +858,11 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
             let total = auto + manual + nottested;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(auto);
+            autoTotal += auto;
             datasets[1].data.push(manual);
+            manualTotal += manual;
             datasets[2].data.push(nottested);
+            notTestedTotal += nottested;
 
             // datasets[0].backgroundColor.push(colors[index]);
             // datasets[1].backgroundColor.push(colors[index]);
@@ -680,6 +900,9 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
             // })
         }
     });
+    datasets[0].label = 'Auto (' + autoTotal + ')';
+    datasets[1].label = 'Manual (' + manualTotal + ')'
+    datasets[2].label = 'Not Tested (' + notTestedTotal + ')'
     doughnuts[0].data.labels = labels;
     doughnuts[0].data.datasets = datasets;
 
@@ -754,7 +977,7 @@ export const getTCStrategyForUIDomains = (release) => {
             ],
             datasets: [
                 {
-                    label: 'Auto',
+                    label: 'Auto (' + (each[0].auto + each[1].auto + each[2].auto + each[3].auto) + ')',
                     data: [
                         each[0].auto,
                         each[1].auto,
@@ -784,7 +1007,7 @@ export const getTCStrategyForUIDomains = (release) => {
                     ],
                 },
                 {
-                    label: 'Manual',
+                    label: 'Manual (' + (each[0].manual + each[1].manual + each[2].manual + each[3].manual) + ')',
                     data: [
                         each[0].manual,
                         each[1].manual,
@@ -816,7 +1039,7 @@ export const getTCStrategyForUIDomains = (release) => {
                     ],
                 },
                 {
-                    label: 'Not Tested',
+                    label: 'Not Tested (' + (each[0].NotTested + each[1].NotTested + each[2].NotTested + each[3].NotTested) + ')',
                     data: [
                         each[0].NotTested,
                         each[1].NotTested,
@@ -848,7 +1071,7 @@ export const getTCStrategyForUIDomains = (release) => {
                     ],
                 },
             ],
-        }, title: 'Domains'
+        }, title: 'as per Work'
     })
     // })
     return doughnuts;

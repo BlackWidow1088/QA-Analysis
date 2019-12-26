@@ -14,7 +14,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter, Table, Collapse, Progress, Badge
 } from 'reactstrap';
 import { connect } from 'react-redux';
-import { saveReleaseBasicInfo, saveFeatures, saveBugs, saveSingleFeature } from '../../../actions';
+import { saveReleaseBasicInfo, saveFeatures, saveBugs, saveSingleFeature, statusPage } from '../../../actions';
 import { getCurrentRelease } from '../../../reducers/release.reducer';
 import { getTCForStatus, getTCForStrategy } from '../../../reducers/release.reducer';
 import BasicReleaseInfo from '../components/BasicReleaseInfo';
@@ -451,7 +451,12 @@ class ReleaseSummary extends Component {
                                         {
                                             Object.keys(statusScenarios).map(item =>
 
-                                                <Badge className='rp-open-status-badge' style={{ marginTop: '0.5rem' }}>
+                                                <Badge
+                                                    onClick={() => {
+                                                        this.props.statusPage({ featureOpen: true, bugOpen: false, buildOpen: false, graphsOpen: false });
+                                                        this.props.history.push('/release/status');
+                                                    }}
+                                                    className='rp-open-status-badge' style={{ marginTop: '0.5rem' }}>
                                                     <span>{item} : </span>
                                                     <span>{statusScenarios[item].total}</span>
                                                 </Badge>
@@ -492,12 +497,16 @@ class ReleaseSummary extends Component {
                             </Table>
                         </Collapse>
 
+                        <div onClick={() => {
+                            this.props.statusPage({ featureOpen: false, buildOpen: false, bugOpen: true, graphsOpen: false });
+                            this.props.history.push('/release/status');
+                        }}>
 
-                        <Table scroll responsive style={{ overflow: 'scroll', }}>
-                            <tbody>
-                                <tr style={{ cursor: 'pointer' }} onClick={() => this.setState({ bugOpen: !this.state.bugOpen })}>
-                                    <td className='rp-app-table-key'>
-                                        {/* {
+                            <Table scroll responsive style={{ overflow: 'scroll', }}>
+                                <tbody>
+                                    <tr style={{ cursor: 'pointer' }} onClick={() => this.setState({ bugOpen: !this.state.bugOpen })}>
+                                        <td className='rp-app-table-key'>
+                                            {/* {
                                             !this.state.bugOpen &&
                                             <i className="fa fa-angle-down rp-rs-down-arrow"></i>
                                         }
@@ -505,24 +514,25 @@ class ReleaseSummary extends Component {
                                             this.state.bugOpen &&
                                             <i className="fa fa-angle-up rp-rs-down-arrow"></i>
                                         } */}
-                                        Bug Status
+                                            Bug Status
                                     </td>
-                                    <td>
-                                        {
-                                            this.props.bug && this.props.bug.bugCount && Object.keys(this.props.bug.bugCount.all).map((item, index) =>
+                                        <td>
+                                            {
+                                                this.props.bug && this.props.bug.bugCount && Object.keys(this.props.bug.bugCount.all).map((item, index) =>
 
-                                                <Badge className={`rp-bug-${item}-status-badge`}>
-                                                    <span>{item} : </span>
-                                                    <span>{this.props.bug.bugCount.all[item]}</span>
-                                                </Badge>
+                                                    <Badge className={`rp-bug-${item}-status-badge`}>
+                                                        <span>{item} : </span>
+                                                        <span>{this.props.bug.bugCount.all[item]}</span>
+                                                    </Badge>
 
-                                            )
-                                        }
+                                                )
+                                            }
 
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        </div>
                         {/* <Collapse isOpen={this.state.featureOpen}>
                             <Table scroll responsive style={{ overflow: 'scroll', }}>
                                 <thead>
@@ -847,4 +857,4 @@ const mapStateToProps = (state, ownProps) => ({
 )
 
 
-export default connect(mapStateToProps, { saveReleaseBasicInfo, saveFeatures, saveBugs, saveSingleFeature })(ReleaseSummary);
+export default connect(mapStateToProps, { saveReleaseBasicInfo, statusPage, saveFeatures, saveBugs, saveSingleFeature })(ReleaseSummary);

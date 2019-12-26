@@ -267,3 +267,12 @@ th {
   color: #3a4248 !important;
   background: white;
 }
+
+.table th,
+.table td {
+  font-size: 16px;
+  padding: 0.4rem;
+  vertical-align: top;
+  border-top: 1px solid #c8ced3;
+  width: 50%;
+}
