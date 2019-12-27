@@ -244,19 +244,25 @@ export const getTCForStatus = (state, id) => {
                     release.TcAggregate.all.NotTested
                 ],
                 backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#B5801D',
+                    '#e55353',
+                    '#2eb85c',
+                    '#ffc107',
+                    '#39f',
                 ],
                 hoverBackgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#B5801D',
+                    '#e55353',
+                    '#2eb85c',
+                    '#ffc107',
+                    '#39f',
                 ],
             }],
     };
+    const options = {
+        legend: {
+          position: 'right',
+          display: true,
+        },
+      }
     let total = (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) +
         (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) +
         (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) +
@@ -265,7 +271,8 @@ export const getTCForStatus = (state, id) => {
     console.log(data);
     return {
         data,
-        total
+        total,
+        options
     }
 }
 

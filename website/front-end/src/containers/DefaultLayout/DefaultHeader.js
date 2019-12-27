@@ -3,9 +3,11 @@ import { NavLink, Link, withRouter } from 'react-router-dom';
 import { Row, Col, Badge, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { AppAsideToggler, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../assets/img/brand/diamanti_full.png'
+import logo from '../../assets/img/brand/diamanti.png'
 import sygnet from '../../assets/img/brand/diamanti_small.jpg'
+import userIcon from '../../assets/img/ico-user-circle.svg'
 import './DefaultContainer.scss';
+
 const propTypes = {
   children: PropTypes.node,
 };
@@ -37,41 +39,25 @@ class DefaultHeader extends Component {
           <img src={logo} className="rp-dc-logo" alt="logo" />
         </Col> */}
 
-
-
-        <AppSidebarToggler className="d-lg-none" display="md" mobile />
+        <AppSidebarToggler  display="md" mobile />
         <AppNavbarBrand
-          full={{ src: logo, width: 89, height: 25, alt: 'Diamanti Logo' }}
+          full={{ src: logo, width: 150, height: 45, alt: 'Diamanti Logo' }}
           minimized={{ src: sygnet, width: 30, height: 30, alt: 'Diamanti Logo' }}
         />
-        {/* <AppSidebarToggler className="d-md-down-none" display="lg" /> */}
-        {/* <Col xs="8" md="4" lg="2">
-          <Input placeholder='Select Release...' className="rp-dc-select-release" value={this.props.selectedReleaseNumber} onChange={(e) => this.props.onReleaseChange(e.target.value)} type="select" name="selectRelease" id="selectRelease">
-            <option value="">Select Release ...</option>
-            {
-              this.props.releases.map(release => <option value={release}>{release}</option>)
-            }
-          </Input>
-        </Col>
-        {
-          this.props.user &&
-          <Col xs="4" md="4" lg="6">
-            <img src={'../../assets/img/avatars/6.jpg'} className="img-avatar rp-dc-avatar" alt={this.props.user.email} />
-          </Col>
-        } */}
-        <Nav className="d-md-down-none" navbar>
+        <Nav className="d-md-down-none"  navbar>
           <UncontrolledDropdown nav direction="down">
             <DropdownToggle nav>
-              <span style={{ fontWeight: 600, marginRight: '1rem' }}>Select Release</span>
-              {/* <img src={'../../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" /> */}
+              <span style={{ fontWeight: 600, marginRight: '1rem' }}> Release : </span>
               {this.props.selectedReleaseNumber ? this.props.selectedReleaseNumber : 'Release...'}
+              <i class="fa fa-caret-down" style={{ paddingLeft:'10px' }} aria-hidden="true"></i>
+
             </DropdownToggle>
             <DropdownMenu>
               {
                 this.props.releases.map(release => <DropdownItem onClick={e => {
                   this.props.history.push('/release/summary')
                   this.props.onReleaseChange(release);
-                }} ><i className="fa fa-file"></i> {release}</DropdownItem>
+                }} ><i className="fa fa-file" ></i> {release}</DropdownItem>
                 )
               }
             </DropdownMenu>
@@ -99,7 +85,7 @@ class DefaultHeader extends Component {
 
           <UncontrolledDropdown nav direction="down">
             <DropdownToggle nav>
-              <img src={'../../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+              <img src={userIcon} className="img-avatar" alt="admin@bootstrapmaster.com" />
             </DropdownToggle>
             <DropdownMenu right>
               {/* <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem> */}
