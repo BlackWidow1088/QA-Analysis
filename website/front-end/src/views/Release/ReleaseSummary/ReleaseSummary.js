@@ -140,8 +140,8 @@ class ReleaseSummary extends Component {
                     { position: 'absolute', top: '30%', left: '47%', textAlign: 'center', fontSize: '20px', fontWeight: 600, color: '#00742b' } :
                     { position: 'absolute', top: '30%', left: '46%', textAlign: 'center', fontSize: '16px', fontWeight: 600, color: '#00742b' },
                 tcSummaryTitleStyle: window.screen.availWidth > 1400 ?
-                    { position: 'absolute', top: '38%', left: '47%', textAlign: 'center', fontSize: '20px', fontWeight: 600, color: '#00742b' } :
-                    { position: 'absolute', top: '40%', left: '46%', textAlign: 'center', fontSize: '16px', fontWeight: 600, color: '#00742b' },
+                    { position: 'absolute', top: '22%', left: '35%', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#003168' } :
+                    { position: 'absolute', top: '22%', left: '28%', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#003168' } ,
             },
             showFeatures: false
         }
@@ -772,14 +772,15 @@ class ReleaseSummary extends Component {
                             
                             <Link to={'/release/qastatus'}>
                                 <div className="chart-wrapper" style={{textAlign:"center"}}>
-                                    {/* <div style={this.state.screen.tcSummaryTitleStyle}>
-                                        <div>Total</div>
-                                        <div>{this.props.tcSummary && this.props.tcSummary.total}</div>
-                                    </div> */}
-
+                                    
 
 
                                     <div class='row' style={{ width:'460px', padding : '10px', margin : 'auto'}}>
+                                    <div style={this.state.screen.tcSummaryTitleStyle}>
+                                        <div>Total</div>
+                                        <div>{this.props.tcSummary && this.props.tcSummary.total}</div>
+                                    </div>
+
                                    <Doughnut data={this.props.tcSummary && this.props.tcSummary.data}   options={this.props.tcSummary && this.props.tcSummary.options} style={{textAlign:'center'}}/>
 
 

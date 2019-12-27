@@ -261,6 +261,10 @@ export const getTCForStatus = (state, id) => {
         legend: {
           position: 'right',
           display: true,
+          labels: {
+            fontColor: '#003168',
+            fontFamily : 'Open Sans, sans-serif',
+        }
         },
       }
     let total = (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) +
