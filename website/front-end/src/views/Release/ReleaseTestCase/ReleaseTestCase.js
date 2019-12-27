@@ -111,6 +111,7 @@ class ReleaseTestCase extends Component {
                         axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcstatus/domain/' + node.data.name)
                             .then(res => {
                                 this.props.saveTestCase({ id: this.props.selectedRelease.ReleaseNumber, data: res.data })
+
                                 this.setState({ domainSelected: node.data.name, doughnuts: getEachTCStatusScenario({ data: res.data, domain: node.data.name, all: all.data }) })
                             }, error => {
 

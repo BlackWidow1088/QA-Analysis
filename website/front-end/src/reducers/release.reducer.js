@@ -588,21 +588,6 @@ export const getDomainStatus = (state, id) => {
 
 }
 
-// const bar = {
-//     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-//     datasets: [
-//       {
-//         label: 'My First dataset',
-//         backgroundColor: 'rgba(255,99,132,0.2)',
-//         borderColor: 'rgba(255,99,132,1)',
-//         borderWidth: 1,
-//         hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-//         hoverBorderColor: 'rgba(255,99,132,1)',
-//         data: [65, 59, 80, 81, 56, 55, 40],
-//       },
-//     ],
-//   };
-
 export const getTCStrategyForUISubDomainsDistribution = (release, domain) => {
     if (!release) {
         return;
@@ -870,41 +855,6 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
             manualTotal += manual;
             datasets[2].data.push(nottested);
             notTestedTotal += nottested;
-
-            // datasets[0].backgroundColor.push(colors[index]);
-            // datasets[1].backgroundColor.push(colors[index]);
-            // datasets[2].backgroundColor.push(colors[index]);
-
-
-            // doughnuts.push({
-            //     data: {
-            //         labels: [
-            //             'Not Tested (' + nottested + ')',
-            //             'Auto Tested (' + auto + ')',
-            //             'Manual Tested (' + manual + ')',
-            //         ],
-            //         datasets: [
-            //             {
-            //                 data: [
-            //                     nottested,
-            //                     auto,
-            //                     manual
-            //                 ],
-            //                 backgroundColor: [
-            //                     '#FF6384',
-            //                     '#36A2EB',
-            //                     '#FFCE56',
-            //                     // '#B5801D',
-            //                 ],
-            //                 hoverBackgroundColor: [
-            //                     '#FF6384',
-            //                     '#36A2EB',
-            //                     '#FFCE56',
-            //                     // '#B5801D',
-            //                 ],
-            //             }],
-            //     }, title: item
-            // })
         }
     });
     datasets[0].label = 'Auto (' + autoTotal + ')';
@@ -912,17 +862,68 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
     datasets[2].label = 'Not Tested (' + notTestedTotal + ')'
     doughnuts[0].data.labels = labels;
     doughnuts[0].data.datasets = datasets;
-
-    // if (doughnuts.length) {
-    //     doughnuts.sort(function (a, b) {
-    //         if (b.data.datasets[0].data[0] !== a.data.datasets[0].data[0]) return b.data.datasets[0].data[0] - a.data.datasets[0].data[0];
-    //         if (b.data.datasets[0].data[1] !== a.data.datasets[0].data[1]) return b.data.datasets[0].data[1] - a.data.datasets[0].data[1];
-    //         if (b.data.datasets[0].data[2] !== a.data.datasets[0].data[2]) return b.data.datasets[0].data[2] - a.data.datasets[0].data[2];
-    //         if (b.data.datasets[0].data[3] !== a.data.datasets[0].data[3]) return b.data.datasets[0].data[3] - a.data.datasets[0].data[3];
-
-    //     });
-    // }
-
+    return doughnuts;
+}
+export const getTCStrategyForUISubDomainsScenario = (release, domain, scenario, all) => {
+    if (!release) {
+        return;
+    }
+    if (!release.TcAggregate) {
+        return;
+    }
+    let doughnuts = [{ data: { labels: [], datasets: [] }, title: domain + ' (as per Work)' }];
+    let labels = [];
+    let datasets = [
+        {
+            label: 'Auto',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        },
+        {
+            label: 'Manual',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        },
+        {
+            label: 'Not Tested',
+            data: [],
+            backgroundColor: [],
+            hoverBackgroundColor: []
+        }
+    ];
+    for (let i = 0; i < datasets.length; i++) {
+        Object.keys(release.TcAggregate.domain).forEach((item, index) => {
+            if (domain === release.TcAggregate.domain[item].tag && release.TcAggregate.domain[item].Domain === scenario) {
+                datasets[i].backgroundColor.push(colors[i]);
+                datasets[i].hoverBackgroundColor.push(colors[i]);
+            }
+        })
+    }
+    let autoTotal = 0;
+    let manualTotal = 0;
+    let notTestedTotal = 0;
+    Object.keys(release.TcAggregate.domain).forEach((item, index) => {
+        if (domain === release.TcAggregate.domain[item].tag && release.TcAggregate.domain[item].Domain === scenario) {
+            let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
+            let manual = release.TcAggregate.domain[item].Tested.manual.Pass + release.TcAggregate.domain[item].Tested.manual.Fail + release.TcAggregate.domain[item].Tested.manual.Skip;
+            let nottested = release.TcAggregate.domain[item].NotTested
+            let total = auto + manual + nottested;
+            labels.push(item + ' (' + total + ')');
+            datasets[0].data.push(auto);
+            autoTotal += auto;
+            datasets[1].data.push(manual);
+            manualTotal += manual;
+            datasets[2].data.push(nottested);
+            notTestedTotal += nottested;
+        }
+    });
+    datasets[0].label = 'Auto (' + autoTotal + ')';
+    datasets[1].label = 'Manual (' + manualTotal + ')'
+    datasets[2].label = 'Not Tested (' + notTestedTotal + ')'
+    doughnuts[0].data.labels = labels;
+    doughnuts[0].data.datasets = datasets;
     return doughnuts;
 }
 

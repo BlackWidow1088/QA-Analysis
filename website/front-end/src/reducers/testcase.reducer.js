@@ -151,7 +151,7 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
                 hoverBackgroundColor: []
             },
             {
-                label: 'Skip',
+                label: 'Blocked',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
@@ -187,53 +187,119 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
             datasets[1].data.push(skip);
             datasets[2].data.push(fail);
             datasets[3].data.push(nottested);
-            // datasets[0].backgroundColor.push(colors[index]);
-            // datasets[1].backgroundColor.push(colors[index]);
-            // datasets[2].backgroundColor.push(colors[index]);
-
-
-            // doughnuts.push({
-            //     data: {
-            //         labels: [
-            //             'Not Tested (' + nottested + ')',
-            //             'Auto Tested (' + auto + ')',
-            //             'Manual Tested (' + manual + ')',
-            //         ],
-            //         datasets: [
-            //             {
-            //                 data: [
-            //                     nottested,
-            //                     auto,
-            //                     manual
-            //                 ],
-            //                 backgroundColor: [
-            //                     '#FF6384',
-            //                     '#36A2EB',
-            //                     '#FFCE56',
-            //                     // '#B5801D',
-            //                 ],
-            //                 hoverBackgroundColor: [
-            //                     '#FF6384',
-            //                     '#36A2EB',
-            //                     '#FFCE56',
-            //                     // '#B5801D',
-            //                 ],
-            //             }],
-            //     }, title: item
-            // })
         });
         doughnut.data.labels = labels;
         doughnut.data.datasets = datasets;
         doughnuts.push(doughnut);
-        // if (doughnuts.length) {
-        //     doughnuts.sort(function (a, b) {
-        //         if (b.data.datasets[0].data[0] !== a.data.datasets[0].data[0]) return b.data.datasets[0].data[0] - a.data.datasets[0].data[0];
-        //         if (b.data.datasets[0].data[1] !== a.data.datasets[0].data[1]) return b.data.datasets[0].data[1] - a.data.datasets[0].data[1];
-        //         if (b.data.datasets[0].data[2] !== a.data.datasets[0].data[2]) return b.data.datasets[0].data[2] - a.data.datasets[0].data[2];
-        //         if (b.data.datasets[0].data[3] !== a.data.datasets[0].data[3]) return b.data.datasets[0].data[3] - a.data.datasets[0].data[3];
 
-        //     });
-        // }
+    });
+    return doughnuts;
+}
+
+
+
+export const getEachTCStrategyScenario = ({ data, domain, all, release }) => {
+    if (!data) {
+        return;
+    }
+    let doughnuts = [];
+    let cardTypes = {};
+    data.forEach(item => {
+        if (cardTypes[item.CardType]) {
+            cardTypes[item.CardType].push(item);
+        } else {
+            cardTypes[item.CardType] = [item];
+        }
+    });
+    console.log('release')
+    console.log(release)
+    console.log('all type')
+    console.log(all)
+    console.log('status type')
+    console.log(data)
+    Object.keys(cardTypes).forEach(cardType => {
+        let scenarios = {};
+        all.forEach(item => {
+            if (item.CardType.includes(cardType)) {
+                if (scenarios[item.Domain]) {
+                    scenarios[item.Domain].Total += 1;
+                } else {
+                    scenarios[item.Domain] = { auto: 0, manual: 0, Total: 1, NotTested: 0 }
+                }
+            }
+        })
+        cardTypes[cardType].forEach(item => {
+            if (scenarios[item.Domain]) {
+                if (item.TcName && item.TcName.length && item.TcName !== 'TC NOT AUTOMATED') {
+                    scenarios[item.Domain].auto += 1
+                } else {
+                    scenarios[item.Domain].manual += 1
+                }
+            } else {
+                console.log('DATA IS INVALID');
+            }
+        });
+        Object.keys(scenarios).forEach(item => {
+            scenarios[item].NotTested = scenarios[item].Total - (scenarios[item].auto + scenarios[item].manual)
+        })
+        // {
+        //     "id": 8, "TcName": "RbacStaticProvision.PodWithLSAndValidateIOPSWithMultipleQosforLocalNRemoteAuth",
+        //         "Build": "2.3.0-48", "Result": "Pass", "Bugs": "-1",
+        //             "Date": "2019-12-21", "Domain": "StoragePVC", "SubDomain": "PVC_Rbac", "TcID": "PVC_Rbac_S-1.0"
+        // },
+        let doughnut = { data: { labels: [], datasets: [] }, title: cardType };
+        let labels = [];
+        let datasets = [
+            {
+                label: 'Auto',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            },
+            {
+                label: 'Manual',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            },
+            // {
+            //     label: 'Fail',
+            //     data: [],
+            //     backgroundColor: [],
+            //     hoverBackgroundColor: []
+            // },
+            {
+                label: 'Not Tested',
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: []
+            }
+        ];
+        for (let i = 0; i < datasets.length; i++) {
+            Object.keys(scenarios).forEach((item, index) => {
+                datasets[i].backgroundColor.push(colors[i]);
+                datasets[i].hoverBackgroundColor.push(colors[i]);
+            })
+        }
+
+        Object.keys(scenarios).forEach((item, index) => {
+            let pass = scenarios[item].auto;
+            let skip = scenarios[item].manual;
+            // let fail = scenarios[item].Fail;
+            // let nottested = scenarios[item].Total - scenarios[item].Tested;
+            let nottested = scenarios[item].NotTested;
+            let total = scenarios[item].auto + scenarios[item].manual;
+            labels.push(item + ' (' + total + ')');
+            datasets[0].data.push(pass);
+            datasets[1].data.push(skip);
+            datasets[2].data.push(nottested);
+        });
+        doughnut.data.labels = labels;
+        doughnut.data.datasets = datasets;
+        if (datasets[0].backgroundColor.length === 0) {
+            doughnut.hide = true
+        }
+        doughnuts.push(doughnut);
 
     });
     return doughnuts;

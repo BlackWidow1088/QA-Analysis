@@ -299,6 +299,7 @@ class ReleaseSummary extends Component {
                                 }
                             </div>
                         }
+
                         <Table scroll responsive style={{ overflow: 'scroll', }}>
                             <tbody>
 
