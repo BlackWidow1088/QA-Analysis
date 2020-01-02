@@ -3,7 +3,7 @@ import { NavLink, Link, withRouter } from 'react-router-dom';
 import { Row, Col, Badge, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { AppAsideToggler, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../assets/img/brand/diamanti.png'
+import logo from '../../assets/img/brand/diamanti_full.png'
 import sygnet from '../../assets/img/brand/diamanti_small.jpg'
 import userIcon from '../../assets/img/ico-user-circle.svg'
 import './DefaultContainer.scss';
@@ -39,17 +39,17 @@ class DefaultHeader extends Component {
           <img src={logo} className="rp-dc-logo" alt="logo" />
         </Col> */}
 
-        <AppSidebarToggler  display="md" mobile />
+        <AppSidebarToggler display="md" mobile />
         <AppNavbarBrand
           full={{ src: logo, width: 150, height: 45, alt: 'Diamanti Logo' }}
           minimized={{ src: sygnet, width: 30, height: 30, alt: 'Diamanti Logo' }}
         />
-        <Nav className="d-md-down-none"  navbar>
+        <Nav className="d-md-down-none" navbar>
           <UncontrolledDropdown nav direction="down">
             <DropdownToggle nav>
               <span style={{ fontWeight: 600, marginRight: '1rem' }}> Release : </span>
               {this.props.selectedReleaseNumber ? this.props.selectedReleaseNumber : 'Release...'}
-              <i class="fa fa-caret-down" style={{ paddingLeft:'10px' }} aria-hidden="true"></i>
+              <i class="fa fa-caret-down" style={{ paddingLeft: '10px' }} aria-hidden="true"></i>
 
             </DropdownToggle>
             <DropdownMenu>

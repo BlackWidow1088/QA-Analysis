@@ -27,6 +27,7 @@ const options = {
     },
     maintainAspectRatio: false
 }
+const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 class ReleaseStatus extends Component {
     constructor(props) {
         super(props);
@@ -59,8 +60,132 @@ class ReleaseStatus extends Component {
         })
     }
     render() {
+        let featuresCount = 0;
+        let statusScenarios = { Open: { total: 0 }, Resolved: { total: 0 } };
+        if (this.props.feature && this.props.feature.issues) {
+            featuresCount = this.props.feature.issues.length;
+            this.props.feature.issues.forEach(item => {
+                if (statusScenarios[item.fields.status.name]) {
+                    statusScenarios[item.fields.status.name].total += 1;
+                } else {
+                    statusScenarios[item.fields.status.name] = { total: 1 }
+                }
+            })
+        }
         return (
             <div>
+                <Row>
+                    <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
+                        <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ bugOpen: !this.state.bugOpen })}>
+
+                            <div class="row">
+                                <div class='col-md-6'>
+                                    <div class='row'>
+                                        <div class='col-md-3'>
+                                            {
+                                                !this.state.bugOpen &&
+                                                <i className="fa fa-angle-down rp-rs-down-arrow"></i>
+                                            }
+                                            {
+                                                this.state.bugOpen &&
+                                                <i className="fa fa-angle-up rp-rs-down-arrow"></i>
+                                            }
+                                            <span className='col-md-3 rp-app-table-title'>Bugs</span>
+                                        </div>
+                                        {
+                                            this.props.bug && Object.keys(this.props.bug.bugCount.all).map(item =>
+                                                <div class='col-md-2'>
+                                                    <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
+                                                        <small class="text-muted">{item}</small><br></br>
+                                                        <strong class="h5">{this.props.bug.bugCount.all[item]}</strong>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <Collapse isOpen={this.state.bugOpen}>
+                            <Row style={
+                                {
+                                    marginRight: '0',
+                                    marginLeft: '0'
+                                }
+                            }>
+                                <Col xs="12" sm="12" md="12" lg="12">
+                                    {/* <div class='row' style={
+                                        {
+
+                                            borderStyle: 'solid',
+                                            borderWidth: '2px 0px 0px 0px',
+                                            paddingTop: '11px',
+                                            borderTop: '1px solid #c8ced3'
+                                        }
+                                    }>
+                                        <div class='col-md-1 rp-app-table-title' style={{ marginLeft: '1rem' }}>Priority</div>
+                                        {
+                                            this.props.bug && Object.keys(this.props.bug.bugCount.category).map(item =>
+                                                // <Badge className={`rp-priority-${item}-status-badge`}>
+                                                //     <span>{item} : </span>
+                                                //     <span>{this.props.bug.bugCount.category[item].total}</span>
+                                                // </Badge>
+                                                <div class='col-md-1'>
+                                                    <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
+                                                        <small class="text-muted">{item}</small><br></br>
+                                                        <strong class="h5">{this.props.bug.bugCount.category[item].total}</strong>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    </div> */}
+                                    <div style={{ marginLeft: '1rem', marginTop: '1rem', overflowY: 'scroll', maxHeight: '30rem' }}>
+                                        <Table scroll responsive style={{ overflow: 'scroll' }}>
+                                            <thead>
+                                                <tr>
+                                                    <th>Bug</th>
+                                                    <th>Summary</th>
+                                                    <th>Status</th>
+                                                    <th>Priority</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    this.props.bug && this.props.bug.bug && this.props.bug.bug.issues &&
+                                                    this.props.bug.bug.issues.map(item => {
+                                                        console.log('item here')
+                                                        console.log(item);
+                                                        return (
+                                                            <tr style={{ cursor: 'pointer' }}>
+                                                                <td className='rp-app-table-key'>{item.key}</td>
+                                                                <td>{item.fields.summary}</td>
+                                                                {/* <td><Badge className={`rp-bug-${item.fields.status.name}-status-badge`}>{item.fields.status.name}</Badge></td> */}
+                                                                <td> <div className={`c-callout c-callout-${item.fields.status.name.toLowerCase()} rp-new-badge`}>
+                                                                    <strong class="h5">{item.fields.status.name}</strong>
+                                                                </div></td>
+                                                                {/* <td><Badge className={`rp-priority-${item.fields.status.name}-status-badge`}>{item.fields.status.name}</Badge></td> */}
+                                                                <div className={`c-callout c-callout-${item.fields.priority.name.toLowerCase()} rp-new-badge`}>
+                                                                    <strong class="h5">{item.fields.priority.name}</strong>
+                                                                </div>
+                                                            </tr>
+                                                        )
+                                                    })
+                                                }
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Collapse>
+                    </Col>
+                </Row>
+
+
+
+
+
+
+
 
                 <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
@@ -73,7 +198,7 @@ class ReleaseStatus extends Component {
                                 this.state.buildOpen &&
                                 <i className="fa fa-angle-up rp-rs-down-arrow"></i>
                             }
-                            <span className='rp-app-table-title'>Upgrade Metrics and Risks</span>
+                            <span className='col-md-3 rp-app-table-title'>Upgrade Metrics and Risks</span>
                         </div>
                         <Collapse isOpen={this.state.buildOpen}>
                             <Row>
@@ -91,8 +216,8 @@ class ReleaseStatus extends Component {
                                                 {
                                                     this.props.selectedRelease.UpgradeMetrics && this.props.selectedRelease.UpgradeMetrics.map(item =>
                                                         <tr>
-                                                            <td><Badge className='rp-feature-Open-status-badge'>{item}</Badge></td>
-                                                            <td><Badge className='rp-feature-Closed-status-badge'>{this.props.selectedRelease.ReleaseNumber}</Badge></td>
+                                                            <td>{item}</td>
+                                                            <td>{this.props.selectedRelease.ReleaseNumber}</td>
                                                         </tr>
                                                     )
                                                 }
@@ -126,15 +251,41 @@ class ReleaseStatus extends Component {
                 <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
                         <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ featureOpen: !this.state.featureOpen })}>
-                            {
-                                !this.state.featureOpen &&
-                                <i className="fa fa-angle-down rp-rs-down-arrow"></i>
-                            }
-                            {
-                                this.state.featureOpen &&
-                                <i className="fa fa-angle-up rp-rs-down-arrow"></i>
-                            }
-                            <span className='rp-app-table-title'>Features</span>
+                            <div class="row">
+                                <div class='col-md-6'>
+                                    <div class="row">
+                                        <div class='col-md-3'>
+                                            {
+                                                !this.state.featureOpen &&
+                                                <i className="fa fa-angle-down rp-rs-down-arrow"></i>
+                                            }
+                                            {
+                                                this.state.featureOpen &&
+                                                <i className="fa fa-angle-up rp-rs-down-arrow"></i>
+                                            }
+                                            <span className='col-md-3 rp-app-table-title'>Features</span>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div className={`c-callout c-callout-total`} style={{ marginTop: '0', marginBottom: '0' }}>
+                                                <small class="text-muted">Total</small><br></br>
+                                                <strong class="h4">{featuresCount}</strong>
+                                            </div>
+                                        </div>
+                                        {
+                                            Object.keys(statusScenarios).map(item =>
+                                                <div class="col-sm-3">
+                                                    <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
+                                                        <small class="text-muted">{item}</small><br></br>
+                                                        <strong class="h4">{statusScenarios[item].total}</strong>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <Collapse isOpen={this.state.featureOpen}>
 
@@ -157,7 +308,12 @@ class ReleaseStatus extends Component {
                                                             <tr style={{ cursor: 'pointer' }} onClick={() => this.getFeatureDetails(item.self)}>
                                                                 <td className='rp-app-table-key'>{item.key}</td>
                                                                 <td>{item.fields.summary}</td>
-                                                                <td><Badge className='rp-open-status-badge'>{item.fields.status.name}</Badge></td>
+                                                                <td>
+                                                                    {/* <Badge className='rp-open-status-badge'>{item.fields.status.name}</Badge> */}
+                                                                    <div className={`c-callout c-callout-open rp-new-badge`}>
+                                                                        <strong class="h5">{item.fields.status.name}</strong>
+                                                                    </div>
+                                                                </td>
                                                             </tr>
                                                         )
                                                     })
@@ -167,6 +323,11 @@ class ReleaseStatus extends Component {
                                     </div>
                                 </Col>
                                 <Col xs="11" sm="11" md="11" lg="8">
+                                    {
+                                        this.props.singleFeature && !this.props.singleFeature.fields
+                                        && loading()
+
+                                    }
                                     {
                                         this.props.singleFeature && this.props.singleFeature.fields &&
 
@@ -190,8 +351,14 @@ class ReleaseStatus extends Component {
                                                     </tr>
                                                     <tr>
                                                         <td className='rp-app-table-key'>Priority</td>
-                                                        <td className='rp-app-table-key'><Badge className={`rp-priority-${this.props.singleFeature.fields.priority.name}-status-badge`} style={{ marginTop: '0.5rem' }}>
-                                                            {this.props.singleFeature.fields.priority.name}</Badge></td>
+                                                        <td className='rp-app-table-key'>
+                                                            <div className={`c-callout c-callout-${this.props.singleFeature.fields.priority.name.toLowerCase()} rp-new-badge`}>
+                                                                <strong class="h5">{this.props.singleFeature.fields.priority.name}</strong>
+                                                            </div>
+                                                            {/* <Badge className={`rp-priority-${this.props.singleFeature.fields.priority.name}-status-badge`} style={{ marginTop: '0.5rem' }}>
+                                                            {this.props.singleFeature.fields.priority.name}
+                                                            </Badge> */}
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td className='rp-app-table-key'>Progress</td>
@@ -199,7 +366,14 @@ class ReleaseStatus extends Component {
                                                     </tr>
                                                     <tr>
                                                         <td className='rp-app-table-key'>Status</td>
-                                                        <td className='rp-app-table-key'><Badge className={`rp-feature-${this.props.singleFeature.fields.status.name}-status-badge`} style={{ marginTop: '0.5rem' }}>{this.props.singleFeature.fields.status.name}</Badge></td>
+                                                        <td className='rp-app-table-key'>
+                                                            <div className={`c-callout c-callout-${this.props.singleFeature.fields.status.name.toLowerCase()} rp-new-badge`}>
+                                                                <strong class="h5">{this.props.singleFeature.fields.status.name}</strong>
+                                                            </div>
+                                                            {/* <Badge className={`rp-feature-${this.props.singleFeature.fields.status.name}-status-badge`} style={{ marginTop: '0.5rem' }}>
+                                                            {this.props.singleFeature.fields.status.name}
+                                                            </Badge> */}
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </Table>
@@ -213,8 +387,13 @@ class ReleaseStatus extends Component {
                                                                 <tr>
                                                                     <td>{item.key}</td>
                                                                     <td>{item.fields.summary}</td>
-                                                                    <td><Badge className={`rp-feature-${item.fields.status.name}-status-badge`} style={{ marginTop: '0.5rem' }}>
-                                                                        {item.fields.status.name}</Badge></td>
+                                                                    <td>
+                                                                        <div className={`c-callout c-callout-${item.fields.status.name.toLowerCase()} rp-new-badge`}>
+                                                                            <strong class="h5">{item.fields.status.name}</strong>
+                                                                        </div>
+                                                                        {/* <Badge className={`rp-feature-${item.fields.status.name}-status-badge`} style={{ marginTop: '0.5rem' }}>
+                                                                        {item.fields.status.name}</Badge> */}
+                                                                    </td>
                                                                 </tr>
                                                             )
                                                         })
@@ -232,88 +411,7 @@ class ReleaseStatus extends Component {
 
 
 
-                <Row>
-                    <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
-                        <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ bugOpen: !this.state.bugOpen })}>
-                            {
-                                !this.state.bugOpen &&
-                                <i className="fa fa-angle-down rp-rs-down-arrow"></i>
-                            }
-                            {
-                                this.state.bugOpen &&
-                                <i className="fa fa-angle-up rp-rs-down-arrow"></i>
-                            }
-                            <span className='rp-app-table-title'>Bugs</span>
-                        </div>
-                        <Collapse isOpen={this.state.bugOpen}>
-                            <Row>
-                                <Col xs="11" sm="11" md="11" lg="8">
-                                    <div style={{ marginLeft: '1rem', marginTop: '1rem', overflowY: 'scroll', maxHeight: '30rem' }}>
-                                        <Table scroll responsive style={{ overflow: 'scroll' }}>
-                                            <thead>
-                                                <tr>
-                                                    <th>Bug</th>
-                                                    <th>Summary</th>
-                                                    <th>Status</th>
-                                                    <th>Priority</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    this.props.bug && this.props.bug.bug && this.props.bug.bug.issues &&
-                                                    this.props.bug.bug.issues.map(item => {
-                                                        return (
-                                                            <tr style={{ cursor: 'pointer' }}>
-                                                                <td className='rp-app-table-key'>{item.key}</td>
-                                                                <td>{item.fields.summary}</td>
-                                                                <td><Badge className={`rp-bug-${item.fields.status.name}-status-badge`}>{item.fields.status.name}</Badge></td>
-                                                                <td><Badge className={`rp-priority-${item.fields.status.name}-status-badge`}>{item.fields.status.name}</Badge></td>
-                                                            </tr>
-                                                        )
-                                                    })
-                                                }
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </Col>
-                                <Col xs="11" sm="11" md="11" lg="4">
-                                    <Table scroll responsive style={{ overflow: 'scroll' }}>
-                                        <tbody>
-                                            <tr>
-                                                <td className='rp-app-table-key'>All</td>
-                                                <td>
-                                                    {
-                                                        this.props.bug && Object.keys(this.props.bug.bugCount.all).map(item =>
-                                                            <Badge className={`rp-bug-${item}-status-badge`}>
-                                                                <span>{item} : </span>
-                                                                <span>{this.props.bug.bugCount.all[item]}</span>
-                                                            </Badge>
-                                                        )
-                                                    }
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className='rp-app-table-key'>Priority</td>
-                                                <td>
-                                                    {
-                                                        this.props.bug && Object.keys(this.props.bug.bugCount.category).map(item =>
-                                                            <Badge className={`rp-priority-${item}-status-badge`}>
-                                                                <span>{item} : </span>
-                                                                <span>{this.props.bug.bugCount.category[item].total}</span>
-                                                            </Badge>
-                                                        )
-                                                    }
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </Table>
-                                </Col>
-                            </Row>
-                        </Collapse>
-                    </Col>
-                </Row>
-
-                <Row>
+                {/* <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
                         <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ graphsOpen: !this.state.graphsOpen })}>
                             {
@@ -338,7 +436,7 @@ class ReleaseStatus extends Component {
                             </Row>
                         </Collapse>
                     </Col>
-                </Row>
+                </Row> */}
 
             </div >)
     }

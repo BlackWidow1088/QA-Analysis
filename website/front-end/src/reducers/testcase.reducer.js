@@ -115,23 +115,38 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
 
     Object.keys(cardTypes).forEach(cardType => {
         let scenarios = {};
-        all.forEach(item => {
+        data.forEach(item => {
             if (scenarios[item.SubDomain]) {
                 scenarios[item.SubDomain].Total += 1;
             } else {
-                scenarios[item.SubDomain] = { Pass: 0, Fail: 0, Skip: 0, Total: 1, Tested: 0 }
+                scenarios[item.SubDomain] = { Pass: 0, Fail: 0, Skip: 0, Total: 1, Tested: 0, NotTested: 0 }
             }
         })
         cardTypes[cardType].forEach(item => {
             if (scenarios[item.SubDomain]) {
-                if (scenarios[item.SubDomain].Result === 'Pass') {
+                // if (scenarios[item.SubDomain].Result === 'Pass') {
+                //     scenarios[item.SubDomain].Pass += 1
+                // } else if (scenarios[item.SubDomain].Result === 'Fail') {
+                //     scenarios[item.SubDomain].Fail += 1
+                // } else {
+                //     scenarios[item.SubDomain].Skip += 1
+                // }
+                // scenarios[item.SubDomain].Tested += 1;
+                if (item.Result === 'Pass') {
                     scenarios[item.SubDomain].Pass += 1
-                } else if (scenarios[item.SubDomain].Result === 'Fail') {
-                    scenarios[item.SubDomain].Fail += 1
-                } else {
-                    scenarios[item.SubDomain].Skip += 1
                 }
-                scenarios[item.SubDomain].Tested += 1;
+                if (item.Result === 'Fail') {
+                    scenarios[item.SubDomain].Fail += 1
+                }
+                if (item.Result === 'Skip') {
+                    scenarios[item.SubDomain].Skip += 1;
+                }
+                if (item.Result === 'NotApplicable') {
+                    scenarios[item.SubDomain].NotApplicable += 1;
+                }
+                if (item.Result === 'Not Tested') {
+                    scenarios[item.SubDomain].NotTested += 1;
+                }
             } else {
                 console.log('DATA IS INVALID');
             }
@@ -180,7 +195,7 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
             let pass = scenarios[item].Pass;
             let skip = scenarios[item].Skip;
             let fail = scenarios[item].Fail;
-            let nottested = scenarios[item].Total - scenarios[item].Tested;
+            let nottested = scenarios[item].NotTested;
             let total = scenarios[item].Total;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(pass);
@@ -198,7 +213,7 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
 
 
 
-export const getEachTCStrategyScenario = ({ data, domain, all, release }) => {
+export const getEachTCStrategyScenario = ({ data, domain }) => {
     if (!data) {
         return;
     }
@@ -211,37 +226,46 @@ export const getEachTCStrategyScenario = ({ data, domain, all, release }) => {
             cardTypes[item.CardType] = [item];
         }
     });
-    console.log('release')
-    console.log(release)
+
     console.log('all type')
     console.log(all)
     console.log('status type')
     console.log(data)
     Object.keys(cardTypes).forEach(cardType => {
         let scenarios = {};
-        all.forEach(item => {
-            if (item.CardType.includes(cardType)) {
+        data.forEach(item => {
+            if (item.CardType === cardType) {
                 if (scenarios[item.Domain]) {
                     scenarios[item.Domain].Total += 1;
                 } else {
-                    scenarios[item.Domain] = { auto: 0, manual: 0, Total: 1, NotTested: 0 }
+                    scenarios[item.Domain] = { auto: 0, manual: 0, Total: 1, NotTested: 0, Skip: 0 }
                 }
             }
         })
         cardTypes[cardType].forEach(item => {
             if (scenarios[item.Domain]) {
-                if (item.TcName && item.TcName.length && item.TcName !== 'TC NOT AUTOMATED') {
+                if ((item.Result === 'Pass' || item.Result === 'Fail') && item.TcName !== 'TC NOT AUTOMATED') {
                     scenarios[item.Domain].auto += 1
-                } else {
+                }
+                if ((item.Result === 'Pass' || item.Result === 'Fail') && item.TcName === 'TC NOT AUTOMATED') {
                     scenarios[item.Domain].manual += 1
+                }
+                if (item.Result === 'Skip') {
+                    scenarios[item.Domain].Skip += 1;
+                }
+                if (item.Result === 'NotApplicable') {
+                    scenarios[item.Domain].NotApplicable += 1;
+                }
+                if (item.Result === 'Not Tested') {
+                    scenarios[item.Domain].NotTested += 1;
                 }
             } else {
                 console.log('DATA IS INVALID');
             }
         });
-        Object.keys(scenarios).forEach(item => {
-            scenarios[item].NotTested = scenarios[item].Total - (scenarios[item].auto + scenarios[item].manual)
-        })
+        // Object.keys(scenarios).forEach(item => {
+        //     scenarios[item].NotTested = scenarios[item].Total - (scenarios[item].auto + scenarios[item].manual)
+        // })
         // {
         //     "id": 8, "TcName": "RbacStaticProvision.PodWithLSAndValidateIOPSWithMultipleQosforLocalNRemoteAuth",
         //         "Build": "2.3.0-48", "Result": "Pass", "Bugs": "-1",
@@ -269,7 +293,7 @@ export const getEachTCStrategyScenario = ({ data, domain, all, release }) => {
             //     hoverBackgroundColor: []
             // },
             {
-                label: 'Not Tested',
+                label: 'Not Applicable',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
@@ -287,8 +311,8 @@ export const getEachTCStrategyScenario = ({ data, domain, all, release }) => {
             let skip = scenarios[item].manual;
             // let fail = scenarios[item].Fail;
             // let nottested = scenarios[item].Total - scenarios[item].Tested;
-            let nottested = scenarios[item].NotTested;
-            let total = scenarios[item].auto + scenarios[item].manual;
+            let nottested = scenarios[item].NotApplicable;
+            let total = scenarios[item].auto + scenarios[item].manual + scenarios[item].NotApplicable;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(pass);
             datasets[1].data.push(skip);

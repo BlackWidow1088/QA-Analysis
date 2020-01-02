@@ -31,8 +31,9 @@ const options = {
 }
 
 const data = [
-    { date: 'Nov 2019', QARateOfProgress: 40, tcTotal: 2000, tcSkipped: 200, tcNA: 100, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
-    { date: 'Oct 2019', QARateOfProgress: 50, tcTotal: 1000, tcSkipped: 200, tcNA: 100, SetupsUsed: ['autotb5', 'auto8', 'atuo10'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
+    { date: 'Dec 2019', QARateOfProgress: 5, tcTotal: 2100, tcSkipped: 11, tcNA: 0, SetupsUsed: ['autotb1', 'autotb2', 1, 2, 3, 4, 5, 6], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2, 3, 4, 5, 6], startdate: '1-Oct-2019', freezedate: '15-Dec-2019', upgrade: '4/21' },
+    { date: 'Nov 2019', QARateOfProgress: 10, tcTotal: 2000, tcSkipped: 0, tcNA: 0, SetupsUsed: ['autotb1', 'autotb2', 1, 2, 3, 4, 5, 6], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2, 3, 4, 5, 6], startdate: '1-Oct-2019', freezedate: '1-Dec-2019', upgrade: '0/21' },
+    { date: 'Oct 2019', QARateOfProgress: 10, tcTotal: 1850, tcSkipped: 0, tcNA: 0, SetupsUsed: ['autotb5', 'auto8', 'atuo10', 1, 2], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2], startdate: '1-Oct-2019', freezedate: '1-Dec-2019', upgrade: '0/21' },
     // { date: 'Sept 2019', QARateOfProgress: 60, tcTotal: 500, tcSkipped: 50, tcNA: 200, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
 ]
 class ReleaseQAStrategy extends Component {
@@ -90,7 +91,7 @@ class ReleaseQAStrategy extends Component {
         return (
             <div>
                 <Row>
-                    <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
+                    {/* <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
                         <div className='rp-app-table-header'>
                             <span className='rp-app-table-title'>Dec 2019</span>
                         </div>
@@ -142,7 +143,7 @@ class ReleaseQAStrategy extends Component {
                                 }
                             </tbody>
                         </Table>
-                    </Col>
+                    </Col> */}
                     {
                         data.map((each, i) =>
                             <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
@@ -163,7 +164,7 @@ class ReleaseQAStrategy extends Component {
                                                 { key: 'Engineers', field: 'EngineerCount', value: each.Engineer.length },
                                                 { key: 'QA Start Date', field: 'QAStartDate', value: each.startdate },
                                                 { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: each.freezedate },
-                                                { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: each.upgrade.length },
+                                                { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: each.upgrade },
 
                                             ].map((item, index) => {
                                                 return (
@@ -196,7 +197,7 @@ class ReleaseQAStrategy extends Component {
                                         }
                                     </tbody>
                                 </Table>
-                                {
+                                {/* {
                                     !this.state.open[each.date] &&
                                     <div style={{ textAlign: 'center' }}>
                                         <i className="fa fa-angle-down rp-rs-down-arrow" onClick={() => this.setState({ open: { ...this.state.open, [each.date]: !this.state.open[each.date] } })}></i>
@@ -207,7 +208,7 @@ class ReleaseQAStrategy extends Component {
                                     <div style={{ textAlign: 'center' }}>
                                         <i className="fa fa-angle-up rp-rs-down-arrow" onClick={() => this.setState({ open: { ...this.state.open, [each.date]: !this.state.open[each.date] } })}></i>
                                     </div>
-                                }
+                                } */}
                             </Col>
                         )
 

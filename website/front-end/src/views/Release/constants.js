@@ -76,6 +76,48 @@ export const cardChartData2 = {
         },
     ],
 };
+
+export const chartData = {
+    'BOS': {
+        labels: ["4 November 2019", "11 November 2019", "18 November 2019", "25 November 2019", "4 December 2019", "9 December 2019", "17 December 2019", "23 December 2019", "30 December 2019"],
+        datasets: [
+            {
+                label: 'Weekly Progress',
+                backgroundColor: 'transparent',
+                // borderColor: 'rgba(255,255,255,.55)',
+                borderColor: brandInfo,
+                borderWidth: 5,
+                data: [70.5, 74.05, 76.48, 81.79, 90.82, 93.88, 95.68, 98.63, 99.43],
+            },
+        ],
+    },
+    'NYNJ': {
+        labels: ["4 November 2019", "11 November 2019", "18 November 2019", "25 November 2019", "4 December 2019", "9 December 2019", "17 December 2019", "23 December 2019", "30 December 2019"],
+        datasets: [
+            {
+                label: 'Weekly Progress',
+                backgroundColor: 'transparent',
+                // borderColor: 'rgba(255,255,255,.55)',
+                borderColor: brandInfo,
+                borderWidth: 5,
+                data: [72.93, 74.61, 78.25, 82.11, 91.22, 94.42, 95.85, 98.88, 99.66],
+            },
+        ],
+    },
+    'COMMON': {
+        labels: ["4 November 2019", "11 November 2019", "18 November 2019", "25 November 2019", "4 December 2019", "9 December 2019", "17 December 2019", "23 December 2019", "30 December 2019"],
+        datasets: [
+            {
+                label: 'Weekly Progress',
+                backgroundColor: 'transparent',
+                // borderColor: 'rgba(255,255,255,.55)',
+                borderColor: brandInfo,
+                borderWidth: 5,
+                data: [75.65, 79.65, 85.64, 82.88, 88.78, 95.94, 97.50, 97.66, 99.06],
+            },
+        ],
+    },
+}
 export const cardChartDataPurple = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
@@ -87,6 +129,165 @@ export const cardChartDataPurple = {
         },
     ],
 };
+
+export const chartOptions = {
+    'BOS': {
+        tooltips: {
+            enabled: false,
+            custom: CustomTooltips
+        },
+        maintainAspectRatio: false,
+        legend: {
+            display: false,
+            // display: true
+        },
+        scales: {
+            xAxes: [
+                {
+                    gridLines: {},
+                    // gridLines: {
+                    //     color: '#00742b',
+                    //     zeroLineColor: '#00742b',
+                    // },
+                    ticks: {
+                        fontSize: 2,
+                        fontColor: '#00742b',
+                    },
+
+                }],
+            yAxes: [
+                {
+                    gridLines: {},
+                    // gridLines: {
+                    //     color: '#00742b',
+                    //     zeroLineColor: '#00742b',
+                    // },
+                    // display: false,
+                    ticks: {
+                        display: true,
+                        min: Math.min.apply(Math, chartData.BOS.datasets[0].data) - 5,
+                        max: Math.max.apply(Math, chartData.BOS.datasets[0].data) + 5,
+                        fontColor: '#00742b',
+                    },
+                }],
+        },
+        elements: {
+            line: {
+                tension: 0.00001,
+                borderWidth: 1,
+            },
+            point: {
+                radius: 4,
+                hitRadius: 10,
+                hoverRadius: 4,
+            },
+        },
+    },
+    'NYNJ': {
+        tooltips: {
+            enabled: false,
+            custom: CustomTooltips
+        },
+        maintainAspectRatio: false,
+        legend: {
+            display: false,
+            // display: true
+        },
+        scales: {
+            xAxes: [
+                {
+                    gridLines: {},
+                    // gridLines: {
+                    //     color: '#00742b',
+                    //     zeroLineColor: '#00742b',
+                    // },
+                    ticks: {
+                        fontSize: 2,
+                        fontColor: '#00742b',
+                    },
+
+                }],
+            yAxes: [
+                {
+                    gridLines: {},
+                    // gridLines: {
+                    //     color: '#00742b',
+                    //     zeroLineColor: '#00742b',
+                    // },
+                    // display: false,
+                    ticks: {
+                        display: true,
+                        min: Math.min.apply(Math, chartData.NYNJ.datasets[0].data) - 5,
+                        max: Math.max.apply(Math, chartData.NYNJ.datasets[0].data) + 5,
+                        fontColor: '#00742b',
+                    },
+                }],
+        },
+        elements: {
+            line: {
+                tension: 0.00001,
+                borderWidth: 1,
+            },
+            point: {
+                radius: 4,
+                hitRadius: 10,
+                hoverRadius: 4,
+            },
+        },
+    },
+    'COMMON': {
+        tooltips: {
+            enabled: false,
+            custom: CustomTooltips
+        },
+        maintainAspectRatio: false,
+        legend: {
+            display: false,
+            // display: true
+        },
+        scales: {
+            xAxes: [
+                {
+                    gridLines: {},
+                    // gridLines: {
+                    //     color: '#00742b',
+                    //     zeroLineColor: '#00742b',
+                    // },
+                    ticks: {
+                        fontSize: 2,
+                        fontColor: '#00742b',
+                    },
+
+                }],
+            yAxes: [
+                {
+                    gridLines: {},
+                    // gridLines: {
+                    //     color: '#00742b',
+                    //     zeroLineColor: '#00742b',
+                    // },
+                    // display: false,
+                    ticks: {
+                        display: true,
+                        min: Math.min.apply(Math, chartData.COMMON.datasets[0].data) - 5,
+                        max: Math.max.apply(Math, chartData.COMMON.datasets[0].data) + 5,
+                        fontColor: '#00742b',
+                    },
+                }],
+        },
+        elements: {
+            line: {
+                tension: 0.00001,
+                borderWidth: 1,
+            },
+            point: {
+                radius: 4,
+                hitRadius: 10,
+                hoverRadius: 4,
+            },
+        },
+    }
+}
 export const cardChartOpts2 = {
     tooltips: {
         enabled: false,
@@ -121,8 +322,8 @@ export const cardChartOpts2 = {
                 // display: false,
                 ticks: {
                     display: true,
-                    min: 0,
-                    max: Math.max.apply(Math, cardChartData2.datasets[0].data) + 5,
+                    min: Math.min.apply(Math, chartData.BOS.datasets[0].data) - 5,
+                    max: Math.max.apply(Math, chartData.BOS.datasets[0].data) + 5,
                     fontColor: '#00742b',
                 },
             }],

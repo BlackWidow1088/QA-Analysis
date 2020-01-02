@@ -259,14 +259,14 @@ export const getTCForStatus = (state, id) => {
     };
     const options = {
         legend: {
-          position: 'right',
-          display: true,
-          labels: {
-            fontColor: '#003168',
-            fontFamily : 'Open Sans, sans-serif',
-        }
+            position: 'right',
+            display: true,
+            labels: {
+                fontColor: '#003168',
+                fontFamily: 'Open Sans, sans-serif',
+            }
         },
-      }
+    }
     let total = (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) +
         (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) +
         (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) +
@@ -634,7 +634,7 @@ export const getTCStrategyForUISubDomainsDistribution = (release, domain) => {
         if (domain === release.TcAggregate.domain[item].tag) {
             let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
             let manual = release.TcAggregate.domain[item].Tested.manual.Pass + release.TcAggregate.domain[item].Tested.manual.Fail + release.TcAggregate.domain[item].Tested.manual.Skip;
-            let nottested = release.TcAggregate.domain[item].NotTested
+            let nottested = release.TcAggregate.domain[item].NotApplicable
             let total = auto + manual + nottested;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(total);
@@ -829,7 +829,7 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
             hoverBackgroundColor: []
         },
         {
-            label: 'Not Tested',
+            label: 'Not Applicable',
             data: [],
             backgroundColor: [],
             hoverBackgroundColor: []
@@ -850,7 +850,7 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
         if (domain === release.TcAggregate.domain[item].tag) {
             let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
             let manual = release.TcAggregate.domain[item].Tested.manual.Pass + release.TcAggregate.domain[item].Tested.manual.Fail + release.TcAggregate.domain[item].Tested.manual.Skip;
-            let nottested = release.TcAggregate.domain[item].NotTested
+            let nottested = release.TcAggregate.domain[item].NotApplicable
             let total = auto + manual + nottested;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(auto);
@@ -863,7 +863,7 @@ export const getTCStrategyForUISubDomains = (release, domain) => {
     });
     datasets[0].label = 'Auto (' + autoTotal + ')';
     datasets[1].label = 'Manual (' + manualTotal + ')'
-    datasets[2].label = 'Not Tested (' + notTestedTotal + ')'
+    datasets[2].label = 'Not Applicable (' + notTestedTotal + ')'
     doughnuts[0].data.labels = labels;
     doughnuts[0].data.datasets = datasets;
     return doughnuts;
@@ -891,7 +891,7 @@ export const getTCStrategyForUISubDomainsScenario = (release, domain, scenario, 
             hoverBackgroundColor: []
         },
         {
-            label: 'Not Tested',
+            label: 'Not Applicable',
             data: [],
             backgroundColor: [],
             hoverBackgroundColor: []
@@ -909,10 +909,10 @@ export const getTCStrategyForUISubDomainsScenario = (release, domain, scenario, 
     let manualTotal = 0;
     let notTestedTotal = 0;
     Object.keys(release.TcAggregate.domain).forEach((item, index) => {
-        if (domain === release.TcAggregate.domain[item].tag && release.TcAggregate.domain[item].Domain === scenario) {
+        if (domain === release.TcAggregate.domain[item].tag && item === scenario) {
             let auto = release.TcAggregate.domain[item].Tested.auto.Pass + release.TcAggregate.domain[item].Tested.auto.Fail + release.TcAggregate.domain[item].Tested.auto.Skip;
             let manual = release.TcAggregate.domain[item].Tested.manual.Pass + release.TcAggregate.domain[item].Tested.manual.Fail + release.TcAggregate.domain[item].Tested.manual.Skip;
-            let nottested = release.TcAggregate.domain[item].NotTested
+            let nottested = release.TcAggregate.domain[item].NotApplicable
             let total = auto + manual + nottested;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(auto);
@@ -925,7 +925,7 @@ export const getTCStrategyForUISubDomainsScenario = (release, domain, scenario, 
     });
     datasets[0].label = 'Auto (' + autoTotal + ')';
     datasets[1].label = 'Manual (' + manualTotal + ')'
-    datasets[2].label = 'Not Tested (' + notTestedTotal + ')'
+    datasets[2].label = 'Not Applicable (' + notTestedTotal + ')'
     doughnuts[0].data.labels = labels;
     doughnuts[0].data.datasets = datasets;
     return doughnuts;
@@ -941,20 +941,20 @@ export const getTCStrategyForUIDomains = (release) => {
     let doughnuts = [];
     let storageAuto = release.TcAggregate.uidomain['Storage'].Tested.auto.Pass + release.TcAggregate.uidomain['Storage'].Tested.auto.Fail + release.TcAggregate.uidomain['Storage'].Tested.auto.Skip;
     let storageManual = release.TcAggregate.uidomain['Storage'].Tested.manual.Pass + release.TcAggregate.uidomain['Storage'].Tested.manual.Fail + release.TcAggregate.uidomain['Storage'].Tested.manual.Skip;
-    let storageNotTested = release.TcAggregate.uidomain['Storage'].NotTested;
+    let storageNotTested = release.TcAggregate.uidomain['Storage'].NotApplicable;
 
     let networkAuto = release.TcAggregate.uidomain['Network'].Tested.auto.Pass + release.TcAggregate.uidomain['Network'].Tested.auto.Fail + release.TcAggregate.uidomain['Network'].Tested.auto.Skip;
     let networkManual = release.TcAggregate.uidomain['Network'].Tested.manual.Pass + release.TcAggregate.uidomain['Network'].Tested.manual.Fail + release.TcAggregate.uidomain['Network'].Tested.manual.Skip;
-    let networkNotTested = release.TcAggregate.uidomain['Network'].NotTested;
+    let networkNotTested = release.TcAggregate.uidomain['Network'].NotApplicable;
 
 
     let managementAuto = release.TcAggregate.uidomain['Management'].Tested.auto.Pass + release.TcAggregate.uidomain['Management'].Tested.auto.Fail + release.TcAggregate.uidomain['Management'].Tested.auto.Skip;
     let managementManual = release.TcAggregate.uidomain['Management'].Tested.manual.Pass + release.TcAggregate.uidomain['Management'].Tested.manual.Fail + release.TcAggregate.uidomain['Management'].Tested.manual.Skip;
-    let managementNotTested = release.TcAggregate.uidomain['Management'].NotTested;
+    let managementNotTested = release.TcAggregate.uidomain['Management'].NotApplicable;
 
     let othersAuto = release.TcAggregate.uidomain['Others'].Tested.auto.Pass + release.TcAggregate.uidomain['Others'].Tested.auto.Fail + release.TcAggregate.uidomain['Others'].Tested.auto.Skip;
     let othersManual = release.TcAggregate.uidomain['Others'].Tested.manual.Pass + release.TcAggregate.uidomain['Others'].Tested.manual.Fail + release.TcAggregate.uidomain['Others'].Tested.manual.Skip;
-    let othersNotTested = release.TcAggregate.uidomain['Others'].NotTested;
+    let othersNotTested = release.TcAggregate.uidomain['Others'].NotApplicable;
 
     let each = [
         {
@@ -1051,7 +1051,7 @@ export const getTCStrategyForUIDomains = (release) => {
                     ],
                 },
                 {
-                    label: 'Not Tested (' + (each[0].NotTested + each[1].NotTested + each[2].NotTested + each[3].NotTested) + ')',
+                    label: 'Not Applicable (' + (each[0].NotTested + each[1].NotTested + each[2].NotTested + each[3].NotTested) + ')',
                     data: [
                         each[0].NotTested,
                         each[1].NotTested,

@@ -32,7 +32,7 @@ const options = {
     maintainAspectRatio: false,
     // legend: { labels: { fontSize: '14px', fontColor: 'black' } }
 }
-
+const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 class ReleaseTestMetrics extends Component {
     constructor(props) {
         super(props);
@@ -114,13 +114,15 @@ class ReleaseTestMetrics extends Component {
             })
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
+            return false;
+            this.setState({ domainSelected: node.data.name, doughnuts: null, doughnutsDist: null })
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
                 .then(all => {
                     if (all && all.data.length) {
                         axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcstatus/domain/' + node.data.name)
                             .then(res => {
                                 this.props.saveTestCase({ id: this.props.selectedRelease.ReleaseNumber, data: res.data })
-                                this.setState({ domainSelected: node.data.name, doughnuts: getEachTCStrategyScenario({ data: res.data, domain: node.data.name, all: all.data, release: this.props.selectedRelease }) })
+                                this.setState({ domainSelected: node.data.name, doughnuts: getEachTCStrategyScenario({ data: res.data, domain: node.data.name, release: this.props.selectedRelease }) })
                             }, error => {
 
                             });
@@ -166,6 +168,11 @@ class ReleaseTestMetrics extends Component {
                                 </div>
                             </Col>
                             <Col xs="11" sm="11" md="11" lg="8">
+                                {
+                                    this.state.domainSelected &&
+                                    !(this.state.doughnuts || this.state.doughnutsDist) &&
+                                    loading()
+                                }
                                 {
                                     !this.state.domainSelected &&
                                     <Row style={{ marginLeft: '0.5rem' }}>

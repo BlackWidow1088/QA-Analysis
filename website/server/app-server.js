@@ -36,10 +36,10 @@ var jiraReq = client.post("http://dwsjira1.eng.diamanti.com:8080/rest/auth/1/ses
                 cookie: session.name + '=' + session.value,
                 "Content-Type": "application/json"
             },
-            data: {
-                // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
-                jql: "type=Bug AND status=Closed"
-            }
+            // data: {
+            //     // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
+            //     jql: "type=Bug AND status=Closed"
+            // }
         };
         // Make the request return the search results, passing the header information including the cookie.
         // client.post("http://localhost:8090/jira/rest/api/2/search", searchArgs, function (searchResult, response) {
@@ -89,29 +89,58 @@ app.use('/rest/features/:id', (req, res) => {
         res.send(searchResult);
     }, err => { console.log('cannot get jira') });
 }, err => { })
-app.use('/rest/bugs/:id', (req, res) => {
-    var str = `?jql=type%20in%20("Bug")%20AND%20fixVersion%20in%20(${req.params.id})&fields=key,status,priority,summary&maxResults=2000`
-    // /rest/api/2/search?jql=type%20in%20("New%20Feature")%20AND%20fixVersion%20in%20(2.3.0)&fields=key,summary
+// app.use('/rest/bugs/:id', (req, res) => {
+//     var str = `?jql=type%20in%20("Bug")%20AND%20fixVersion%20in%20(${req.params.id})&fields=key,status,priority,summary&maxResults=2000`
+//     // /rest/api/2/search?jql=type%20in%20("New%20Feature")%20AND%20fixVersion%20in%20(2.3.0)&fields=key,summary
+//     console.log(jiraHeaders);
+//     // var searchArgs = {
+//     //     headers: jiraHeaders,
+//     //     data: {
+//     //         // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
+//     //         jql: "type=Bug AND status=Closed"
+//     //     }
+//     // };
+//     client.get(JIRA_URL + '/rest/api/2/search' + str, searchArgs, function (searchResult, response) {
+//         console.log('status code:', response.statusCode);
+//         console.log('search result:', searchResult);
+//         res.send(searchResult);
+//     }, err => { console.log('cannot get jira') });
+// }, err => { })
+app.use('/rest/bugs/total/:id', (req, res) => {
+    var totalBugsStr = `?jql=affectedVersion%20in%20(${req.params.id})%20AND%20type%20in%20("Bug","Sub-task")&fields=key,status,priority,summary&maxResults=2000`
     console.log(jiraHeaders);
-    // var searchArgs = {
-    //     headers: jiraHeaders,
-    //     data: {
-    //         // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
-    //         jql: "type=Bug AND status=Closed"
-    //     }
-    // };
-    client.get(JIRA_URL + '/rest/api/2/search' + str, searchArgs, function (searchResult, response) {
-        console.log('status code:', response.statusCode);
-        console.log('search result:', searchResult);
-        res.send(searchResult);
-    }, err => { console.log('cannot get jira') });
+    var totalBugs = '';
+    var resolvedBugs = '';
+    client.get(JIRA_URL + '/rest/api/2/search' + totalBugsStr, searchArgs, function (searchResultTotal, responseTotal) {
+        totalBugs = searchResultTotal;
+        res.send(totalBugs);
+
+    }, err1 => { console.log('cannot get jira') });
+}, err => { });
+app.use('/rest/bugs/open/:id', (req, res) => {
+    var openBugsStr = `?jql=status%20in%20("Open","In Progress","To Do","Done")%20AND%20fixVersion%20in%20(${req.params.id})%20AND%20type%20in%20("Bug","Sub-task")%20AND%20(Component!=Automation%20OR%20Component=EMPTY)&fields=key,status,priority,summary&maxResults=2000`
+    var openBugs = '';
+    client.get(JIRA_URL + '/rest/api/2/search' + openBugsStr, searchArgs, function (searchResultOpen, responseOpen) {
+        openBugs = searchResultOpen;
+        res.send(openBugs);
+        // client.get(JIRA_URL + '/rest/api/2/search' + resolvedBugsStr, searchArgs, function (searchResultResolved, responseResolved) {
+        //     resolvedBugs = searchResultResolved;
+        //     res.send({ totalBugs, openBugs, resolvedBugs });
+        // }, err3 => { })
+    }, err2 => { });
+}, err => { })
+app.use('/rest/bugs/resolved/:id', (req, res) => {
+    var resolvedBugsStr = `?jql=status%20in%20("Done","Resolved","Closed","Duplicate")%20AND%20fixVersion%20in%20(${req.params.id})%20AND%20type%20in%20("Bug","Sub-task")%20AND%20(Component!=Automation%20OR%20Component=EMPTY)&fields=key,status,priority,summary&maxResults=2000`
+    var resolvedBugs = '';
+    client.get(JIRA_URL + '/rest/api/2/search' + resolvedBugsStr, searchArgs, function (searchResultResolved, responseResolved) {
+        resolvedBugs = searchResultResolved;
+        res.send(resolvedBugs);
+    }, err3 => { })
 }, err => { })
 app.use('/rest/featuredetail', (req, res) => {
     console.log('got from post', req.body.data);
     var str = '?fields=key,summary,subtasks,created,progress,status,updated,priority'
     client.get(req.body.data + str, function (searchResult, response) {
-        console.log('status code:', response.statusCode);
-        console.log('search result:', searchResult);
         res.send(searchResult);
     });
 

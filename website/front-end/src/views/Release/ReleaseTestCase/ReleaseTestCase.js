@@ -41,8 +41,8 @@ class ReleaseTestCase extends Component {
             domainSelected: false,
             domains: getTCStatusForSunburst(this.props.selectedRelease),
             tcSummaryTitleStyle: window.screen.availWidth > 1400 ?
-                { position: 'absolute', top: '37%', left: '46%', textAlign: 'center', fontSize: '20px', fontWeight: 600, color: '#00742b' } :
-                { position: 'absolute', top: '40%', left: '45%', textAlign: 'center', fontSize: '16px', fontWeight: 600, color: '#00742b' },
+                { position: 'absolute', top: '41%', left: '47%', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#003168' } :
+                { position: 'absolute', top: '42%', left: '46%', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#003168' },
         }
     }
     componentDidMount() {
@@ -179,12 +179,23 @@ class ReleaseTestCase extends Component {
                                                 return (
                                                     <Col xs="12" sm="12" md="6" lg="6">
                                                         <div className="chart-wrapper">
-                                                            <div style={this.state.tcSummaryTitleStyle}>
+                                                            <div class='row' style={{ padding: '10px', margin: 'auto' }}>
+                                                                <div style={this.state.tcSummaryTitleStyle}>
+                                                                    <div>Total</div>
+                                                                    <div style={{ fontSize: '15px' }}>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
+                                                                </div>
+
+                                                                <Doughnut data={item.data} style={{ textAlign: 'center' }} />
+
+                                                            </div>
+                                                            {/* <div style={this.state.tcSummaryTitleStyle}>
                                                                 <div>Total</div>
                                                                 <div>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
                                                             </div>
-                                                            <Doughnut data={item.data} />
+                                                            <Doughnut data={item.data} /> */}
                                                         </div>
+
+
                                                         <div className='rp-tc-dougnut-text'>
                                                             {item && item.title}
                                                         </div>
