@@ -11,6 +11,7 @@ import app from './app.reducer';
 import { testcaseReducer as testcase } from './testcase.reducer';
 import { featureReducer as feature } from './feature.reducer';
 import { bugReducer as bug } from './bug.reducer';
+import user from './user.reducer';
 export default combineReducers({
   auth,
   posts,
@@ -21,5 +22,6 @@ export default combineReducers({
   app,
   testcase,
   feature,
-  bug
+  bug,
+  user
 });

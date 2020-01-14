@@ -42,6 +42,8 @@ const ReleaseTestCase = React.lazy(() => import('./views/Release/ReleaseTestCase
 const ReleaseQAStrategy = React.lazy(() => import('./views/Release/ReleaseQAStrategy/ReleaseQAStrategy'));
 const ReleaseTestMetrics = React.lazy(() => import('./views/Release/ReleaseTestMetrics/ReleaseTestMetrics'));
 const ReleaseStatus = React.lazy(() => import('./views/Release/ReleaseStatus/ReleaseStatus'));
+const ReleaseAdmin = React.lazy(() => import('./views/Release/ReleaseAdmin/ReleaseAdmin'));
+const ReleaseDocs = React.lazy(() => import('./views/Release/ReleaseDocs/ReleaseDocs'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -49,10 +51,13 @@ const routes = [
 
   { path: '/release/summary', name: 'Summary', exact: true, component: ReleaseSummary },
   { path: '/release/qastatus', name: 'Test Case', exact: true, component: ReleaseTestCase },
-  // { path: '/release/manage', exact: true, name: 'Manage', component: ManageRelease },
+  { path: '/release/manage', exact: true, name: 'Manage', component: ManageRelease },
   { path: '/release/qastrategy', name: 'QA Strategy', exact: true, component: ReleaseQAStrategy },
   { path: '/release/testmetrics', name: 'QA Strategy', exact: true, component: ReleaseTestMetrics },
   { path: '/release/status', name: 'Release Status', exact: true, component: ReleaseStatus },
+  { path: '/release/user', name: 'Admin Panel', exact: true, component: ReleaseAdmin },
+  { path: '/release/docs', name: 'Documentation Panel', exact: true, component: ReleaseDocs },
+
   // { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   // { path: '/theme', exact: true, name: 'Theme', component: Colors },
   // { path: '/theme/colors', name: 'Colors', component: Colors },

@@ -27,11 +27,18 @@ export default {
       icon: 'fa fa-compass',
     },
     {
+      name: 'Documents',
+      url: '/release/docs',
+      icon: 'fa fa-file'
+    },
+    {
       name: 'Jira Dashboard',
       url: 'http://dwsjira1.eng.diamanti.com:8080/secure/Dashboard.jspa?selectPageId=11803',
       attributes: { target: '_blank' },
       icon: 'fa fa-bug',
       class: 'rp-jira'
     },
+
+
   ],
 };

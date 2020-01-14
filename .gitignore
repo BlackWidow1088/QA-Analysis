@@ -1,5 +1,7 @@
 /website/server/build
 /website/server/node_modules
+/website/server_original
+/website/server_version2
 /website/front-end/build
 /website/front-end/node_modules
 # production

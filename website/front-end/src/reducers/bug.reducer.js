@@ -65,8 +65,6 @@ function all(state = initialState.features, action) {
             //         bugCount.category[item.fields.priority.name] = { total: 1 }
             //     }
             // })
-            console.log('counting bugs')
-            console.log(bugCount);
             // }
             state[action.payload.id] = {
                 bugCount: bugCount, bug: allBugs

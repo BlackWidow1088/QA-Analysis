@@ -195,6 +195,14 @@ export const SAVE_FEATURES = 'SAVE_FEATURES';
 export const SAVE_BUGS = 'SAVE_BUGS';
 export const SAVE_SINGLE_FEATURE = 'SAVE_SINGLE_FEATURE';
 export const RELEASE_STATUS_PAGE = 'RELEASE_STATUS_PAGE';
+export const SAVE_USER_NOTIFICATIONS = 'SAVE_USER_NOTIFICATIONS';
+export const FETCH_USER_NOTIFICATIONS = 'FETCH_USER_NOTIFICATIONS';
+export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
+export const SAVE_OPEN_WORK = 'SAVE_OPEN_WORK';
+export const SAVE_CLOSED_WORK = 'SAVE_CLOSED_WORK';
+export const SAVE_USERS = 'SAVE_USERS';
+export const UPDATE_TC_EDIT = 'UPDATE_TC_EDIT';
+export const SAVE_USER_DETAILS = 'SAVE_USER_DETAILS';
 export const logInRequest = payload => ({
   type: LOG_IN_REQUEST,
   payload,
@@ -249,6 +257,10 @@ export const saveSingleTestCase = payload => ({
   type: SAVE_SINGLE_TEST_CASE,
   payload
 })
+export const updateTCEdit = payload => ({
+  type: UPDATE_TC_EDIT,
+  payload
+})
 
 export const saveFeatures = payload => ({
   type: SAVE_FEATURES,
@@ -264,5 +276,32 @@ export const saveSingleFeature = payload => ({
 })
 export const statusPage = payload => ({
   type: RELEASE_STATUS_PAGE,
+  payload
+})
+export const fetchUserNotifications = payload => ({
+  type: FETCH_USER_NOTIFICATIONS,
+  ...payload
+})
+export const saveUserNotifications = payload => ({
+  type: SAVE_USER_NOTIFICATIONS,
+  payload
+})
+export const clearUserData = () => ({
+  type: CLEAR_USER_DATA
+})
+export const saveOpenWork = (payload) => ({
+  type: SAVE_OPEN_WORK,
+  payload
+})
+export const saveClosedWork = (payload) => ({
+  type: SAVE_CLOSED_WORK,
+  payload
+})
+export const saveUsers = (payload) => ({
+  type: SAVE_USERS,
+  payload
+})
+export const saveUserDetails = (payload) => ({
+  type: SAVE_USER_DETAILS,
   payload
 })

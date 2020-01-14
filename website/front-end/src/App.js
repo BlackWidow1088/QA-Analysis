@@ -7,11 +7,11 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { Provider } from 'react-redux';
 import configureStore from './store';
 
-const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
-
 // Containers
-const DefaultLayout = React.lazy(() => import('./containers/DefaultLayout'));
+// const DefaultLayout = React.lazy(() => import('./containers/DefaultLayout'));
+import DefaultLayout from './containers/DefaultLayout';
 
+const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 // Pages
 const Login = React.lazy(() => import('./views/Pages/Login'));
 const Register = React.lazy(() => import('./views/Pages/Register'));

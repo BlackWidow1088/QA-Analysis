@@ -11,12 +11,15 @@ import {
     DELETE_TEST_CASE,
     SAVE_TEST_CASE,
     SAVE_TEST_CASE_STATUS,
-    SAVE_SINGLE_TEST_CASE
+    SAVE_SINGLE_TEST_CASE,
+    UPDATE_TC_EDIT
 } from '../actions';
 
 const initialState = {
     testcases: {},
-    testcaseStatus: {}
+    testcaseStatus: {},
+    testcaseDetail: {},
+    testcaseEdit: { Master: true, errors: {} },
 };
 
 // TO BE REMOVEED
@@ -56,6 +59,7 @@ function all(state = initialState.testcases, action) {
             state[action.payload.id] = action.payload.data;
             return { ...state };
 
+
         case DELETE_TEST_CASE:
             let found = null;
             state.forEach((item, index) => {
@@ -65,12 +69,6 @@ function all(state = initialState.testcases, action) {
             });
             if (found !== null) {
                 state.splice(found, 1);
-            }
-            return { ...state };
-
-        case SAVE_SINGLE_TEST_CASE:
-            if (state[action.payload.id]) {
-                state[action.payload.id].unshift(action.payload.data)
             }
             return { ...state };
 
@@ -87,10 +85,30 @@ function status(state = initialState.testcaseStatus, action) {
             return state;
     }
 }
+function testcaseDetail(state = initialState.testcaseDetail, action) {
+    switch (action.type) {
+        case SAVE_SINGLE_TEST_CASE:
+            state = action.payload
+            return state;
+        default:
+            return state;
+    }
+}
+function testcaseEdit(state = initialState.testcaseEdit, action) {
+    switch (action.type) {
+        case UPDATE_TC_EDIT:
+            state = action.payload
+            return state;
+        default:
+            return state;
+    }
+}
 
 export const testcaseReducer = combineReducers({
     all,
-    status
+    status,
+    testcaseDetail,
+    testcaseEdit
 });
 
 // ////////////////////
@@ -212,13 +230,23 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
 }
 
 
-
-export const getEachTCStrategyScenario = ({ data, domain }) => {
+// "id": 7600,
+// "TcName": "LocalStorage.Basic",
+// "Build": "2.3.0-98",
+// "CardType": "BOS",
+// "Result": "Pass",
+// "Bugs": "-1",
+// "Date": "2019-12-30",
+// "Domain": "Storage-Tests",
+// "SubDomain": "Limit Testing",
+// "TcID": "S_Limit-1.0"
+export const getEachTCStrategyScenario = ({ data, domain, release }) => {
     if (!data) {
         return;
     }
     let doughnuts = [];
     let cardTypes = {};
+    let totalAuto = 0, totalManual = 0, totalNA = 0;
     data.forEach(item => {
         if (cardTypes[item.CardType]) {
             cardTypes[item.CardType].push(item);
@@ -226,38 +254,30 @@ export const getEachTCStrategyScenario = ({ data, domain }) => {
             cardTypes[item.CardType] = [item];
         }
     });
-
-    console.log('all type')
-    console.log(all)
-    console.log('status type')
-    console.log(data)
     Object.keys(cardTypes).forEach(cardType => {
         let scenarios = {};
         data.forEach(item => {
             if (item.CardType === cardType) {
-                if (scenarios[item.Domain]) {
-                    scenarios[item.Domain].Total += 1;
+                if (scenarios[item.SubDomain]) {
+                    scenarios[item.SubDomain].Total += 1;
                 } else {
-                    scenarios[item.Domain] = { auto: 0, manual: 0, Total: 1, NotTested: 0, Skip: 0 }
+                    scenarios[item.SubDomain] = { auto: 0, manual: 0, Total: 1, NotApplicable: 0 }
                 }
             }
         })
         cardTypes[cardType].forEach(item => {
-            if (scenarios[item.Domain]) {
+            if (scenarios[item.SubDomain]) {
                 if ((item.Result === 'Pass' || item.Result === 'Fail') && item.TcName !== 'TC NOT AUTOMATED') {
-                    scenarios[item.Domain].auto += 1
+                    scenarios[item.SubDomain].auto += 1
+                    totalAuto += 1;
                 }
                 if ((item.Result === 'Pass' || item.Result === 'Fail') && item.TcName === 'TC NOT AUTOMATED') {
-                    scenarios[item.Domain].manual += 1
+                    scenarios[item.SubDomain].manual += 1
+                    totalManual += 1;
                 }
-                if (item.Result === 'Skip') {
-                    scenarios[item.Domain].Skip += 1;
-                }
-                if (item.Result === 'NotApplicable') {
-                    scenarios[item.Domain].NotApplicable += 1;
-                }
-                if (item.Result === 'Not Tested') {
-                    scenarios[item.Domain].NotTested += 1;
+                if (item.Result === 'Not Applicable') {
+                    scenarios[item.SubDomain].NotApplicable += 1;
+                    totalNA += 1;
                 }
             } else {
                 console.log('DATA IS INVALID');
@@ -275,13 +295,13 @@ export const getEachTCStrategyScenario = ({ data, domain }) => {
         let labels = [];
         let datasets = [
             {
-                label: 'Auto',
+                label: 'Auto (' + totalAuto + ')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
             },
             {
-                label: 'Manual',
+                label: 'Manual (' + totalManual + ')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
@@ -293,7 +313,7 @@ export const getEachTCStrategyScenario = ({ data, domain }) => {
             //     hoverBackgroundColor: []
             // },
             {
-                label: 'Not Applicable',
+                label: 'Not Applicable (' + totalNA + ')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
@@ -307,16 +327,16 @@ export const getEachTCStrategyScenario = ({ data, domain }) => {
         }
 
         Object.keys(scenarios).forEach((item, index) => {
-            let pass = scenarios[item].auto;
-            let skip = scenarios[item].manual;
+            let auto = scenarios[item].auto;
+            let manual = scenarios[item].manual;
             // let fail = scenarios[item].Fail;
             // let nottested = scenarios[item].Total - scenarios[item].Tested;
-            let nottested = scenarios[item].NotApplicable;
+            let na = scenarios[item].NotApplicable;
             let total = scenarios[item].auto + scenarios[item].manual + scenarios[item].NotApplicable;
             labels.push(item + ' (' + total + ')');
-            datasets[0].data.push(pass);
-            datasets[1].data.push(skip);
-            datasets[2].data.push(nottested);
+            datasets[0].data.push(auto);
+            datasets[1].data.push(manual);
+            datasets[2].data.push(na);
         });
         doughnut.data.labels = labels;
         doughnut.data.datasets = datasets;

@@ -17,10 +17,23 @@ import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 import { saveTestCase, saveTestCaseStatus, saveSingleTestCase } from '../../../actions';
+import SunburstComponent from '../components/SunburstComponent';
 import './ReleaseTestCase.scss'
 // import sunburst from '../../../reducers/domains.js'
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import Sunburst from '../components/Sunburst';
+import sunburstData from './constants';
+const Status = {
+    Fail: 'Fail',
+    Pass: 'Pass',
+    Warning: 'Warning'
+}
+const DeviceType = {
+    dev1: 'dev1',
+    dev2: 'dev2',
+    dev3: 'dev3',
+    dev4: 'dev4'
+}
 const options = {
     tooltips: {
         enabled: false,
@@ -33,6 +46,9 @@ class ReleaseTestCase extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            svgKey: 0,
+            selected: 'Domains',
+            metricsOpen: false,
             addTC: {},
             open: false,
             width: window.screen.availWidth > 1700 ? 500 : 380,
@@ -46,6 +62,7 @@ class ReleaseTestCase extends Component {
         }
     }
     componentDidMount() {
+        this.setState({ metricsOpen: true })
     }
     getTcs() {
         if (this.state.domainSelected) {
@@ -121,146 +138,192 @@ class ReleaseTestCase extends Component {
         }
         return true;
     }
+    sectionSelect(e) {
+        this.setState({ selected: e.rule.name, svgKey: this.state.svgKey + 1 })
+    }
+
     render() {
         return (
             <div>
                 <Row>
-                    <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
-                        <div className='rp-app-table-header'>
-                            <span className='rp-app-table-title'>Test Case Status (Domain Wise)</span>
-                        </div>
-                        <Row>
-
-                            <Col xs="11" sm="11" md="11" lg="4">
-                                <div style={{ marginLeft: '1rem', marginTop: '1rem' }}>
-                                    <Sunburst
-                                        tooltip={false}
-                                        onClick={(node) => this.sunburstClick(node)}
-                                        data={this.state.domains}
-                                        width={this.state.width}
-                                        height={this.state.width}
-                                        count_member="size"
-                                        labelFunc={(node) => node.data.name}
-                                    />
-                                </div>
-                            </Col>
-                            <Col xs="11" sm="11" md="11" lg="8">
-                                <Row style={{ marginLeft: '0.5rem' }}>
-                                    {
-                                        this.state.domainSelected &&
-                                        !this.state.doughnuts &&
-                                        loading()
-                                    }
-                                    {
-                                        this.state.domainSelected &&
-                                        this.state.doughnuts &&
-                                        this.state.doughnuts.map((item, index) => {
-                                            if (index < 2) {
-                                                return (
-                                                    <Col xs="12" sm="12" md="12" lg="12">
-                                                        <div className="chart-wrapper" style={{ minHeight: '400px' }}>
-                                                            {/* <Doughnut data={item.data} /> */}
-                                                            <Bar data={item.data} options={options} />
-                                                        </div>
-                                                        <div className='rp-tc-dougnut-text'>
-                                                            {item && item.title}
-                                                        </div>
-                                                    </Col>
-                                                )
+                    <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'marginLeft': '1.5rem' }}>
+                        <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ metricsOpen: !this.state.metricsOpen })}>
+                            <div class="row">
+                                <div class='col-md-6'>
+                                    <div class='row'>
+                                        <div class='col-md-6 col-lg-6'>
+                                            {
+                                                !this.state.metricsOpen &&
+                                                <i className="fa fa-angle-down rp-rs-down-arrow"></i>
+                                            }
+                                            {
+                                                this.state.metricsOpen &&
+                                                <i className="fa fa-angle-up rp-rs-down-arrow"></i>
                                             }
 
-                                        })
-                                    }
-                                    {
-                                        !this.state.domainSelected &&
-                                        this.state.doughnuts &&
-                                        this.state.doughnuts.map((item, index) => {
-                                            if (index < 4) {
-                                                return (
-                                                    <Col xs="12" sm="12" md="6" lg="6">
-                                                        <div className="chart-wrapper">
-                                                            <div class='row' style={{ padding: '10px', margin: 'auto' }}>
-                                                                <div style={this.state.tcSummaryTitleStyle}>
-                                                                    <div>Total</div>
-                                                                    <div style={{ fontSize: '15px' }}>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
+                                            <div className='rp-icon-button'><i className="fa fa-area-chart"></i></div>
+                                            <span className='rp-app-table-title'>Test Case Status</span>
+                                        </div>
+                                        {/* {
+                                            this.props.bug && Object.keys(this.props.bug.bugCount.all).map(item =>
+                                                <div class='col-md-2'>
+                                                    <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
+                                                        <small class="text-muted">{item.toUpperCase()}</small><br></br>
+                                                        <strong class="h5">{this.props.bug.bugCount.all[item]}</strong>
+                                                    </div>
+                                                </div>
+                                            )
+                                        } */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <Collapse isOpen={this.state.metricsOpen}>
+                            <React.Fragment>
+                                <Row>
+
+                                    <Col xs="11" sm="11" md="11" lg="4">
+                                        <div style={{ marginLeft: '1rem', marginTop: '1rem' }}>
+                                            <Sunburst
+                                                tooltip={false}
+                                                onClick={(node) => this.sunburstClick(node)}
+                                                data={this.state.domains}
+                                                width={this.state.width}
+                                                height={this.state.width}
+                                                count_member="size"
+                                                labelFunc={(node) => node.data.name}
+                                            />
+                                        </div>
+                                        {/* <div className="main-container">
+                                            <div>
+                                                <SunburstComponent key={this.state.svgKey} sectionSelect={(e) => this.sectionSelect(e)} data={sunburstData[this.state.selected]}></SunburstComponent>
+                                            </div>
+                                        </div> */}
+
+                                    </Col>
+                                    <Col xs="11" sm="11" md="11" lg="8">
+                                        <Row style={{ marginLeft: '0.5rem' }}>
+                                            {
+                                                this.state.domainSelected &&
+                                                !this.state.doughnuts &&
+                                                loading()
+                                            }
+                                            {
+                                                this.state.domainSelected &&
+                                                this.state.doughnuts &&
+                                                this.state.doughnuts.map((item, index) => {
+                                                    if (index < 2) {
+                                                        return (
+                                                            <Col xs="12" sm="12" md="12" lg="12">
+                                                                <div className="chart-wrapper" style={{ minHeight: '400px' }}>
+                                                                    {/* <Doughnut data={item.data} /> */}
+                                                                    <Bar data={item.data} options={options} />
                                                                 </div>
+                                                                <div className='rp-tc-dougnut-text'>
+                                                                    {item && item.title}
+                                                                </div>
+                                                            </Col>
+                                                        )
+                                                    }
 
-                                                                <Doughnut data={item.data} style={{ textAlign: 'center' }} />
+                                                })
+                                            }
+                                            {
+                                                !this.state.domainSelected &&
+                                                this.state.doughnuts &&
+                                                this.state.doughnuts.map((item, index) => {
+                                                    if (index < 4) {
+                                                        return (
+                                                            <Col xs="12" sm="12" md="6" lg="6">
+                                                                <div className="chart-wrapper">
+                                                                    <div class='row' style={{ padding: '10px', margin: 'auto' }}>
+                                                                        <div style={this.state.tcSummaryTitleStyle}>
+                                                                            <div>Total</div>
+                                                                            <div style={{ fontSize: '15px' }}>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
+                                                                        </div>
 
-                                                            </div>
-                                                            {/* <div style={this.state.tcSummaryTitleStyle}>
+                                                                        <Doughnut data={item.data} style={{ textAlign: 'center' }} />
+
+                                                                    </div>
+                                                                    {/* <div style={this.state.tcSummaryTitleStyle}>
                                                                 <div>Total</div>
                                                                 <div>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
                                                             </div>
                                                             <Doughnut data={item.data} /> */}
+                                                                </div>
+
+
+                                                                <div className='rp-tc-dougnut-text'>
+                                                                    {item && item.title}
+                                                                </div>
+                                                            </Col>
+                                                        )
+                                                    }
+
+                                                })
+                                            }
+                                        </Row>
+                                    </Col>
+                                </Row>
+                                {
+                                    this.state.domainSelected &&
+                                    !this.state.doughnuts &&
+                                    loading()
+                                }
+                                {
+                                    this.state.domainSelected &&
+                                    <Row>
+                                        {
+                                            this.state.doughnuts &&
+                                            this.state.doughnuts.map((item, index) => {
+                                                if (index >= 2) {
+                                                    return (
+                                                        <Col xs="12" sm="12" md="6" lg="6">
+                                                            <div className="chart-wrapper" style={{ minHeight: '400px' }}>
+                                                                {/* <Doughnut data={item.data} /> */}
+                                                                <Bar data={item.data} options={options} />
+                                                            </div>
+                                                            <div className='rp-tc-dougnut-text'>
+                                                                {item && item.title}
+                                                            </div>
+                                                        </Col>
+                                                    )
+                                                }
+
+                                            })
+                                        }
+                                    </Row>
+                                }
+                                {
+                                    !this.state.domainSelected &&
+                                    <Row>
+                                        {
+                                            this.state.doughnuts &&
+                                            this.state.doughnuts.length >= 4 &&
+                                            this.state.doughnuts.map((item, index) => {
+                                                if (index >= 4) {
+                                                    return (<Col xs="12" sm="12" md="4" lg="4">
+                                                        <div className="chart-wrapper">
+                                                            <div style={this.state.tcSummaryTitleStyle}>
+                                                                <div>Total</div>
+                                                                <div>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
+                                                            </div>
+                                                            <Doughnut data={item.data} />
                                                         </div>
-
-
                                                         <div className='rp-tc-dougnut-text'>
                                                             {item && item.title}
                                                         </div>
-                                                    </Col>
-                                                )
-                                            }
-
-                                        })
-                                    }
-                                </Row>
-                            </Col>
-                        </Row>
-                        {
-                            this.state.domainSelected &&
-                            !this.state.doughnuts &&
-                            loading()
-                        }
-                        {
-                            this.state.domainSelected &&
-                            this.state.doughnuts &&
-                            this.state.doughnuts.map((item, index) => {
-                                if (index >= 2) {
-                                    return (
-                                        <Col xs="12" sm="12" md="6" lg="6">
-                                            <div className="chart-wrapper" style={{ minHeight: '400px' }}>
-                                                {/* <Doughnut data={item.data} /> */}
-                                                <Bar data={item.data} options={options} />
-                                            </div>
-                                            <div className='rp-tc-dougnut-text'>
-                                                {item && item.title}
-                                            </div>
-                                        </Col>
-                                    )
-                                }
-
-                            })
-                        }
-                        {
-                            !this.state.domainSelected &&
-                            <Row>
-                                {
-                                    this.state.doughnuts &&
-                                    this.state.doughnuts.length >= 4 &&
-                                    this.state.doughnuts.map((item, index) => {
-                                        if (index >= 4) {
-                                            return (<Col xs="12" sm="12" md="4" lg="4">
-                                                <div className="chart-wrapper">
-                                                    <div style={this.state.tcSummaryTitleStyle}>
-                                                        <div>Total</div>
-                                                        <div>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
-                                                    </div>
-                                                    <Doughnut data={item.data} />
-                                                </div>
-                                                <div className='rp-tc-dougnut-text'>
-                                                    {item && item.title}
-                                                </div>
-                                            </Col>)
+                                                    </Col>)
+                                                }
+                                            })
                                         }
-                                    })
+                                    </Row>
                                 }
-                            </Row>
-                        }
-
+                            </React.Fragment>
+                        </Collapse>
                     </Col>
                 </Row>
+
                 {/* <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
                         <div className='rp-rs-hw-support'>Automation Syncup and Meetings</div>
@@ -360,7 +423,7 @@ class ReleaseTestCase extends Component {
                         </Collapse>
                     </div>
                 } */}
-                {
+                {/* {
                     this.state.domainSelected &&
                     <Row>
                         <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
@@ -392,7 +455,9 @@ class ReleaseTestCase extends Component {
 
                         </Col>
                     </Row>
-                }
+
+                } */}
+
 
                 < Modal isOpen={this.state.modal} toggle={() => this.toggle()}>
                     <ModalHeader toggle={() => this.toggle()}>Confirmation</ModalHeader>
@@ -404,6 +469,7 @@ class ReleaseTestCase extends Component {
                         <Button color="secondary" onClick={() => this.toggle()}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
+
             </div >)
 
         // <Pagination>

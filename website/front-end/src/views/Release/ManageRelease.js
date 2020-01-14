@@ -28,7 +28,7 @@ import {
     Table
 } from 'reactstrap';
 import { connect } from 'react-redux';
-import { saveReleaseBasicInfo, deleteRelease } from '../../actions';
+import { saveReleaseBasicInfo, deleteRelease, releaseChange } from '../../actions';
 import BasicReleaseInfo from './components/BasicReleaseInfo';
 import './ManageRelease.scss';
 import { api } from '../../utils/API.utils';
@@ -40,6 +40,9 @@ class ManageRelease extends Component {
             release: this.props.allReleases[0] ? this.props.allReleases[0].ReleaseNumber : '',
             updatedValues: {},
             basic: { editing: false, updated: {}, open: false },
+        }
+        if (!this.props.currentUser || (this.props.currentUser && !this.props.currentUser.isAdmin)) {
+            this.props.history.push('/');
         }
     }
     reset() {
@@ -163,9 +166,21 @@ class ManageRelease extends Component {
         }
         console.log('saved data ', data);
         axios.post(`/api/release`, { ...data })
-            .then(res => {
-                this.props.saveReleaseBasicInfo({ id: data.ReleaseNumber, data: data });
-                this.reset();
+            .then(single => {
+                axios.get(`/api/release/all`)
+                    .then(res => {
+                        res.data.forEach(item => {
+                            // this.props.updateNavBar({ id: item.ReleaseNumber });
+
+                            this.props.saveReleaseBasicInfo({ id: item.ReleaseNumber, data: item });
+                        });
+                        if (res.data[res.data.length - 1]) {
+                            this.props.releaseChange({ id: res.data[res.data.length - 1].ReleaseNumber });
+                        }
+                        this.props.history.push('/release/summary');
+                        this.reset();
+                    }, error => {
+                    });
             }, error => {
                 alert('error in updating');
             });
@@ -191,7 +206,10 @@ class ManageRelease extends Component {
                             </FormGroup>
                         </Col>
                         <Col xs="4">
-                            <Button onClick={() => this.delToggle()} size="sm" color="danger" className="rp-mr-del-button"><i className="fa fa-ban"></i> Delete</Button>
+                            <Button onClick={() => this.delToggle()} size="sm" color="danger" className="rp-mr-del-button"><i className="fa fa-ban" style={{
+                                'color': 'white',
+                                'marginRight': '0.5rem'
+                            }}></i> Delete</Button>
                         </Col>
                     </Row>
                     <Row>
@@ -278,7 +296,7 @@ class ManageRelease extends Component {
                                                     { key: 'UBoot Number', value: '', field: 'UbootVersion' },
                                                     { key: 'Customers', field: 'Customers', value: '' },
                                                     { key: 'Target Date', field: 'TargetedReleaseDate', value: '', type: 'date' },
-                                                    { key: 'Actual Date', field: 'ActualReleaseDate', value: '', type: 'date' },
+
                                                 ].map((item, index) => {
                                                     return (
                                                         <tr>
@@ -302,6 +320,25 @@ class ManageRelease extends Component {
                                                     )
                                                 })
                                             }
+                                            <tr>
+                                                <React.Fragment>
+                                                    <td className='rp-app-table-key'>Priority</td>
+
+                                                    <td>
+                                                        <Input className='rp-app-table-value' type="select" id="Priority" name="Priority" value={this.state.basic.updated.Priority}
+                                                            onChange={(e) => this.setState({ basic: { ...this.state.basic, updated: { ...this.state.basic.updated, Priority: e.target.value } } })}>
+                                                            {
+                                                                ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+                                                                    <option value={item}>{item}</option>
+                                                                )
+                                                            }
+                                                        </Input>
+                                                    </td>
+
+
+                                                </React.Fragment>
+
+                                            </tr>
                                         </tbody>
                                     </Table>
                                 </Col>
@@ -356,4 +393,4 @@ const mapStateToProps = (state, ownProps) => ({
     allReleases: state.release.all
 })
 
-export default connect(mapStateToProps, { saveReleaseBasicInfo, deleteRelease })(ManageRelease);
+export default connect(mapStateToProps, { saveReleaseBasicInfo, deleteRelease, releaseChange })(ManageRelease);

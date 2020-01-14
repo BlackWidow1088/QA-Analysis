@@ -48,8 +48,6 @@ th {
   font-size: 13px;
   font-weight: 550;
   color: $app-secondary-color-light;
-
-
 }
 
 //change 2
@@ -59,12 +57,13 @@ th {
   margin: 1rem .2rem 1rem 3.5rem;
   border: 1px solid #fff;
   padding: 0.4rem;
-  box-shadow: 2px 4px 8px 4px rgba(44, 51, 73, 0.1);
+  box-shadow: 2px 4px 8px 4px rgba(1, 210, 81, 0.4);
 
   &:hover {
-    box-shadow: 4px 8px 12px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 8px 12px 8px rgba(11, 98, 46, 0.3);
   }
 }
+
 
 // .rp-summary-tables {
 //   font-size: 14px;
@@ -179,6 +178,18 @@ th {
   border-color: black;
 }
 
+.rp-sunburst-container {
+  flex: 0 0 33.33333%;
+  max-width: 33.33333%;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: white;
+  font-size: 14px;
+  margin: 1rem .2rem 1rem 3.5rem;
+  border: 1px solid #fff;
+  padding: 0.4rem;
+  box-shadow: 2px 4px 8px 4px rgba(1, 210, 81, 0.4);
+}
 
 .rp-app-table-header {
   // change
@@ -187,8 +198,21 @@ th {
   // padding: 0.5rem;
   // background-color: rgba(65, 240, 65, 0.3);
   // background-color: rgba(0, 116, 43, 0.3);
-  margin-top: 10px;
-  margin-bottom: 10px;
+  // margin-top: 10px;
+  // margin-bottom: 10px;
+}
+
+.rp-icon-button {
+  display: inline-block;
+  font-size: 14px;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  text-align: center;
+  vertical-align: middle;
+
+  i {
+    font-size: 24px !important;
+  }
 }
 
 .rp-app-table-key {
@@ -196,6 +220,31 @@ th {
   font-weight: 400;
   font-size: 12px;
   font-family: Open Sans, sans-serif;
+}
+
+.rp-app-table-label {
+  color: $app-secondary-color-light;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: Open Sans, sans-serif;
+}
+
+.rp-app-table-value {
+  //change
+  font-family: Open Sans, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: $app-secondary-color-light;
+}
+
+.rp-margin-tp-btm-1 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rp-edit-TC-span {
+  text-decoration: underline;
+  word-wrap: break-word;
 }
 
 .rp-rs-hw-support {
@@ -213,15 +262,6 @@ th {
   margin-bottom: 0.5rem;
 }
 
-.table th,
-.table td {
-  padding: 0.4rem;
-  vertical-align: top;
-  border-top: 1px solid #c8ced3;
-  font-weight: 400;
-  font-size: 12px;
-  font-family: Open Sans, sans-serif;
-}
 
 .sidebar {
   height: calc(100vh - 65px);
@@ -378,6 +418,20 @@ th {
   font-family: Open Sans, sans-serif;
 }
 
+.rp-table-textarea-container {
+
+  .table th,
+  .table td {
+    padding: 0.4rem;
+    vertical-align: top;
+    border-top: 1px solid #c8ced3;
+    width: auto;
+    font-weight: 400;
+    font-size: 12px;
+    font-family: Open Sans, sans-serif;
+  }
+}
+
 .rp-new-badge {
   padding: 0.3rem !important;
   margin-top: 0 !important;
@@ -442,6 +496,27 @@ html:not([dir=rtl]) .c-callout-info {
 
 html:not([dir=rtl]) .c-callout-not-a-bug {
   border-left-color: #2eb85c !important;
+}
+
+.text-muted {
+  color: $app-secondary-color !important;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.rp-error-text {
+  font-weight: 600;
+  font-size: 14px;
+  color: $app-fail-color;
+}
+
+.rp-error-icon {
+  margin-left: 0.5rem;
+  color: $app-fail-color;
+}
+
+.rp-error-box {
+  border-color: $app-fail-color;
 }
 
 // '#e55353',

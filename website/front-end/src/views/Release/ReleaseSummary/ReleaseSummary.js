@@ -19,19 +19,31 @@ import { getCurrentRelease } from '../../../reducers/release.reducer';
 import { getTCForStatus, getTCForStrategy } from '../../../reducers/release.reducer';
 import BasicReleaseInfo from '../components/BasicReleaseInfo';
 import ChatBox from '../../../components/ChatBox/ChatBox';
-import AgGrid from '../../../components/AgGrid/AgGrid';
 import AppTable from '../../../components/AppTable/AppTable';
 import './ReleaseSummary.scss';
-import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
+import { Bar, Doughnut, Line, Pie, Polar, Radar, HorizontalBar } from 'react-chartjs-2';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { TABLE_OPTIONS } from '../../../constants';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
-import { cardChartOpts2, cardChartData2, chartData, chartOptions } from '../constants';
+import SunburstComponent from '../components/SunburstComponent';
+import { cardChartOpts2, cardChartData2, chartData, chartOptions, stackedBarChart, stackedBarChartOptions } from '../constants';
 const brandPrimary = getStyle('--primary')
 const brandSuccess = getStyle('--success')
 const brandInfo = getStyle('--info')
 const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
+
+const Status = {
+    Fail: 'Fail',
+    Pass: 'Pass',
+    Warning: 'Warning'
+}
+const DeviceType = {
+    dev1: 'dev1',
+    dev2: 'dev2',
+    dev3: 'dev3',
+    dev4: 'dev4'
+}
 // const line = {
 //     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
 //     datasets: [
@@ -145,15 +157,96 @@ class ReleaseSummary extends Component {
                     { position: 'absolute', top: '38%', left: '29%', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#003168' },
             },
             showFeatures: false,
-            cardType: 'BOS'
+            cardType: 'BOS',
+            data: {
+                data: [
+                    {
+                        'name': Status.Fail,
+                        'count': 20,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev1
+                    },
+                    {
+                        'name': Status.Warning,
+                        'count': 0,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev1
+                    },
+                    {
+                        'name': Status.Pass,
+                        'count': 21,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev1
+                    },
+                    {
+                        'name': Status.Fail,
+                        'count': 8,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev2
+                    },
+                    {
+                        'name': Status.Warning,
+                        'count': 0,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev2
+                    },
+                    {
+                        'name': Status.Pass,
+                        'count': 6,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev2
+                    },
+                    {
+                        'name': Status.Fail,
+                        'count': 21,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev3
+                    },
+                    {
+                        'name': Status.Warning,
+                        'count': 16,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev3
+                    },
+                    {
+                        'name': Status.Pass,
+                        'count': 40,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev3
+                    },
+                    {
+                        'name': Status.Fail,
+                        'count': 0,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev4
+                    },
+                    {
+                        'name': Status.Warning,
+                        'count': 0,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev4
+                    },
+                    {
+                        'name': Status.Pass,
+                        'count': 0,
+                        'flexName': 'testA',
+                        'device': DeviceType.dev4
+                    },
+                ],
+                componentType: 'dev1'
+            }
         }
     }
+    componentWillUnmount() {
 
+    }
     componentDidMount() {
         this.reset();
         axios.get('/rest/features/' + this.props.selectedRelease.ReleaseNumber)
             .then(res => {
                 this.props.saveFeatures({ data: res.data, id: this.props.selectedRelease.ReleaseNumber })
+                console.log('features')
+                console.log(res.data)
                 this.setState({ showFeatures: true })
             }, err => {
                 console.log('err ', err);
@@ -166,7 +259,7 @@ class ReleaseSummary extends Component {
                 this.props.saveBugs({ data: { total: res.data.total, all: res.data }, id: this.props.selectedRelease.ReleaseNumber })
                 this.setState({ showBugs: true, cntr: 2 })
             }, err => {
-                console.log('getting in bugs')
+                console.log('getting in TOTAL BUGS')
                 console.log('err ', err);
             })
         axios.get('/rest/bugs/open/' + this.props.selectedRelease.ReleaseNumber)
@@ -177,7 +270,7 @@ class ReleaseSummary extends Component {
                 this.props.saveBugs({ data: { open: res.data.total }, id: this.props.selectedRelease.ReleaseNumber })
                 this.setState({ showBugs: true, cntr: 4 })
             }, err => {
-                console.log('getting in bugs')
+                console.log('getting in OPEN BUGS')
                 console.log('err ', err);
             })
         axios.get('/rest/bugs/resolved/' + this.props.selectedRelease.ReleaseNumber)
@@ -188,7 +281,7 @@ class ReleaseSummary extends Component {
                 this.props.saveBugs({ data: { resolved: res.data.total }, id: this.props.selectedRelease.ReleaseNumber })
                 this.setState({ showBugs: true, cntr: 6 })
             }, err => {
-                console.log('getting in bugs')
+                console.log('getting in RESOLVED BUGS')
                 console.log('err ', err);
             })
     }
@@ -227,11 +320,6 @@ class ReleaseSummary extends Component {
             'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers'
         ]
         let formattedArrays = {};
-        console.log('server ttype')
-        console.log(data.ServerType);
-        if (data.ServerType && !Array.isArray(data.ServerType)) {
-            console.log('entered')
-        }
 
         arrays.forEach(item => {
             if (!data[item]) {
@@ -303,28 +391,34 @@ class ReleaseSummary extends Component {
         return (
             <div className="main-container">
                 {/* <Button onClick={(e) => this.call()}>Click</Button> */}
+                {/* <div>
+                    <SunburstComponent data={this.state.data}></SunburstComponent>
+                </div> */}
                 <Row>
                     <Col xs="12" sm="12" md="5" lg="5" className="rp-summary-tables">
                         {
                             <div className='rp-app-table-header'>
-                                <span className='rp-app-table-title'>Basic Info</span>
-                                {
-                                    this.props.currentUser && this.props.currentUser.isAdmin && this.state.basic.editOptions && this.state.basic.editOptions.length ?
-                                        this.state.basic.editing ?
-                                            <Fragment>
-                                                <Button title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.toggle()} >
-                                                    <i className="fa fa-check-square-o"></i>
+
+                                <div className='rp-app-table-title'>
+                                    <div className='rp-icon-button'><i className="fa fa-gg-circle"></i></div><span>Basic Info</span>
+                                    {
+                                        this.props.currentUser && this.props.currentUser.isAdmin && this.state.basic.editOptions && this.state.basic.editOptions.length ?
+                                            this.state.basic.editing ?
+                                                <Fragment>
+                                                    <Button title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.toggle()} >
+                                                        <i className="fa fa-check-square-o"></i>
+                                                    </Button>
+                                                    <Button size="md" color="transparent" className="float-right" onClick={() => this.reset()} >
+                                                        <i className="fa fa-undo"></i>
+                                                    </Button>
+                                                </Fragment>
+                                                :
+                                                <Button size="md" color="transparent" className="float-right" onClick={() => this.setState({ basic: { ...this.state.basic, editing: true } })} >
+                                                    <i className="fa fa-pencil-square-o"></i>
                                                 </Button>
-                                                <Button size="md" color="transparent" className="float-right" onClick={() => this.reset()} >
-                                                    <i className="fa fa-undo"></i>
-                                                </Button>
-                                            </Fragment>
-                                            :
-                                            <Button size="md" color="transparent" className="float-right" onClick={() => this.setState({ basic: { ...this.state.basic, editing: true } })} >
-                                                <i className="fa fa-pencil-square-o"></i>
-                                            </Button>
-                                        : null
-                                }
+                                            : null
+                                    }
+                                </div>
                             </div>
                         }
 
@@ -415,7 +509,7 @@ class ReleaseSummary extends Component {
                                             { key: 'Final Build Number', field: 'BuildNumber', value: this.props.selectedRelease.BuildNumber ? this.props.selectedRelease.BuildNumber : '' },
                                             { key: 'UBoot Number', value: this.props.selectedRelease.UbootVersion, field: 'UbootVersion' },
                                             { key: 'Docker Core RPM Number', value: this.props.selectedRelease.FinalDockerCore, field: 'FinalDockerCore' },
-
+                                            // { key: 'Priority of TCs', value: this.props.selectedRelease.Priority, field: 'Priority' },
                                         ].map((item, index) => {
                                             return (
                                                 <tr>
@@ -458,13 +552,32 @@ class ReleaseSummary extends Component {
                                             )
                                         })
                                     }
+                                    <tr>
+                                        <React.Fragment>
+                                            <td className='rp-app-table-key'>Priority of TCs</td>
+
+                                            <td>
+                                                <Input className='rp-app-table-value' type="select" id="Priority" name="Priority" value={this.props.selectedRelease.Priority}
+                                                    onChange={(e) => this.setState({ basic: { ...this.state.basic, updated: { ...this.state.basic.updated, Priority: e.target.value } } })}>
+                                                    {
+                                                        ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+                                                            <option value={item}>{item}</option>
+                                                        )
+                                                    }
+                                                </Input>
+                                            </td>
+
+
+                                        </React.Fragment>
+
+                                    </tr>
                                 </tbody>
                             </Table>
                         </Collapse>
                     </Col>
                     <Col xs="12" sm="12" md="5" lg="5" className="rp-summary-tables">
                         <div className='rp-app-table-header'>
-                            <span className='rp-app-table-title'>Release Status</span>
+                            <div className='rp-icon-button'><i className="fa fa-bars"></i></div><span className='rp-app-table-title'>Release Status</span>
                         </div>
 
                         <Table scroll responsive style={{ overflow: 'hidden', }}>
@@ -525,7 +638,7 @@ class ReleaseSummary extends Component {
                                             <div class="row">
                                                 <div class="col-sm-3">
                                                     <div className={`c-callout c-callout-total`}>
-                                                        <small class="text-muted">Total</small><br></br>
+                                                        <small class="text-muted">TOTAL</small><br></br>
                                                         <strong class="h4">{featuresCount}</strong>
                                                     </div>
                                                 </div>
@@ -649,7 +762,7 @@ class ReleaseSummary extends Component {
                     <Col xs="12" sm="12" md="5" lg="5" className="rp-summary-tables">
                         <div className='rp-app-table-header'>
                             <Link to={'/release/qastrategy'}>
-                                <span className='rp-app-table-title'>QA Strategy</span>
+                                <div className='rp-icon-button'><i className="fa fa-cogs"></i></div><span className='rp-app-table-title'>QA Strategy</span>
                             </Link>
                             {
                                 this.props.currentUser && this.props.currentUser.isAdmin && this.state.qaStrategy.editOptions && this.state.qaStrategy.editOptions.length ?
@@ -690,7 +803,7 @@ class ReleaseSummary extends Component {
                                         { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: this.props.tcStrategy ? this.props.tcStrategy.notApplicable : 0 },
 
                                         { key: 'Setups Used', restrictEdit: true, field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.length : 0 },
-                                        { key: 'Engineers', field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount : 0 },
+                                        { key: 'Engineers', restrictEdit: true, field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount : 0 },
                                         { key: 'QA Start Date', field: 'QAStartDate', value: this.props.selectedRelease.QAStartDate, type: 'date' },
                                         { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: this.props.selectedRelease.TargetedCodeFreezeDate, type: 'date' },
                                         { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: this.props.selectedRelease.UpgradeMetrics ? this.props.selectedRelease.UpgradeMetrics.length : '' },
@@ -792,7 +905,7 @@ class ReleaseSummary extends Component {
                     <Col xs="12" sm="12" md="5" lg="5" className="rp-summary-tables">
                         <div className='rp-app-table-header'>
                             <Link to={'/release/qastatus'}>
-                                <span className='rp-app-table-title'>QA Status</span>
+                                <div className='rp-icon-button'><i className="fa fa-area-chart"></i></div><span className='rp-app-table-title'>QA Status</span>
                             </Link>
                             {/* {
                                 this.props.currentUser && this.props.currentUser.isAdmin && this.state.qaStatus.editOptions && this.state.qaStatus.editOptions.length ?
@@ -818,14 +931,36 @@ class ReleaseSummary extends Component {
 
 
 
-                                <div class='row' style={{ width: '460px', padding: '10px', margin: 'auto' }}>
+                                <div class='row'>
                                     {/* <div style={this.state.screen.tcSummaryTitleStyle}>
                                         <div>Total</div>
                                         <div>{this.props.tcSummary && this.props.tcSummary.total}</div>
                                     </div> */}
-                                    <div class='col-md-1 rp-app-table-key'>Total:</div>
-                                    <div class='col-md-1 rp-app-table-key'>{this.props.tcSummary && this.props.tcSummary.total}</div>
-                                    <Doughnut data={this.props.tcSummary && this.props.tcSummary.data} options={this.props.tcSummary && this.props.tcSummary.options} style={{ textAlign: 'center' }} />
+                                    {/* <div class='col-md-1 rp-app-table-key'>Total:</div>
+                                    <div class='col-md-1 rp-app-table-key'>{this.props.tcSummary && this.props.tcSummary.total}</div> */}
+                                    {/* <Doughnut data={this.props.tcSummary && this.props.tcSummary.data} options={this.props.tcSummary && this.props.tcSummary.options} style={{ textAlign: 'center' }} /> */}
+                                    <div class='col-md-6'>
+                                        {
+                                            this.props.tcSummary &&
+                                            <div className='rp-app-table-key'>
+                                                <span>Domains ({this.props.tcSummary.total[0]})</span>
+                                            </div>
+                                        }
+                                        <div>
+                                            <HorizontalBar height={180} data={this.props.tcSummary && this.props.tcSummary.data[0]} options={stackedBarChartOptions}></HorizontalBar>
+                                        </div>
+                                    </div>
+                                    <div class='col-md-6'>
+                                        {
+                                            this.props.tcSummary &&
+                                            <div className='rp-app-table-key'>
+                                                <span>GUI ({this.props.tcSummary.total[1]})</span>
+                                            </div>
+                                        }
+                                        <div>
+                                            <HorizontalBar height={180} data={this.props.tcSummary && this.props.tcSummary.data[1]} options={stackedBarChartOptions}></HorizontalBar>
+                                        </div>
+                                    </div>
 
 
                                 </div>
@@ -876,9 +1011,6 @@ class ReleaseSummary extends Component {
                                                             }
                                                             {
                                                                 item.field === 'ActualQARateOfProgress' &&
-
-
-
                                                                 <div>
                                                                     <div className="progress-group">
                                                                         <div className="progress-group-bars">
@@ -899,12 +1031,10 @@ class ReleaseSummary extends Component {
                                 }
                             </tbody>
                         </Table>
-                        <div className='rp-app-table-key' style={{
-                            marginLeft: '0.5rem',
-                            textAlign: 'center',
-                            marginTop: '2.5rem',
-                            marginBottom: '0.5rem'
-                        }}>Weekly Rate of Progress (%)</div>
+
+                        <div className="chart-wrapper mx-3" style={{ height: '15rem' }}>
+                            <Line data={chartData[this.state.cardType]} options={chartOptions[this.state.cardType]} height={250} />
+                        </div>
                         <div class='row'>
                             <div class='col-md-3'>
                                 <FormGroup style={{ marginLeft: '0.5rem' }}>
@@ -919,10 +1049,16 @@ class ReleaseSummary extends Component {
 
                                 </FormGroup>
                             </div>
+                            <div class='col-md-5'>
+                                <div className='rp-app-table-key' style={{
+                                    marginLeft: '0.5rem',
+                                    textAlign: 'center',
+                                    marginTop: '0.2rem',
+                                    marginBottom: '0.5rem'
+                                }}>Weekly Rate of Progress (%)</div>
+                            </div>
                         </div>
-                        <div className="chart-wrapper mx-3" style={{ height: '15rem' }}>
-                            <Line data={chartData[this.state.cardType]} options={chartOptions[this.state.cardType]} height={250} />
-                        </div>
+
                     </Col>
                 </Row>
 

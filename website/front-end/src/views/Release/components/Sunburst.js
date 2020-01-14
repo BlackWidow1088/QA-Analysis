@@ -106,7 +106,8 @@ class Sunburst extends React.Component {
 
     constructor(props) {
         super(props);
-
+        console.log('called construcotr');
+        // this.init();
         this._last_click = null
         this.radius = (Math.min(this.props.width, this.props.height) / 2);
         this.y = d3ScaleSqrt()
@@ -132,6 +133,9 @@ class Sunburst extends React.Component {
         this.tooltipDom = null
         this.lastSelect = null
     }
+    init() {
+
+    }
 
     componentDidMount() {
         this.props._debug && this.props._log("Sunburst: componentDidMount()")
@@ -149,12 +153,12 @@ class Sunburst extends React.Component {
     _destroy_svg() {
         this.props._debug && this.props._log("Sunburst: _destroy_svg()")
         this.svg && this.svg.selectAll('*').remove()
-        this.svg = null
+        // this.svg = null
     }
 
     componentDidUpdate() { //prevProps
         this.props._debug && this.props._log("Sunburst: componentDidUpdate()")
-        this._destroy_svg()
+        // this._destroy_svg()
         this._create()
     }
 
@@ -420,7 +424,6 @@ class Sunburst extends React.Component {
         if (current.depth <= 1) {
             hue = this.hueDXScale(d.x0);
             current.fill = d3Hsl(hue, saturation, lightness);
-            console.log('current fill ', current.fill)
             return current.fill;
         }
         current.fill = current.parent.fill.brighter(child_brightness);
@@ -428,7 +431,6 @@ class Sunburst extends React.Component {
         hue = this.hueDXScale(current.x0);
         const colorshift = thishsl.h + (hue / 4);
         const c = d3Hsl(colorshift, thishsl.s, thishsl.l)
-        console.log('color ', c)
         return c;
         // return (this.props.colorFunc || this.props.colorFunc(d, c)) || c
     }
@@ -439,6 +441,7 @@ class Sunburst extends React.Component {
         this.props._debug && this.props._log("Sunburst: render()")
         return (
             <div className='sunburst-wrapper' id={this.domId} />
+
         );
     }
 }

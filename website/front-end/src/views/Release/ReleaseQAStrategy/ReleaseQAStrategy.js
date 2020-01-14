@@ -31,8 +31,8 @@ const options = {
 }
 
 const data = [
-    { date: 'Dec 2019', QARateOfProgress: 5, tcTotal: 2100, tcSkipped: 11, tcNA: 0, SetupsUsed: ['autotb1', 'autotb2', 1, 2, 3, 4, 5, 6], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2, 3, 4, 5, 6], startdate: '1-Oct-2019', freezedate: '15-Dec-2019', upgrade: '4/21' },
-    { date: 'Nov 2019', QARateOfProgress: 10, tcTotal: 2000, tcSkipped: 0, tcNA: 0, SetupsUsed: ['autotb1', 'autotb2', 1, 2, 3, 4, 5, 6], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2, 3, 4, 5, 6], startdate: '1-Oct-2019', freezedate: '1-Dec-2019', upgrade: '0/21' },
+    { date: 'Dec 2019', QARateOfProgress: 5, tcTotal: 2100, tcSkipped: 11, tcNA: 0, SetupsUsed: ['autotb1', 'autotb2', 1, 2, 3, 4, 5, 6, 7, 8, 9], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2, 3, 4, 5], startdate: '1-Oct-2019', freezedate: '15-Dec-2019', upgrade: '4/21' },
+    { date: 'Nov 2019', QARateOfProgress: 10, tcTotal: 2000, tcSkipped: 0, tcNA: 0, SetupsUsed: ['autotb1', 'autotb2', 1, 2, 3, 4, 5, 6, 7], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2, 3, 4, 5], startdate: '1-Oct-2019', freezedate: '1-Dec-2019', upgrade: '0/21' },
     { date: 'Oct 2019', QARateOfProgress: 10, tcTotal: 1850, tcSkipped: 0, tcNA: 0, SetupsUsed: ['autotb5', 'auto8', 'atuo10', 1, 2], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com', 1, 2], startdate: '1-Oct-2019', freezedate: '1-Dec-2019', upgrade: '0/21' },
     // { date: 'Sept 2019', QARateOfProgress: 60, tcTotal: 500, tcSkipped: 50, tcNA: 200, SetupsUsed: ['autotb1', 'autotb2'], Engineer: ['achavan@diamanti.com', 'sushil@diamanti.com', 'nikhil@diamanti.com'], startdate: '5th Nov, 2019', freezedate: '30th Nov, 2019', upgrade: [2.2, 2.2] },
 ]
@@ -148,7 +148,7 @@ class ReleaseQAStrategy extends Component {
                         data.map((each, i) =>
                             <Col xs="11" sm="11" md="6" lg="3" className="rp-summary-tables">
                                 <div className='rp-app-table-header'>
-                                    <span className='rp-app-table-title'>{each.date}</span>
+                                    <div className='rp-icon-button'><i className="fa fa-cogs"></i></div><span className='rp-app-table-title'>{each.date}</span>
                                 </div>
 
                                 <Table scroll responsive style={{ overflow: 'scroll', }}>

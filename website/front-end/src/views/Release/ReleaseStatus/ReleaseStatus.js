@@ -90,13 +90,16 @@ class ReleaseStatus extends Component {
                                                 this.state.bugOpen &&
                                                 <i className="fa fa-angle-up rp-rs-down-arrow"></i>
                                             }
-                                            <span className='col-md-3 rp-app-table-title'>Bugs</span>
+
+                                            <div className='rp-icon-button'><i className="fa fa-bug"></i></div><span className='rp-app-table-title'>Bugs</span>
+
+
                                         </div>
                                         {
                                             this.props.bug && Object.keys(this.props.bug.bugCount.all).map(item =>
                                                 <div class='col-md-2'>
                                                     <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
-                                                        <small class="text-muted">{item}</small><br></br>
+                                                        <small class="text-muted">{item.toUpperCase()}</small><br></br>
                                                         <strong class="h5">{this.props.bug.bugCount.all[item]}</strong>
                                                     </div>
                                                 </div>
@@ -198,7 +201,9 @@ class ReleaseStatus extends Component {
                                 this.state.buildOpen &&
                                 <i className="fa fa-angle-up rp-rs-down-arrow"></i>
                             }
-                            <span className='col-md-3 rp-app-table-title'>Upgrade Metrics and Risks</span>
+
+                            <div className='rp-icon-button'><i className="fa fa-gears"></i></div>
+                            <span className='rp-app-table-title'>Upgrade Metrics and Risks</span>
                         </div>
                         <Collapse isOpen={this.state.buildOpen}>
                             <Row>
@@ -263,11 +268,14 @@ class ReleaseStatus extends Component {
                                                 this.state.featureOpen &&
                                                 <i className="fa fa-angle-up rp-rs-down-arrow"></i>
                                             }
-                                            <span className='col-md-3 rp-app-table-title'>Features</span>
+
+                                            <div className='rp-icon-button'><i className="fa fa-empire"></i></div>
+                                            <span className='rp-app-table-title'>Features</span>
+
                                         </div>
                                         <div class="col-sm-3">
                                             <div className={`c-callout c-callout-total`} style={{ marginTop: '0', marginBottom: '0' }}>
-                                                <small class="text-muted">Total</small><br></br>
+                                                <small class="text-muted">TOTAL</small><br></br>
                                                 <strong class="h4">{featuresCount}</strong>
                                             </div>
                                         </div>
@@ -275,7 +283,7 @@ class ReleaseStatus extends Component {
                                             Object.keys(statusScenarios).map(item =>
                                                 <div class="col-sm-3">
                                                     <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
-                                                        <small class="text-muted">{item}</small><br></br>
+                                                        <small class="text-muted">{item.toUpperCase()}</small><br></br>
                                                         <strong class="h4">{statusScenarios[item].total}</strong>
                                                     </div>
                                                 </div>

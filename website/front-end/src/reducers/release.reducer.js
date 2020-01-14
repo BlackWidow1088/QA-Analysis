@@ -27,7 +27,7 @@ const domainDetail = {
     'StorageSnapshot-Tests': { name: 'Storage', index: 0 },
     'Storage-DrivesetTCs': { name: 'Storage', index: 0 },
     'NetworkTestCases': { name: 'Network', index: 1 },
-    'ManagementTestCases': { name: 'Management', index: 2 },
+    'ManagementTestcases': { name: 'Management', index: 2 },
     'Rbac': { name: 'Management', index: 2 },
 }
 
@@ -145,9 +145,6 @@ function getAggregate(release) {
 function all(state = initialState.releases, action) {
     switch (action.type) {
         case SAVE_RELEASE_BASIC_INFO:
-            console.log('current state ', state)
-            console.log('saving id ', action.payload.id)
-            console.log('saving ', action.payload.data);
             let found = false;
             let dates = [
                 'TargetedReleaseDate', 'ActualReleaseDate', 'TargetedCodeFreezeDate',
@@ -218,6 +215,37 @@ export const getCurrentRelease = (state) => {
     return current ? current : {}
 }
 
+
+// labels: ['Domains (Total: 1100)', 'GUI (Total: 1500)'],
+// datasets: [{
+//     label: 'Pass',
+//     backgroundColor: '#01D251',
+//     borderColor: 'white',
+//     borderWidth: 1,
+//     data: [10, 600]
+// },
+// {
+//     label: 'Blocked',
+//     backgroundColor: '#FFCE56',
+//     borderColor: 'white',
+//     borderWidth: 1,
+//     data: [300, 300]
+// },
+// {
+//     label: 'Fail',
+//     backgroundColor: '#d9534f',
+//     borderColor: 'white',
+//     borderWidth: 1,
+//     data: [300, 400]
+// },
+// {
+//     label: 'Not Tested',
+//     backgroundColor: 'rgba(128,128,128,0.3)',
+//     borderColor: 'white',
+//     borderWidth: 1,
+//     data: [300, 200]
+// },
+// ]
 export const getTCForStatus = (state, id) => {
     let release = state.release.all.filter(item => item.ReleaseNumber === id)[0];
     if (!release) {
@@ -226,37 +254,105 @@ export const getTCForStatus = (state, id) => {
     if (!release.TcAggregate) {
         return;
     }
-    console.log('aggre')
-    console.log(release.TcAggregate);
-    let data = {
-        labels: [
-            'Fail (' + (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) + ')',
-            'Pass (' + (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) + ')',
-            'Blocked (' + (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) + ')',
-            'Yet to be Tested (' + release.TcAggregate.all.NotTested + ')',
-        ],
-        datasets: [
-            {
-                data: [
-                    (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail),
-                    (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass),
-                    (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip),
-                    release.TcAggregate.all.NotTested
-                ],
-                backgroundColor: [
-                    '#e55353',
-                    '#2eb85c',
-                    '#ffc107',
-                    '#39f',
-                ],
-                hoverBackgroundColor: [
-                    '#e55353',
-                    '#2eb85c',
-                    '#ffc107',
-                    '#39f',
-                ],
-            }],
-    };
+    // let domainTotal = release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail +
+    //     release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass +
+    //     release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip +
+    //     release.TcAggregate.all.NotTested;
+    let data = [{
+        // labels: ['Domains (Total: ' + domainTotal + ')'],
+        labels: [''],
+        // labels: [
+        //     'Fail (' + (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) + ')',
+        //     'Pass (' + (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) + ')',
+        //     'Blocked (' + (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) + ')',
+        //     'Yet to be Tested (' + release.TcAggregate.all.NotTested + ')',
+        // ],
+        // datasets: [
+        //     {
+        //         data: [
+        //             (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail),
+        //             (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass),
+        //             (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip),
+        //             release.TcAggregate.all.NotTested
+        //         ],
+        //         backgroundColor: [
+        //             '#e55353',
+        //             '#2eb85c',
+        //             '#ffc107',
+        //             '#39f',
+        //         ],
+        //         hoverBackgroundColor: [
+        //             '#e55353',
+        //             '#2eb85c',
+        //             '#ffc107',
+        //             '#39f',
+        //         ],
+        //     }],
+        datasets: [{
+            label: 'Pass',
+            backgroundColor: '#01D251',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [(release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass)]
+        },
+        {
+            label: 'Blocked',
+            backgroundColor: '#FFCE56',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [(release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip)]
+        },
+        {
+            label: 'Fail',
+            backgroundColor: '#d9534f',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [(release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail)]
+        },
+        {
+            label: 'Not Tested',
+            backgroundColor: 'rgba(128,128,128,0.3)',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [release.TcAggregate.all.NotTested]
+        },
+        ]
+    }];
+    // {
+    // "GUI": { "Tested": { "auto": { "Pass": 199, "Fail": 11, "Skip": 0 }, "manual": { "Pass": 3444, "Fail": 394, "Skip": 0 } }, "NotApplicable": 0, "NotTested": 0 }
+
+    data.push({
+        labels: [''],
+        datasets: [{
+            label: 'Pass',
+            backgroundColor: '#01D251',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [(199 + 3444)]
+        },
+        {
+            label: 'Blocked',
+            backgroundColor: '#FFCE56',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [0]
+        },
+        {
+            label: 'Fail',
+            backgroundColor: '#d9534f',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [(11 + 394)]
+        },
+        {
+            label: 'Not Tested',
+            backgroundColor: 'rgba(128,128,128,0.3)',
+            borderColor: 'white',
+            borderWidth: 1,
+            data: [0]
+        },
+        ]
+    })
     const options = {
         legend: {
             position: 'right',
@@ -267,12 +363,11 @@ export const getTCForStatus = (state, id) => {
             }
         },
     }
-    let total = (release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) +
+    let total = [(release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail) +
         (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) +
         (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) +
-        release.TcAggregate.all.NotTested
-    console.log('data for tc status');
-    console.log(data);
+        release.TcAggregate.all.NotTested];
+    total.push((3643 + 405))
     return {
         data,
         total,

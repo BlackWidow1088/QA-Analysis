@@ -1,5 +1,6 @@
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import { Chart } from 'react-chartjs-2';
 export const brandPrimary = getStyle('--primary')
 export const brandSuccess = getStyle('--success')
 export const brandInfo = getStyle('--info')
@@ -419,3 +420,107 @@ export const cardChartOpts3 = {
         },
     },
 };
+
+export const stackedBarChart = {
+    labels: ['Domains (Total: 1100)', 'GUI (Total: 1500)'],
+    datasets: [{
+        label: 'Pass',
+        backgroundColor: '#01D251',
+        borderColor: 'white',
+        borderWidth: 1,
+        data: [10, 600]
+    },
+    {
+        label: 'Blocked',
+        backgroundColor: '#FFCE56',
+        borderColor: 'white',
+        borderWidth: 1,
+        data: [300, 300]
+    },
+    {
+        label: 'Fail',
+        backgroundColor: '#d9534f',
+        borderColor: 'white',
+        borderWidth: 1,
+        data: [300, 400]
+    },
+    {
+        label: 'Not Tested',
+        backgroundColor: 'rgba(128,128,128,0.3)',
+        borderColor: 'white',
+        borderWidth: 1,
+        data: [300, 200]
+    },
+    ]
+}
+
+export const stackedBarChartOptions = {
+    title: {
+        display: false,
+        text: '80%'
+    },
+    // tooltips: {
+    //     mode: 'index',
+    //     intersect: false
+    // },
+    maintainAspectRatio: false,
+    responsive: true,
+    scales: {
+        xAxes: [{
+            barPercentage: 0.4,
+            stacked: true,
+            gridLines: {},
+            ticks: {
+                beginAtZero: true,
+                fontSize: 14
+            },
+        }],
+        yAxes: [{
+            barPercentage: 0.4,
+            stacked: true,
+            gridLines: {
+                display: false,
+                // color: '#fff',
+                // lineColor: '#fff',
+                // zeroLineColor: '#fff',
+                // zeroLineWidth: 0
+            },
+            ticks: {
+                fontSize: 14
+            },
+        }],
+    },
+    legend: {
+        display: false
+    },
+    animation: {
+        onComplete: function () {
+            var chartInstance = this.chart;
+            var ctx = chartInstance.ctx;
+            ctx.textAlign = "left";
+            ctx.font = "14px Open Sans";
+            ctx.fillStyle = "rgb(4, 56, 26)";
+
+            Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+                var meta = chartInstance.controller.getDatasetMeta(i);
+                // let total = 0;
+                // Chart.helpers.each(meta.data.forEach(function (bar, index) {
+                //     total  += dataset.data[index];
+                // }), this)
+                Chart.helpers.each(meta.data.forEach(function (bar, index) {
+                    let data = dataset.data[index];
+                    // if (i === 0) {
+                    //     ctx.fillText(data, 50, bar._model.y + 4);
+                    // } else {
+                    if (bar._model.x - bar._model.base > 50) {
+                        ctx.fillText(data, bar._model.x - 30, bar._model.y + 4);
+                    }
+
+                    // }
+                }), this)
+            }), this);
+        }
+    },
+    pointLabelFontFamily: "Quadon Extra Bold",
+    scaleFontFamily: "Quadon Extra Bold",
+}
