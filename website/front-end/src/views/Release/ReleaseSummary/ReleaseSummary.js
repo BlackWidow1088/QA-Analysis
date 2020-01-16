@@ -317,7 +317,7 @@ class ReleaseSummary extends Component {
         })
         data = { ...data, ...formattedDates };
         let arrays = [
-            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers'
+            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers', 'EngineerCount'
         ]
         let formattedArrays = {};
 
@@ -332,14 +332,14 @@ class ReleaseSummary extends Component {
         data = { ...data, ...formattedArrays };
 
 
-        if (isNaN(data.EngineerCount)) {
-            data.EngineerCount = 0;
-        } else {
-            data.EngineerCount = parseInt(data.EngineerCount);
-        }
-        if (!data.EngineerCount) {
-            data.EngineerCount = 0;
-        }
+        // if (isNaN(data.EngineerCount)) {
+        //     data.EngineerCount = 0;
+        // } else {
+        //     data.EngineerCount = parseInt(data.EngineerCount);
+        // }
+        // if (!data.EngineerCount) {
+        //     data.EngineerCount = 0;
+        // }
         if (isNaN(data.QARateOfProgress)) {
             data.QARateOfProgress = 0;
         } else {
@@ -555,17 +555,26 @@ class ReleaseSummary extends Component {
                                     <tr>
                                         <React.Fragment>
                                             <td className='rp-app-table-key'>Priority of TCs</td>
-
-                                            <td>
-                                                <Input className='rp-app-table-value' type="select" id="Priority" name="Priority" value={this.props.selectedRelease.Priority}
-                                                    onChange={(e) => this.setState({ basic: { ...this.state.basic, updated: { ...this.state.basic.updated, Priority: e.target.value } } })}>
-                                                    {
-                                                        ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
-                                                            <option value={item}>{item}</option>
-                                                        )
-                                                    }
-                                                </Input>
-                                            </td>
+                                            {this.state.basic.editing &&
+                                                <td>
+                                                    <Input className='rp-app-table-value' type="select" id="Priority" name="Priority" value={this.state.basic.updated.Priority !== undefined ?
+                                                        this.state.basic.updated.Priority : this.props.selectedRelease.Priority ? this.props.selectedRelease.Priority : ''}
+                                                        onChange={(e) => this.setState({ basic: { ...this.state.basic, updated: { ...this.state.basic.updated, Priority: e.target.value } } })}>
+                                                        <option value=''>Select Priority</option>
+                                                        {
+                                                            ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+                                                                <option value={item}>{item}</option>
+                                                            )
+                                                        }
+                                                    </Input>
+                                                </td>
+                                            }
+                                            {
+                                                !this.state.basic.editing &&
+                                                <td>
+                                                    <span>{this.props.selectedRelease.Priority}</span>
+                                                </td>
+                                            }
 
 
                                         </React.Fragment>
@@ -718,7 +727,7 @@ class ReleaseSummary extends Component {
                                         Current Build Number
                                     </td>
                                     <td>
-                                        101
+                                        {this.props.selectedRelease && this.props.selectedRelease.ReleaseNumber === '2.3.0' ? 101 : 'Not Available'}
                                     </td>
                                 </tr>
                             </tbody>
@@ -797,16 +806,23 @@ class ReleaseSummary extends Component {
                         <Table scroll responsive style={{ overflow: 'scroll', }}>
                             <tbody>
                                 {
+                                    <tr>
+                                        <td className='rp-app-table-key'>Test Cases</td>
+                                        <td>
+                                            <span>{this.props.tcStrategy ? this.props.tcStrategy.totalTests : 0}</span>
+                                            {/* <span>(P0: {this.props.selectedRelease.P0},</span>
+                                            <span>P1: {this.props.selectedRelease.P1},</span>
+                                            <span>P2: {this.props.selectedRelease.P2})</span> */}
+                                        </td>
+                                    </tr>
+                                }
+                                {
                                     [
-                                        { key: 'Test Cases', restrictEdit: true, field: 'run', value: this.props.tcStrategy ? this.props.tcStrategy.totalTests : 0 },
+                                        // { key: 'Test Cases', restrictEdit: true, field: 'run', value: this.props.tcStrategy ? this.props.tcStrategy.totalTests : 0 },
                                         { key: 'Test Cases Skipped', restrictEdit: true, field: 'skip', value: this.props.tcStrategy ? this.props.tcStrategy.skipped : 0 },
                                         { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: this.props.tcStrategy ? this.props.tcStrategy.notApplicable : 0 },
-
-                                        { key: 'Setups Used', restrictEdit: true, field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.length : 0 },
-                                        { key: 'Engineers', restrictEdit: true, field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount : 0 },
                                         { key: 'QA Start Date', field: 'QAStartDate', value: this.props.selectedRelease.QAStartDate, type: 'date' },
                                         { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: this.props.selectedRelease.TargetedCodeFreezeDate, type: 'date' },
-                                        { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: this.props.selectedRelease.UpgradeMetrics ? this.props.selectedRelease.UpgradeMetrics.length : '' },
                                         { key: 'Expected rate of Progress per week', field: 'QARateOfProgress', value: this.props.selectedRelease.QARateOfProgress ? this.props.selectedRelease.QARateOfProgress : 0 },
 
                                     ].map((item, index) => {
@@ -883,6 +899,44 @@ class ReleaseSummary extends Component {
                                             </tr>
                                         )
                                     })
+                                }
+                                {
+                                    [
+                                        { key: 'Setups Used', restrictEdit: false, field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.length : 0 },
+                                        { key: 'Engineers', restrictEdit: false, field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount.length : 0 },
+                                        { key: 'Upgrade Metrics', restrictEdit: false, field: 'UpgradeMetrics', value: this.props.selectedRelease.UpgradeMetrics ? this.props.selectedRelease.UpgradeMetrics.length : 0 }
+                                    ].map(item =>
+                                        <React.Fragment>
+                                            <tr>
+                                                <td className='rp-app-table-key'>{item.key}
+                                                    {
+                                                        !this.state.qaStrategy.editing &&
+                                                        <span style={{ 'marginLeft': '0.5rem' }}>(Total: {item.value})</span>
+                                                    }
+                                                </td>
+                                                {
+                                                    this.state.qaStrategy.editing &&
+                                                    <td>
+                                                        <Input type='textarea' rows='2'
+                                                            value={
+                                                                this.state.qaStrategy.updated[item.field] !== undefined ?
+                                                                    this.state.qaStrategy.updated[item.field] : (this.props.selectedRelease[item.field] ? Array.isArray(this.props.selectedRelease[item.field]) ? this.props.selectedRelease[item.field].join(',') : this.props.selectedRelease[item.field] : '')}
+                                                            onChange={(e) => this.setState({ qaStrategy: { ...this.state.qaStrategy, updated: { ...this.state.qaStrategy.updated, [item.field]: e.target.value } } })}
+                                                        >
+                                                        </Input>
+                                                    </td>
+                                                }
+                                                {
+                                                    !this.state.qaStrategy.editing &&
+                                                    <td style={{ wordBreak: 'break-word' }}>
+                                                        <span >{Array.isArray(this.props.selectedRelease[item.field]) ? this.props.selectedRelease[item.field].join(',') : ''}</span>
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        </React.Fragment>
+                                    )
+
                                 }
                             </tbody>
                         </Table>
@@ -970,7 +1024,7 @@ class ReleaseSummary extends Component {
                             <tbody>
                                 {
                                     [
-                                        { key: 'Actual rate of Progress per week', field: 'ActualQARateOfProgress', value: 87.85 },
+                                        { key: 'Actual rate of Progress per week', field: 'ActualQARateOfProgress', value: this.props.selectedRelease.ReleaseNumber === '2.3.0' ? 87.85 : 0 },
                                         { key: 'Test Cases required to run again', restrictEdit: true, field: 'run', value: this.props.tcStrategy ? this.props.tcStrategy.needToRun : 0 },
                                     ].map((item, index) => {
                                         return (
@@ -1014,7 +1068,7 @@ class ReleaseSummary extends Component {
                                                                 <div>
                                                                     <div className="progress-group">
                                                                         <div className="progress-group-bars">
-                                                                            <Progress className="progress-xs" color="warning" value={87.85} />
+                                                                            <Progress className="progress-xs" color="warning" value={this.props.selectedRelease.ReleaseNumber === '2.3.0' ? 87.85 : 0} />
 
                                                                         </div>
                                                                     </div>
@@ -1031,34 +1085,37 @@ class ReleaseSummary extends Component {
                                 }
                             </tbody>
                         </Table>
+                        {
+                            this.props.selectedRelease && this.props.selectedRelease.ReleaseNumber === '2.3.0' &&
+                            <React.Fragment>
+                                <div className="chart-wrapper mx-3" style={{ height: '15rem' }}>
+                                    <Line data={chartData[this.state.cardType]} options={chartOptions[this.state.cardType]} height={250} />
+                                </div>
+                                <div class='row'>
+                                    <div class='col-md-3'>
+                                        <FormGroup style={{ marginLeft: '0.5rem' }}>
+                                            <Label htmlFor="selectRelease" className='rp-app-table-key'>Card Type</Label>
 
-                        <div className="chart-wrapper mx-3" style={{ height: '15rem' }}>
-                            <Line data={chartData[this.state.cardType]} options={chartOptions[this.state.cardType]} height={250} />
-                        </div>
-                        <div class='row'>
-                            <div class='col-md-3'>
-                                <FormGroup style={{ marginLeft: '0.5rem' }}>
-                                    <Label htmlFor="selectRelease" className='rp-app-table-key'>Card Type</Label>
-
-                                    <Input onChange={(e) => this.setState({ cardType: e.target.value })} type="select" name="selectRelease" id="selectRelease">
-                                        <option value='BOS'>BOS</option>
-                                        <option value='NYNJ'>NYNJ</option>
-                                        <option value='COMMON'>COMMON</option>
-                                    </Input>
+                                            <Input onChange={(e) => this.setState({ cardType: e.target.value })} type="select" name="selectRelease" id="selectRelease">
+                                                <option value='BOS'>BOS</option>
+                                                <option value='NYNJ'>NYNJ</option>
+                                                <option value='COMMON'>COMMON</option>
+                                            </Input>
 
 
-                                </FormGroup>
-                            </div>
-                            <div class='col-md-5'>
-                                <div className='rp-app-table-key' style={{
-                                    marginLeft: '0.5rem',
-                                    textAlign: 'center',
-                                    marginTop: '0.2rem',
-                                    marginBottom: '0.5rem'
-                                }}>Weekly Rate of Progress (%)</div>
-                            </div>
-                        </div>
-
+                                        </FormGroup>
+                                    </div>
+                                    <div class='col-md-5'>
+                                        <div className='rp-app-table-key' style={{
+                                            marginLeft: '0.5rem',
+                                            textAlign: 'center',
+                                            marginTop: '0.2rem',
+                                            marginBottom: '0.5rem'
+                                        }}>Weekly Rate of Progress (%)</div>
+                                    </div>
+                                </div>
+                            </React.Fragment>
+                        }
                     </Col>
                 </Row>
 

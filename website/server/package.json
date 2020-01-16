@@ -9,8 +9,8 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "proxy": "nodemon proxy-server.js",
-        "mock-server": "nodemon app-server.js",
+        "proxy": "node proxy-server.js",
+        "mock-server": "node app-server.js",
         "start-all-servers": "concurrently --kill-others \"npm run proxy\" \"npm run mock-server\""
     },
     "private": true,

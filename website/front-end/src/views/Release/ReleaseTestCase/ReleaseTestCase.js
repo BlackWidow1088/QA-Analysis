@@ -116,11 +116,14 @@ class ReleaseTestCase extends Component {
         console.log(node);
         if (alldomains.includes(node.data.name)) {
             this.setState({ doughnuts: getTCStatusForUISubDomains(this.props.selectedRelease, node.data.name), domainSelected: false })
+            return true;
         }
         if (node.data.name === 'domains') {
             this.setState({ doughnuts: getTCStatusForUIDomains(this.props.selectedRelease), domainSelected: false })
+            return true;
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
+            return false;
             this.setState({ domainSelected: node.data.name, doughnuts: null });
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
                 .then(all => {
@@ -136,7 +139,7 @@ class ReleaseTestCase extends Component {
                     }
                 })
         }
-        return true;
+
     }
     sectionSelect(e) {
         this.setState({ selected: e.rule.name, svgKey: this.state.svgKey + 1 })

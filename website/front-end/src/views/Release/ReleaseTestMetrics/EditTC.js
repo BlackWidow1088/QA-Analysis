@@ -205,7 +205,7 @@ class EditTC extends Component {
                         <Col xs="6" md="4" lg="3">
                             <FormGroup className='rp-app-table-value'>
                                 <Label className='rp-app-table-label' htmlFor="Status">
-                                    Status
+                                    Working Status
                                     {
                                         this.props.testcaseEdit.errors['Status'] &&
                                         <i className='fa fa-exclamation-circle rp-error-icon'>{this.props.testcaseEdit.errors['Status']}</i>
@@ -358,7 +358,7 @@ class EditTC extends Component {
                                 {
                                     [
                                         { field: 'TcName', header: 'Tc Name *', type: 'text', restrictWidth: false },
-                                        { field: 'Scenario', header: 'Scenario *', type: 'text' },
+                                        { field: 'Scenario', header: 'Component', type: 'text' },
 
                                     ].map((item, index) => (
                                         <Col xs="6" md="4" lg="3">
@@ -491,8 +491,9 @@ class EditTC extends Component {
                                                 :
                                                 <Input style={{ borderColor: this.props.testcaseEdit.errors.Priority ? 'red' : '' }} className='rp-app-table-value' type="select" id="Priority" name="Priority" value={this.props.testcaseEdit && this.props.testcaseEdit.Priority}
                                                     onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, Priority: e.target.value, errors: { ...this.props.testcaseEdit.errors, Priority: null } })} >
+                                                    <option value=''>Select Priority</option>
                                                     {
-                                                        ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+                                                        ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
                                                             <option value={item}>{item}</option>
                                                         )
                                                     }

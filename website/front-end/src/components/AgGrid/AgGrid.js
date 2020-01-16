@@ -92,6 +92,14 @@ class AgGrid extends Component {
             ],
             columnDefs: [
                 {
+                    headerName: "Domain", field: "Domain", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100'
+
+                },
+                {
+                    headerName: "Sub Domain", field: "SubDomain", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100',
+
+                },
+                {
                     headerName: "Tc ID", field: "TcID", sortable: true, filter: true, cellStyle: this.renderEditedCell,
                     editable: false,
                 },
@@ -100,11 +108,7 @@ class AgGrid extends Component {
 
                 },
                 {
-                    headerName: "Component", field: "Scenario", sortable: true, filter: true, cellStyle: this.renderEditedCell,
-
-                },
-                {
-                    headerName: "Card Type", field: "CardType", sortable: true, filter: true, cellStyle: this.renderEditedCell,
+                    headerName: "Card Type", field: "CardType", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100',
 
                     cellEditor: 'selectionEditor',
                     cellEditorParams: {
@@ -113,10 +117,16 @@ class AgGrid extends Component {
                     }
                 },
                 {
-                    headerName: "Priority", field: "Priority", sortable: true, filter: true, cellStyle: this.renderEditedCell,
+                    headerName: "Build", field: "Build", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100',
+
+                    cellEditor: 'selectionEditor',
+                    cellEditorParams: {
+                        values: ['BOS', 'NYNJ', 'COMMON'],
+                        multiple: true
+                    }
                 },
                 {
-                    headerName: "Status", field: "Status", sortable: true, filter: true, cellStyle: this.renderEditedCell,
+                    headerName: "Status", field: "CurrentStatus", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100',
 
                     cellEditor: 'selectionEditor',
                     cellEditorParams: {
@@ -124,7 +134,10 @@ class AgGrid extends Component {
                     }
                 },
                 {
-                    headerName: "Assignee", field: "Assignee", sortable: true, filter: true, cellStyle: this.renderEditedCell,
+                    headerName: "Priority", field: "Priority", sortable: true, filter: true, cellStyle: this.renderSmallCell, width: '100'
+                },
+                {
+                    headerName: "Assignee", field: "Assignee", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100',
 
                     cellEditor: 'selectionEditor',
                     cellEditorParams: {
@@ -143,7 +156,7 @@ class AgGrid extends Component {
             defaultColDef: { resizable: true },
 
             e2eColumnDefs: [{
-                headerName: "E2E Build", field: "e2eBuild", sortable: true, filter: true,
+                headerName: "Build", field: "e2eBuild", sortable: true, filter: true,
             },
             {
                 headerName: "Date", field: "Date", sortable: true, filter: true,
@@ -228,7 +241,11 @@ class AgGrid extends Component {
         this.props.saveSingleTestCase({});
         this.props.updateTCEdit({ Master: true, errors: {}, original: null });
     }
-
+    renderSmallCell = (params) => {
+        return {
+            backgroundColor: '', maxWidth: '50px'
+        }
+    }
     renderEditedCell = (params) => {
         let editedInRow = this.editedRows[`${params.data.TcID}`] && this.editedRows[params.data.TcID][params.colDef.field] && this.editedRows[params.data.TcID][params.colDef.field].originalValue !== params.value;
         if (editedInRow) {
@@ -461,8 +478,6 @@ class AgGrid extends Component {
         }
     }
     render() {
-        console.log('aggrid')
-        console.log(this.props.tcDetails);
         return (
             <div>
                 <Row>
@@ -512,7 +527,7 @@ class AgGrid extends Component {
                         </div>
                         <Collapse isOpen={this.state.tcOpen}>
                             <div>
-                                <div style={{ width: (window.screen.width * (1 - 0.218)) + 'px', height: '250px', marginBottom: '6rem' }}>
+                                <div style={{ width: (window.screen.width * (1 - 0.248)) + 'px', height: '250px', marginBottom: '6rem' }}>
                                     <div class="test-header">
                                         <div class="row">
                                             <div class="col-md-3">
@@ -606,7 +621,7 @@ class AgGrid extends Component {
                                                 <Collapse isOpen={this.state.more}>
                                                     <Row>
                                                         <Col lg="6">
-                                                            <div className='rp-app-table-title'>E2E Builds Status</div>
+                                                            <div className='rp-app-table-title'>Builds Status</div>
 
                                                             <div class="test-header">
                                                                 <div class="row">
@@ -638,7 +653,7 @@ class AgGrid extends Component {
 
 
                                                         </Col>
-                                                        <Col lg="6">
+                                                        {/* <Col lg="6">
                                                             <div className='rp-app-table-title'>Activity</div>
                                                             <div style={{ width: (window.screen.width * ((1 - 0.218) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
                                                                 <div class="test-header">
@@ -667,7 +682,7 @@ class AgGrid extends Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </Col>
+                                                        </Col> */}
                                                     </Row>
                                                     <FormGroup row className="my-0">
                                                         {
@@ -702,7 +717,7 @@ class AgGrid extends Component {
 
 
 
-                                                    <Row>
+                                                    {/* <Row>
 
                                                         <Col lg="6">
                                                             <div className='rp-app-table-title'>Auto Builds Status</div>
@@ -765,7 +780,7 @@ class AgGrid extends Component {
                                                             </div>
                                                         </Col>
 
-                                                    </Row>
+                                                    </Row> */}
                                                 </Collapse>
                                             }
                                         </React.Fragment>

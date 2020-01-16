@@ -60,6 +60,8 @@ class ReleaseTestMetrics extends Component {
     getTcs() {
         axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}`)
             .then(all => {
+                console.log('all tc count');
+                console.log(all.data.length)
                 if (all.data && all.data.length) {
                     this.props.saveTestCase({ data: all.data, id: this.props.selectedRelease.ReleaseNumber });
                 }
@@ -83,6 +85,7 @@ class ReleaseTestMetrics extends Component {
                 doughnutsDist: getTCStrategyForUISubDomainsDistribution(this.props.selectedRelease, node.data.name),
                 domainSelected: false
             })
+            return true;
         }
         if (node.data.name === 'domains') {
             this.setState({
@@ -90,9 +93,10 @@ class ReleaseTestMetrics extends Component {
                 doughnutsDist: getTCStrategyForUIDomainsDistribution(this.props.selectedRelease),
                 domainSelected: false
             })
+            return true;
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
-            // return false;
+            return false;
             this.setState({ domainSelected: node.data.name, doughnuts: null, doughnutsDist: null })
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
                 .then(all => {

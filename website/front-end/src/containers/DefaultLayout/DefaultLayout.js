@@ -8,10 +8,14 @@
 // tc count for new tc is wrong
 // multiselect for tc table, assignee update
 //  qa strategy edit option
-//  responsive
 //  name of build e2e 
 //  status should be pass, fail, blocked, etc.
 // 
+// setinterval, 
+// user if in app-server
+// yatish checking
+
+
 /* global gapi */
 import React, { Component, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';

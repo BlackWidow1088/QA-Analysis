@@ -136,7 +136,7 @@ class ManageRelease extends Component {
         })
         data = { ...data, ...formattedDates };
         let arrays = [
-            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers'
+            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers', 'EngineerCount',
         ]
         let formattedArrays = {};
         arrays.forEach(item => {
@@ -147,15 +147,16 @@ class ManageRelease extends Component {
                 formattedArrays[item] = data[item].split(',');
             }
         })
+        console.log('priority ')
         data = { ...data, ...formattedArrays };
-        if (isNaN(data.EngineerCount)) {
-            data.EngineerCount = 0;
-        } else {
-            data.EngineerCount = parseInt(data.EngineerCount);
-        }
-        if (!data.EngineerCount) {
-            data.EngineerCount = 0;
-        }
+        // if (isNaN(data.EngineerCount)) {
+        //     data.EngineerCount = 0;
+        // } else {
+        //     data.EngineerCount = parseInt(data.EngineerCount);
+        // }
+        // if (!data.EngineerCount) {
+        //     data.EngineerCount = 0;
+        // }
         if (isNaN(data.QARateOfProgress)) {
             data.QARateOfProgress = 0;
         } else {
@@ -174,9 +175,10 @@ class ManageRelease extends Component {
 
                             this.props.saveReleaseBasicInfo({ id: item.ReleaseNumber, data: item });
                         });
-                        if (res.data[res.data.length - 1]) {
-                            this.props.releaseChange({ id: res.data[res.data.length - 1].ReleaseNumber });
-                        }
+                        this.props.releaseChange({ id: data.ReleaseNumber })
+                        // if (res.data[res.data.length - 1]) {
+                        //     this.props.releaseChange({ id: res.data[res.data.length - 1].ReleaseNumber });
+                        // }
                         this.props.history.push('/release/summary');
                         this.reset();
                     }, error => {
@@ -325,10 +327,12 @@ class ManageRelease extends Component {
                                                     <td className='rp-app-table-key'>Priority</td>
 
                                                     <td>
-                                                        <Input className='rp-app-table-value' type="select" id="Priority" name="Priority" value={this.state.basic.updated.Priority}
+                                                        <Input type="select" id="Priority" name="Priority" value={this.state.basic.updated.Priority}
                                                             onChange={(e) => this.setState({ basic: { ...this.state.basic, updated: { ...this.state.basic.updated, Priority: e.target.value } } })}>
+                                                            <option value=''>Select Priority</option>
                                                             {
-                                                                ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+
+                                                                ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
                                                                     <option value={item}>{item}</option>
                                                                 )
                                                             }

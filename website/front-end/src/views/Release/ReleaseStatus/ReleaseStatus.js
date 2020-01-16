@@ -257,7 +257,7 @@ class ReleaseStatus extends Component {
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
                         <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ featureOpen: !this.state.featureOpen })}>
                             <div class="row">
-                                <div class='col-md-6'>
+                                <div class='col-md-8'>
                                     <div class="row">
                                         <div class='col-md-3'>
                                             {

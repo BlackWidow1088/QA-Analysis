@@ -4,11 +4,11 @@
 
 const express = require('express');
 const jsonfile = require('jsonfile')
-// let releases = {};
 let releases = jsonfile.readFileSync('./releases.json');
 let assignedTCs = jsonfile.readFileSync('./currentAssigned.json');
 let users = jsonfile.readFileSync('./users.json');
 let allTcs = jsonfile.readFileSync('./tcCompleteSort.json');
+
 // assignedTCs['2.3.0'] = { "ADMIN": Object.keys(allTcs['2.3.0']) }
 let statusOptions = jsonfile.readFileSync('./constants.json');
 let tcs = {};
@@ -18,14 +18,39 @@ var jiraHeaders = null;
 var searchArgs = null;
 
 function assignPriority(priority, release) {
-    Object.keys(allTcs[release]).forEach(item => {
-        if (allTcs[release][item].Priority === '' || !allTcs[release][item].Priority) {
-            allTcs[release][item].Priority = priority;
+    Object.keys(allTcs[`${release}`]).forEach(item => {
+        if (allTcs[`${release}`][`${item}`] && (allTcs[`${release}`][`${item}`].Priority === '' || !allTcs[`${release}`][`${item}`].Priority)) {
+            allTcs[`${release}`][`${item}`].Priority = priority;
         }
     })
 }
 
+// function assignMasterPriority() {
+//     Object.keys(allTcs).forEach(release => {
+//         if (allTcs[release]) {
+//             Object.keys(allTcs[release]).forEach(item => {
+//                 if (allTcs[release][item]) {
+//                     allTcs[release][item]['Priority'] = '';
+//                 }
+//             })
+//         }
 
+
+
+//     })
+// }
+// assignMasterPriority();
+
+// function assignMasterNotTested() {
+//     Object.keys(allTcs).forEach(release => {
+//         Object.keys(allTcs[release]).forEach(item => {
+//             if (allTcs[release][item]) {
+//                 allTcs[release][item]['CurrentStatus'] = 'NotTested';
+//             }
+//         })
+//     })
+// }
+// assignMasterNotTested();
 
 
 // function sortInfo() {
@@ -62,16 +87,18 @@ function assignPriority(priority, release) {
 //         item.Master = true;
 //         item.Date = '2019-12-30T00:00:00.000Z';
 //         item.Assignee = 'ADMIN';
+//         item.Priority = '';
 //         item.Steps = '';
+//         item.CurrentStatus = 'NotTested';
 //         tcs230[item.TcID] = item;
 //     });
 //     TCMaster.forEach(item => {
 //         if (domainsMaster[item.Domain]) {
 //             if (!domainsMaster[item.Domain].includes(item.SubDomain)) {
 //                 domainsMaster[item.Domain].push(item.SubDomain);
-//                 masterAggr.domain[item.Domain].NotTested += item.CardType.length;
-//                 total += item.CardType.length;
 //             }
+//             masterAggr.domain[item.Domain].NotTested += item.CardType.length;
+//             total += item.CardType.length;
 //         } else {
 //             total += item.CardType.length;
 //             masterAggr.domain[item.Domain] = { "Tested": { "auto": { "Pass": 0, "Fail": 0, "Skip": 0 }, "manual": { "Pass": 0, "Fail": 0, "Skip": 0 } }, "NotTested": item.CardType.length, "NotApplicable": 0, "Block": 0, "Skip": 0 };
@@ -92,7 +119,10 @@ function assignPriority(priority, release) {
 //         item.Date = '2019-12-30T00:00:00.000Z';
 //         item.Assignee = 'ADMIN';
 //         item.Steps = '';
+//         item.Priority = '';
+//         item.CurrentStatus = 'NotTested';
 //         tcsMaster[item.TcID] = item;
+
 //     });
 //     masterAggr.all.NotTested = total;
 
@@ -105,26 +135,31 @@ function assignPriority(priority, release) {
 //             "log": "",
 //             "logUrl": ""
 //         }
+//         tcs230[item.TcID].CurrentStatus = item.Result;
+//         tcs230[item.TcID].CardType = item.CardType;
+//         tcs230[item.TcID].Build = item.Build;
 //         tcs230[item.TcID].LatestE2EBuilds.push(e2eBuild);
 //     });
 //     tcs = {
 //         master: tcsMaster,
-//         '2.3.0': tcs230
+//         '2.3.0': tcs230,
+//         '3.0.0': tcsMaster,
+//         '2.3.1': tcsMaster
 //     }
 
-//     updatedReleases.forEach(item => {
-//         if (item.ReleaseNumber === 'master') {
-//             item.AvailableDomainOptions = domainsMaster;
-//             item.StatusOptions = statusOptions;
-//             item.TagOptions = ["DAILY", "WEEKLY", "MONTHLY"]
-//             item.TcAggregate = masterAggr;
-//         }
-//         if (item.ReleaseNumber === '2.3.0') {
-//             item.AvailableDomainOptions = domains230;
-//             item.StatusOptions = statusOptions;
-//             item.TagOptions = ["DAILY", "WEEKLY", "MONTHLY"]
-//         }
-//     });
+// updatedReleases.forEach(item => {
+//     if (item.ReleaseNumber === 'master') {
+//         item.AvailableDomainOptions = domainsMaster;
+//         item.StatusOptions = statusOptions;
+//         item.TagOptions = ["DAILY", "WEEKLY", "MONTHLY"]
+//         item.TcAggregate = masterAggr;
+//     }
+//     if (item.ReleaseNumber === '2.3.0') {
+//         item.AvailableDomainOptions = domains230;
+//         item.StatusOptions = statusOptions;
+//         item.TagOptions = ["DAILY", "WEEKLY", "MONTHLY"]
+//     }
+// });
 // }
 // sortInfo();
 
@@ -364,6 +399,22 @@ app.use('/rest/featuredetail', (req, res) => {
 
 })
 app.use('/api/release/all', (req, res) => {
+    // for (let i = 0; i < releases.length; i++) {
+    // ['P1', 'P2', 'P3'].map(each => {
+    //     releases[i][each] = 0;
+
+    //     console.log(Object.keys(allTcs[releases[i].ReleaseNumber]))
+    //     Object.keys(allTcs[releases[i].ReleaseNumber]).forEach(item => {
+    //         if (allTcs[releases[i].ReleaseNumber] && allTcs[releases[i].ReleaseNumber][item] && allTcs[releases[i].ReleaseNumber][item].Priority === each) {
+    //             releases[i][each] += 1
+    //         }
+    //     })
+    // })
+
+    // releases[i].P0 = Object.keys(allTcs[releases[i].ReleaseNumber]).filter(item => allTcs[releases[i].ReleaseNumber][item] && allTcs[releases[i].ReleaseNumber][item].Priority === 'P0').length;
+    // releases[i].P1 = Object.keys(allTcs[releases[i].ReleaseNumber]).filter(item => allTcs[releases[i].ReleaseNumber][item] && allTcs[releases[i].ReleaseNumber][item].Priority === 'P1').length;
+    // releases[i].P2 = Object.keys(allTcs[releases[i].ReleaseNumber]).filter(item => allTcs[releases[i].ReleaseNumber][item] && allTcs[releases[i].ReleaseNumber][item].Priority === 'P2').length;
+    // }
     res.send(releases);
 }, err => { })
 app.use('/user/login', (req, res) => {
@@ -371,209 +422,7 @@ app.use('/user/login', (req, res) => {
         res.status(401).send({ message: 'Please enter email' })
     }
     let user = users.filter(item => item.email === req.body.email)[0];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if (user.email) {
+    if (user && user.email) {
         res.send(user)
     } else {
         users.push({ email: req.body.email, role: 'ENGG', name: req.body.name });
@@ -639,11 +488,18 @@ app.put('/test/:release/tcinfo/details/id/:id', (req, res) => {
         allTcs[req.params.release][req.params.id].TcID === req.body.TcID) {
         removeAssignee(allTcs[req.params.release][req.body.TcID], req.params.release);
         allTcs[req.params.release][req.body.TcID] = {
-            ...req.body, Activity:
-                [...allTcs[req.params.release][req.body.TcID].Activity, req.body.Activity],
+            ...req.body,
+            LatestE2EBuilds: [...allTcs[req.params.release][req.body.TcID].LatestE2EBuilds, ...req.body.ManualBuilds, ...req.body.AutoBuilds],
+            Activity: [...allTcs[req.params.release][req.body.TcID].Activity, req.body.Activity],
             ManualBuilds: [...allTcs[req.params.release][req.body.TcID].ManualBuilds, ...req.body.ManualBuilds],
             AutoBuilds: [...allTcs[req.params.release][req.body.TcID].AutoBuilds, ...req.body.AutoBuilds],
         };
+        if (allTcs[req.params.release][req.body.TcID].LatestE2EBuilds.length > 0) {
+            let e2e = allTcs[req.params.release][req.body.TcID].LatestE2EBuilds;
+            allTcs[req.params.release][req.body.TcID].CurrentStatus = e2e[e2e.length - 1].Result;
+        } else {
+            allTcs[req.params.release][req.body.TcID].CurrentStatus = 'NotTested';
+        }
         if (allTcs[req.params.release][req.body.TcID].TcName === '') {
             allTcs[req.params.release][req.body.TcID].TcName = 'TC NOT AUTOMATED'
         }
@@ -692,7 +548,7 @@ app.post('/api/release', (req, res) => {
         return;
     }
     let master = releases.filter(item => item.ReleaseNumber === 'master')[0];
-    let release = { ...master, ...req.body };
+    let release = { ...master, ...req.body, };
     allTcs[req.body.ReleaseNumber] = { ...allTcs.master };
     assignedTCs[req.body.ReleaseNumber] = { "ADMIN": Object.keys(allTcs.master) }
     releases.push(release);
@@ -748,6 +604,7 @@ app.post('/api/tcinfo/:release', (req, res) => {
             if (allTcs[req.params.release][req.body.TcID].TcName === '') {
                 allTcs[req.params.release][req.body.TcID].TcName = 'TC NOT AUTOMATED'
             }
+            allTcs[req.params.release][req.body.TcID].CurrentStatus = 'NotTested'
             // if (req.body.Master) {
             //     allTcs['master'][req.body.TcID] = req.body;
             // }
@@ -760,6 +617,7 @@ app.post('/api/tcinfo/:release', (req, res) => {
         // if (req.body.Master) {
         //     allTcs['master'][req.body.TcID] = req.body;
         // }
+        allTcs[req.params.release][req.body.TcID].CurrentStatus = 'NotTested'
         addAssignee(allTcs[req.params.release][req.body.TcID], req.params.release)
         // jsonfile.writeFileSync('./tcDetails.json', allTcs);
         res.send({ message: 'ok' });
@@ -782,14 +640,15 @@ const server = app.listen('5051');
 
 var gracefulShutdown = function () {
     console.log("Shutting down....");
-    jsonfile.writeFileSync('./users.json', users);
-    console.log('updated users')
-    jsonfile.writeFileSync('./currentAssigned.json', assignedTCs);
-    console.log('updated assigned')
-    jsonfile.writeFileSync('./releases.json', releases);
-    console.log('updated releases')
-    jsonfile.writeFileSync('./tcCompleteSort.json', allTcs);
-    console.log('updated tcs')
+    // jsonfile.writeFileSync('./users.json', users);
+    // console.log('updated users')
+    // jsonfile.writeFileSync('./currentAssigned.json', assignedTCs);
+    // console.log('updated assigned')
+    // jsonfile.writeFileSync('./releases.json', releases);
+    // console.log('updated releases')
+    // jsonfile.writeFileSync('./tcCompleteSort.json', allTcs);
+
+    // jsonfile.writeFileSync('./releases.json', updatedReleases);
     // jsonfile.writeFileSync('./tcCompleteSort.json', tcs);
     server.close(function () {
         setTimeout(function () {

@@ -320,39 +320,74 @@ export const getTCForStatus = (state, id) => {
     }];
     // {
     // "GUI": { "Tested": { "auto": { "Pass": 199, "Fail": 11, "Skip": 0 }, "manual": { "Pass": 3444, "Fail": 394, "Skip": 0 } }, "NotApplicable": 0, "NotTested": 0 }
+    if (release.ReleaseNumber === '2.3.0') {
+        data.push({
+            labels: [''],
+            datasets: [{
+                label: 'Pass',
+                backgroundColor: '#01D251',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [(199 + 3444)]
+            },
+            {
+                label: 'Blocked',
+                backgroundColor: '#FFCE56',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [0]
+            },
+            {
+                label: 'Fail',
+                backgroundColor: '#d9534f',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [(11 + 394)]
+            },
+            {
+                label: 'Not Tested',
+                backgroundColor: 'rgba(128,128,128,0.3)',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [0]
+            },
+            ]
+        })
+    } else {
+        data.push({
+            labels: [''],
+            datasets: [{
+                label: 'Pass',
+                backgroundColor: '#01D251',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [0]
+            },
+            {
+                label: 'Blocked',
+                backgroundColor: '#FFCE56',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [0]
+            },
+            {
+                label: 'Fail',
+                backgroundColor: '#d9534f',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [0]
+            },
+            {
+                label: 'Not Tested',
+                backgroundColor: 'rgba(128,128,128,0.3)',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [3643 + 405]
+            },
+            ]
+        })
+    }
 
-    data.push({
-        labels: [''],
-        datasets: [{
-            label: 'Pass',
-            backgroundColor: '#01D251',
-            borderColor: 'white',
-            borderWidth: 1,
-            data: [(199 + 3444)]
-        },
-        {
-            label: 'Blocked',
-            backgroundColor: '#FFCE56',
-            borderColor: 'white',
-            borderWidth: 1,
-            data: [0]
-        },
-        {
-            label: 'Fail',
-            backgroundColor: '#d9534f',
-            borderColor: 'white',
-            borderWidth: 1,
-            data: [(11 + 394)]
-        },
-        {
-            label: 'Not Tested',
-            backgroundColor: 'rgba(128,128,128,0.3)',
-            borderColor: 'white',
-            borderWidth: 1,
-            data: [0]
-        },
-        ]
-    })
     const options = {
         legend: {
             position: 'right',
@@ -367,7 +402,11 @@ export const getTCForStatus = (state, id) => {
         (release.TcAggregate.all.Tested.auto.Pass + release.TcAggregate.all.Tested.manual.Pass) +
         (release.TcAggregate.all.Tested.auto.Skip + release.TcAggregate.all.Tested.manual.Skip) +
         release.TcAggregate.all.NotTested];
-    total.push((3643 + 405))
+    if (release.ReleaseNumber === '2.3.0') {
+        total.push((3643 + 405))
+    } else {
+        total.push(3643 + 405);
+    }
     return {
         data,
         total,
@@ -412,7 +451,7 @@ export const getTCForStrategy = (state, id) => {
         totalTests: release.TcAggregate.all.TotalTested + release.TcAggregate.all.NotTested + release.TcAggregate.all.Skip + release.TcAggregate.all.NotApplicable,
         skipped: release.TcAggregate.all.Skip,
         notApplicable: release.TcAggregate.all.NotApplicable,
-        needToRun: release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail
+        needToRun: release.TcAggregate.all.Tested.auto.Fail + release.TcAggregate.all.Tested.manual.Fail + release.TcAggregate.all.NotTested
     };
 }
 export const getTCForTestMetrics = (state, id) => {
