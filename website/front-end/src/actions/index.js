@@ -203,6 +203,11 @@ export const SAVE_CLOSED_WORK = 'SAVE_CLOSED_WORK';
 export const SAVE_USERS = 'SAVE_USERS';
 export const UPDATE_TC_EDIT = 'UPDATE_TC_EDIT';
 export const SAVE_USER_DETAILS = 'SAVE_USER_DETAILS';
+export const SAVE_PENDING_APPROVAL = 'SAVE_PENDING_APPROVAL';
+export const SAVE_MULTI_PENDING_APPROVAL = 'SAVE_MULTI_PENDING_APPROVAL';
+export const SAVE_MY_REGRESSION = 'SAVE_MY_REGRESSION';
+export const SAVE_ASSIGN_TCS = 'SAVE_ASSIGN_TCS';
+export const SAVE_MY_PENDING_APPROVAL = 'SAVE_MY_PENDING_APPROVAL';
 export const logInRequest = payload => ({
   type: LOG_IN_REQUEST,
   payload,
@@ -303,5 +308,25 @@ export const saveUsers = (payload) => ({
 })
 export const saveUserDetails = (payload) => ({
   type: SAVE_USER_DETAILS,
+  payload
+});
+export const saveUserPendingApproval = (payload) => ({
+  type: SAVE_PENDING_APPROVAL,
+  payload
+})
+export const saveMultiPendingApproval = (payload) => ({
+  type: SAVE_MULTI_PENDING_APPROVAL,
+  payload
+})
+export const saveUserMyRegression = (payload) => ({
+  type: SAVE_MY_REGRESSION,
+  payload
+});
+export const saveAssignTcs = (payload) => ({
+  type: SAVE_ASSIGN_TCS,
+  payload
+})
+export const saveUserMyPendingApproval = (payload) => ({
+  type: SAVE_MY_PENDING_APPROVAL,
   payload
 })

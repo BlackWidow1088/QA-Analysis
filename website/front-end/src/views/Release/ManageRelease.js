@@ -131,7 +131,7 @@ class ManageRelease extends Component {
         dates.forEach(item => {
             if (data[item]) {
                 let date = new Date(data[item]);
-                formattedDates[item] = date.toISOString()
+                formattedDates[item] = date.toISOString();
             }
         })
         data = { ...data, ...formattedDates };

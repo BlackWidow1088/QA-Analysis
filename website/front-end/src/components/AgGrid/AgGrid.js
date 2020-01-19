@@ -32,9 +32,7 @@ class AgGrid extends Component {
         this.state = {
             rowSelect: false,
             isEditing: false,
-            edit: {},
-            delete: {},
-            add: [],
+            delete: false,
             editColumnDefs: [
                 {
                     headerName: "Date", field: "Date", sortable: true, filter: true, cellStyle: this.renderEditedCell,
@@ -62,7 +60,7 @@ class AgGrid extends Component {
                     headerName: "Server Type", field: "ServerType", sortable: true, filter: true, cellStyle: this.renderEditedCell,
                 },
                 {
-                    headerName: "Status", field: "Status", sortable: true, filter: true, cellStyle: this.renderEditedCell,
+                    headerName: "Status", field: "CurrentStatus", sortable: true, filter: true, cellStyle: this.renderEditedCell,
                 },
                 {
                     headerName: "OrchestrationPlatform", field: "OrchestrationPlatform", sortable: true, filter: true, cellStyle: this.renderEditedCell,
@@ -291,27 +289,43 @@ class AgGrid extends Component {
     }
     onFilterTextBoxChanged(value) {
         this.deselect();
-        this.setState({ domain: null, subDomain: null, rowSelect: false });
+        this.setState({ domain: null, subDomain: null, CardType: null, rowSelect: false });
         this.gridApi.setQuickFilter(value);
     }
+    filterData({ Domain, SubDomain, CardType }) {
+        return this.props.data.filter(item => {
+            let domain = Domain && Domain !== '' ? Domain : item.Domain;
+            let subdomain = SubDomain && SubDomain !== '' ? SubDomain : item.SubDomain;
+            let card = CardType && CardType !== '' ? CardType : item.CardType;
+            if (domain === item.Domain && subdomain === item.SubDomain && card === item.CardType) {
+                return true;
+            }
+            return false;
+        })
+    }
+    toggleDelete = () => {
+        this.setState({ delete: !this.state.delete })
+    };
     onSelectDomain(domain) {
         this.deselect();
         if (domain === '') {
-            this.setState({ domain: null, subDomain: null, data: this.props.data, rowSelect: false });
-            return;
+            domain = null;
         }
-        let filter = this.props.data.filter(item => item.Domain === domain);
-        this.setState({ domain: domain, subDomain: null, data: filter, rowSelect: false });
+        this.setState({ domain: domain, subDomain: null, data: this.filterData({ Domain: domain, SubDomain: null, CardType: this.state.CardType }), rowSelect: false });
     }
     onSelectSubDomain(subDomain) {
         this.deselect();
         if (subDomain === '') {
-            let filter = this.props.data.filter(item => item.Domain === this.state.domain);
-            this.setState({ subDomain: null, data: filter, rowSelect: false });
-            return;
+            subDomain = null;
         }
-        let filter = this.props.data.filter(item => item.SubDomain === subDomain && item.Domain === this.state.domain);
-        this.setState({ subDomain: subDomain, data: filter, rowSelect: false });
+        this.setState({ subDomain: subDomain, data: this.filterData({ Domain: this.state.domain, SubDomain: subDomain, CardType: this.state.CardType }), rowSelect: false });
+    }
+    onSelectCardType(cardType) {
+        this.deselect();
+        if (cardType === '') {
+            cardType = null;
+        }
+        this.setState({ CardType: cardType, data: this.filterData({ Domain: this.state.domain, SubDomain: this.state.subDomain, CardType: cardType }), rowSelect: false });
     }
     rowSelect(e) {
         this.setState({ rowSelect: true, toggleMessage: null })
@@ -321,7 +335,7 @@ class AgGrid extends Component {
         axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}`)
             .then(all => {
                 if (all.data && all.data.length) {
-                    this.setState({ domain: null, subDomain: null, data: null, rowSelect: false })
+                    this.setState({ domain: null, subDomain: null, CardType: null, data: null, rowSelect: false })
                     this.props.saveTestCase({ data: all.data, id: this.props.selectedRelease.ReleaseNumber });
                     this.deselect();
                     setTimeout(this.gridApi.refreshView(), 0)
@@ -355,16 +369,16 @@ class AgGrid extends Component {
         let DateTC = new Date().toISOString();
         let release = data['Master'] ? `${this.props.selectedRelease.ReleaseNumber},master` : this.props.selectedRelease.ReleaseNumber;
 
-        let Status = 'UPDATED';
-        if (data.original.Status === 'UNAPPROVED') {
-            data.Status = 'CREATED';
+        let WorkingStatus = 'UPDATED';
+        if (data.original.WorkingStatus === 'UNAPPROVED') {
+            data.WorkingStatus = 'CREATED';
         }
-        if (data.Status !== data.original.Status) {
-            Status = data.Status
+        if (data.WorkingStatus !== data.original.WorkingStatus) {
+            WorkingStatus = data.WorkingStatus
         }
-        let header = `${Status}: ${release}, REPORTER: ${this.props.user.email}`;
+        let header = `${WorkingStatus}: ${release}, REPORTER: ${this.props.user.email}`;
 
-        let Assignee = data.Assignee ? data.Assignee : 'UNASSIGNED';
+        let Assignee = data.Assignee ? data.Assignee : 'ADMIN';
 
         let arrays = ['CardType', 'ServerType', 'OrchestrationPlatform'];
         let formattedArrays = {};
@@ -387,29 +401,26 @@ class AgGrid extends Component {
         };
         data.ManualBuilds = [];
         data.AutoBuilds = [];
-        if (data.Status === 'MANUAL_COMPLETED') {
+        if (data.WorkingStatus === 'MANUAL_COMPLETED') {
             data.StatusChangeComments = {
                 ...data.StatusChangeComments,
-                Result: data.StatusChangeComments.Result ? data.StatusChangeComments.Result : 'Pass',
+                Result: data.StatusChangeComments.Result ? data.StatusChangeComments.Result : 'Fail',
                 Assignee: this.props.user.email,
                 Date: new Date().toISOString()
             }
             data.ManualBuilds = [data.StatusChangeComments];
             Activity.StatusChangeComments = 'MANUAL_COMPLETED'
-        } else if (data.Status === 'AUTO_COMPLETED') {
+        } else if (data.WorkingStatus === 'AUTO_COMPLETED') {
             data.StatusChangeComments = {
                 ...data.StatusChangeComments,
-                Result: data.StatusChangeComments.Result ? data.StatusChangeComments.Result : 'Pass',
+                Result: data.StatusChangeComments.Result ? data.StatusChangeComments.Result : 'Fail',
                 Assignee: this.props.user.email,
                 Date: new Date().toISOString()
             }
             data.AutoBuilds = [data.StatusChangeComments];
             Activity.StatusChangeComments = 'AUTO_COMPLETED'
-        } else if (data.Status === 'BUG') {
-            Activity.logURL = data.StatusChangeComments.logURL;
-            Activity.StatusChangeComments = data.StatusChangeComments.Notes;
-        } else if (data.Status === 'RESOLVED') {
-            Activity.StatusChangeComments = 'RESOLVED'
+        } else if (data.WorkingStatus === 'REVIEWED') {
+            Activity.StatusChangeComments = 'REVIEWED'
         } else {
             Activity.StatusChangeComments = data.StatusChangeComments
         }
@@ -530,13 +541,21 @@ class AgGrid extends Component {
                                 <div style={{ width: (window.screen.width * (1 - 0.248)) + 'px', height: '250px', marginBottom: '6rem' }}>
                                     <div class="test-header">
                                         <div class="row">
-                                            <div class="col-md-3">
-                                                <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onFilterTextBoxChanged(e.target.value)} />
-                                            </div>
                                             {
                                                 this.props.data &&
                                                 <div class="col-md-3">
-                                                    <Input onChange={(e) => this.onSelectDomain(e.target.value)} type="select" name="selectDomain" id="selectDomain">
+                                                    <Input value={this.state.CardType} onChange={(e) => this.onSelectCardType(e.target.value)} type="select" name="selectCardType" id="selectCardType">
+                                                        <option value=''>Select Card Type</option>
+                                                        {
+                                                            this.props.selectedRelease.CardType && this.props.selectedRelease.CardType.map(item => <option value={item}>{item}</option>)
+                                                        }
+                                                    </Input>
+                                                </div>
+                                            }
+                                            {
+                                                this.props.data &&
+                                                <div class="col-md-3">
+                                                    <Input value={this.state.domain} onChange={(e) => this.onSelectDomain(e.target.value)} type="select" name="selectDomain" id="selectDomain">
                                                         <option value=''>Select Domain</option>
                                                         {
                                                             this.props.selectedRelease.AvailableDomainOptions && Object.keys(this.props.selectedRelease.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
@@ -545,16 +564,19 @@ class AgGrid extends Component {
                                                 </div>
                                             }
                                             {
-                                                this.state.domain &&
+                                                this.props.data &&
                                                 <div class="col-md-3">
-                                                    <Input onChange={(e) => this.onSelectSubDomain(e.target.value)} type="select" name="subDomains" id="subDomains">
+                                                    <Input value={this.state.subDomain} onChange={(e) => this.onSelectSubDomain(e.target.value)} type="select" name="subDomains" id="subDomains">
                                                         <option value=''>Select Sub Domain</option>
                                                         {
-                                                            this.props.selectedRelease.AvailableDomainOptions[this.state.domain].map(item => <option value={item}>{item}</option>)
+                                                            this.state.domain && this.props.selectedRelease.AvailableDomainOptions[this.state.domain].map(item => <option value={item}>{item}</option>)
                                                         }
                                                     </Input>
                                                 </div>
                                             }
+                                            <div class="col-md-3">
+                                                <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onFilterTextBoxChanged(e.target.value)} />
+                                            </div>
 
 
                                         </div>
@@ -601,59 +623,103 @@ class AgGrid extends Component {
                                 </div>
                                 <Collapse isOpen={this.state.rowSelect}>
                                     {
+                                        this.props.user && this.props.user.email &&
+                                        <React.Fragment>
+                                            {
+                                                this.state.isEditing ?
+                                                    <Fragment>
+                                                        <Button title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.toggle()} >
+                                                            <i className="fa fa-check-square-o"></i>
+                                                        </Button>
+                                                        <Button size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.reset()} >
+                                                            <i className="fa fa-undo"></i>
+                                                        </Button>
+                                                    </Fragment>
+                                                    :
+                                                    <Fragment>
+
+                                                        <Button size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.toggleDelete()} >
+                                                            <i className="fa fa-trash-o"></i>
+                                                        </Button>
+                                                        <Button size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.setState({ isEditing: true })} >
+                                                            <i className="fa fa-pencil-square-o"></i>
+                                                        </Button>
+                                                    </Fragment>
+
+                                            }
+                                        </React.Fragment>
+                                    }
+                                    {
                                         this.props.tcDetails && this.props.tcDetails.TcID &&
                                         <React.Fragment>
-                                            <EditTC delete={() => this.delete()} isEditing={this.state.isEditing} edit={(val) => val ? this.setState({ isEditing: val }) : this.reset()} toggle={() => this.toggle()}></EditTC>
-                                            {
-                                                !this.state.more &&
-                                                <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                                                    <i className="fa fa-angle-down rp-save-tc-icon" onClick={() => this.setState({ more: !this.state.more })}> Expand</i>
-                                                </div>
-                                            }
-                                            {
-                                                this.state.more &&
-                                                <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                                                    <i className="fa fa-angle-up rp-save-tc-icon" onClick={() => this.setState({ more: !this.state.more })}> Close</i>
-                                                </div>
-                                            }
-                                            {
-                                                (this.props.testcaseEdit.Domain || this.props.tcDetails.Domain) && (this.props.testcaseEdit.SubDomain || this.props.tcDetails.SubDomain) &&
-                                                <Collapse isOpen={this.state.more}>
-                                                    <Row>
-                                                        <Col lg="6">
-                                                            <div className='rp-app-table-title'>Builds Status</div>
+                                            <FormGroup row className="my-0">
+                                                {
+                                                    [
 
-                                                            <div class="test-header">
-                                                                <div class="row">
-                                                                    <div class="col-md-3">
-                                                                        <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onE2EFilterTextBoxChanged(e.target.value)} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div style={{ width: (window.screen.width * ((1 - 0.218) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
-                                                                <div style={{ width: "100%", height: "100%" }}>
-                                                                    <div
-                                                                        id="e2eGrid"
-                                                                        style={{
-                                                                            height: "100%",
-                                                                            width: "100%",
-                                                                        }}
-                                                                        className="ag-theme-balham"
-                                                                    >
-                                                                        <AgGridReact
-                                                                            modules={this.state.modules}
-                                                                            columnDefs={this.state.e2eColumnDefs}
-                                                                            defaultColDef={this.state.defaultColDef}
-                                                                            rowData={this.props.tcDetails ? this.props.tcDetails.LatestE2EBuilds : []}
+                                                        { field: 'Description', header: 'Description', type: 'text' },
+                                                        { field: 'Steps', header: 'Steps', type: 'text' },
+                                                        { field: 'ExpectedBehaviour', header: 'Expected Behaviour', type: 'text' },
+                                                        { field: 'Notes', header: 'Notes', type: 'text' },
 
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                    ].map((item, index) => (
+                                                        <Col xs="12" md="6" lg="6" className='rp-margin-tp-btm-1'>
+                                                            <FormGroup className='rp-app-table-value'>
+                                                                <Label className='rp-app-table-label' htmlFor={item.field}>{item.header} {
+                                                                    this.props.testcaseEdit.errors.Master &&
+                                                                    <i className='fa fa-exclamation-circle rp-error-icon'>{this.props.testcaseEdit.errors.Master}</i>
+                                                                }</Label>
+                                                                {
+                                                                    !this.state.isEditing ?
+                                                                        <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '', backgroundColor: 'white' }} className='rp-app-table-value' type='textarea' rows='9' value={this.props.tcDetails && this.props.tcDetails[item.field]}></Input>
+                                                                        :
+                                                                        <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '' }} className='rp-app-table-value' placeholder={'Add ' + item.header} type="textarea" rows='4' id={item.field} value={this.props.testcaseEdit && this.props.testcaseEdit[item.field]}
+                                                                            onChange={(e) => this.setState({ addTC: { ...this.props.testcaseEdit, [item.field]: e.target.value }, errors: { ...this.props.testcaseEdit.errors, [item.field]: null } })} >
 
-
+                                                                        </Input>
+                                                                }
+                                                            </FormGroup>
                                                         </Col>
-                                                        {/* <Col lg="6">
+                                                    ))
+                                                }
+                                            </FormGroup>
+                                            <EditTC isEditing={this.state.isEditing}></EditTC>
+
+
+                                            <Row>
+                                                <Col lg="6">
+                                                    <div className='rp-app-table-title'>Test Status</div>
+
+                                                    <div class="test-header">
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onE2EFilterTextBoxChanged(e.target.value)} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ width: (window.screen.width * ((1 - 0.218) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
+                                                        <div style={{ width: "100%", height: "100%" }}>
+                                                            <div
+                                                                id="e2eGrid"
+                                                                style={{
+                                                                    height: "100%",
+                                                                    width: "100%",
+                                                                }}
+                                                                className="ag-theme-balham"
+                                                            >
+                                                                <AgGridReact
+                                                                    modules={this.state.modules}
+                                                                    columnDefs={this.state.e2eColumnDefs}
+                                                                    defaultColDef={this.state.defaultColDef}
+                                                                    rowData={this.props.tcDetails ? this.props.tcDetails.LatestE2EBuilds : []}
+
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </Col>
+                                                {/* <Col lg="6">
                                                             <div className='rp-app-table-title'>Activity</div>
                                                             <div style={{ width: (window.screen.width * ((1 - 0.218) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
                                                                 <div class="test-header">
@@ -683,106 +749,7 @@ class AgGrid extends Component {
                                                                 </div>
                                                             </div>
                                                         </Col> */}
-                                                    </Row>
-                                                    <FormGroup row className="my-0">
-                                                        {
-                                                            [
-
-                                                                { field: 'Description', header: 'Description', type: 'text' },
-                                                                { field: 'Steps', header: 'Steps', type: 'text' },
-                                                                { field: 'ExpectedBehaviour', header: 'Expected Behaviour', type: 'text' },
-                                                                { field: 'Notes', header: 'Notes', type: 'text' },
-
-                                                            ].map((item, index) => (
-                                                                <Col xs="12" md="6" lg="6" className='rp-margin-tp-btm-1'>
-                                                                    <FormGroup className='rp-app-table-value'>
-                                                                        <Label className='rp-app-table-label' htmlFor={item.field}>{item.header} {
-                                                                            this.props.testcaseEdit.errors.Master &&
-                                                                            <i className='fa fa-exclamation-circle rp-error-icon'>{this.props.testcaseEdit.errors.Master}</i>
-                                                                        }</Label>
-                                                                        {
-                                                                            !this.state.isEditing ?
-                                                                                <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '', backgroundColor: 'white' }} className='rp-app-table-value' type='textarea' rows='9' value={this.props.tcDetails && this.props.tcDetails[item.field]}></Input>
-                                                                                :
-                                                                                <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '' }} className='rp-app-table-value' placeholder={'Add ' + item.header} type="textarea" rows='4' id={item.field} value={this.props.testcaseEdit && this.props.testcaseEdit[item.field]}
-                                                                                    onChange={(e) => this.setState({ addTC: { ...this.props.testcaseEdit, [item.field]: e.target.value }, errors: { ...this.props.testcaseEdit.errors, [item.field]: null } })} >
-
-                                                                                </Input>
-                                                                        }
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            ))
-                                                        }
-                                                    </FormGroup>
-
-
-
-                                                    {/* <Row>
-
-                                                        <Col lg="6">
-                                                            <div className='rp-app-table-title'>Auto Builds Status</div>
-                                                            <div style={{ width: (window.screen.width * ((1 - 0.218) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
-                                                                <div class="test-header">
-                                                                    <div class="row">
-                                                                        <div class="col-md-3">
-                                                                            <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onAutoFilterTextBoxChanged(e.target.value)} />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div style={{ width: "100%", height: "100%" }}>
-                                                                    <div
-                                                                        id="autoGrid"
-                                                                        style={{
-                                                                            height: "100%",
-                                                                            width: "100%",
-                                                                        }}
-                                                                        className="ag-theme-balham"
-                                                                    >
-                                                                        <AgGridReact
-                                                                            modules={this.state.modules}
-                                                                            columnDefs={this.state.autoColumnDefs}
-                                                                            defaultColDef={this.state.defaultColDef}
-                                                                            rowData={this.props.tcDetails ? this.props.tcDetails.AutoBuilds : []}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </Col>
-
-                                                        <Col lg="6">
-                                                            <div className='rp-app-table-title'>Manual Builds Status</div>
-                                                            <div style={{ width: (window.screen.width * ((1 - 0.218) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
-                                                                <div class="test-header">
-                                                                    <div class="row">
-                                                                        <div class="col-md-3">
-                                                                            <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onManualFilterTextBoxChanged(e.target.value)} />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div style={{ width: "100%", height: "100%" }}>
-                                                                    <div
-                                                                        id="manualGrid"
-                                                                        style={{
-                                                                            height: "100%",
-                                                                            width: "100%",
-                                                                        }}
-                                                                        className="ag-theme-balham"
-                                                                    >
-                                                                        <AgGridReact
-                                                                            onRowClicked={(e) => this.setState({ manual: e.data })}
-                                                                            modules={this.state.modules}
-                                                                            columnDefs={this.state.manualColumnDefs}
-                                                                            defaultColDef={this.state.defaultColDef}
-                                                                            rowData={this.props.tcDetails ? this.props.tcDetails.ManualBuilds : []}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </Col>
-
-                                                    </Row> */}
-                                                </Collapse>
-                                            }
+                                            </Row>
                                         </React.Fragment>
                                     }
                                 </Collapse>
@@ -861,6 +828,25 @@ class AgGrid extends Component {
                         {
                             !this.state.toggleMessage &&
                             <Button color="secondary" onClick={() => this.toggle()}>Cancel</Button>
+                        }
+                    </ModalFooter>
+                </Modal>
+                <Modal isOpen={this.state.delete} toggle={() => this.toggleDelete()}>
+                    {
+                        <ModalHeader toggle={() => this.toggleDelete()}>{
+                            'Delete Confirmation'
+                        }</ModalHeader>
+                    }
+                    <ModalBody>
+                        {
+                            `Are you sure you want to delete ${this.props.testcaseEdit.TcID} ?`
+                        }
+
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={() => { this.delete(); this.toggleDelete(); }}>Ok</Button>{' '}
+                        {
+                            <Button color="secondary" onClick={() => this.toggleDelete()}>Cancel</Button>
                         }
                     </ModalFooter>
                 </Modal>

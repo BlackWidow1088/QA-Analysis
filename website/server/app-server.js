@@ -25,6 +25,17 @@ function assignPriority(priority, release) {
     })
 }
 
+// function assign() {
+//     Object.keys(allTcs).forEach(release => {
+//         Object.keys(allTcs[release]).forEach(item => {
+//             if (allTcs[release][item]) {
+//                 allTcs[release][item]['WorkingStatus'] = 'UNASSIGNED';
+//             }
+//         })
+//     })
+// }
+// assign();
+
 // function assignMasterPriority() {
 //     Object.keys(allTcs).forEach(release => {
 //         if (allTcs[release]) {
@@ -34,9 +45,6 @@ function assignPriority(priority, release) {
 //                 }
 //             })
 //         }
-
-
-
 //     })
 // }
 // assignMasterPriority();
@@ -73,7 +81,7 @@ function assignPriority(priority, release) {
 //         } else {
 //             domains230[item.Domain] = [];
 //         }
-//         item.Status = 'RESOLVED';
+//         item.WorkingStatus = 'RESOLVED';
 //         item.Activity = [{
 //             "Date": "2019-12-30T00:00:00.000Z",
 //             "Header": "RESOLVED: master, REPORTER:",
@@ -104,7 +112,7 @@ function assignPriority(priority, release) {
 //             masterAggr.domain[item.Domain] = { "Tested": { "auto": { "Pass": 0, "Fail": 0, "Skip": 0 }, "manual": { "Pass": 0, "Fail": 0, "Skip": 0 } }, "NotTested": item.CardType.length, "NotApplicable": 0, "Block": 0, "Skip": 0 };
 //             domainsMaster[item.Domain] = [];
 //         }
-//         item.Status = 'CREATED';
+//         item.WorkingStatus = 'CREATED';
 //         item.Activity = [{
 //             "Date": "2019-12-30T00:00:00.000Z",
 //             "Header": "CREATED: master, REPORTER:",
@@ -425,8 +433,8 @@ app.use('/user/login', (req, res) => {
     if (user && user.email) {
         res.send(user)
     } else {
-        users.push({ email: req.body.email, role: 'ENGG', name: req.body.name });
-        res.send({ email: req.body.email, role: 'ENGG', name: req.body.name });
+        users.push({ email: req.body.email, role: 'QA', name: req.body.name });
+        res.send({ email: req.body.email, role: 'QA', name: req.body.name });
         // res.status(404).send({ message: 'User not found' });
     }
     // if (req.body.email === 'yatish@diamanti.com' || req.body.email === 'bharati@diamanti.com' || req.body.email === 'deepak@diamanti.com' || req.body.email === 'rahul@diamanti.com') {
@@ -450,6 +458,39 @@ app.get('/user/:release/assigned/:email', (req, res) => {
     console.log(assignedTCs);
     res.send(tcs);
 })
+app.get('/user/:release/pendingApproval/:email', (req, res) => {
+    let tcs = [];
+    if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
+        assignedTCs[req.params.release][req.params.email].forEach(item => {
+            if ((allTcs[req.params.release][item].WorkingStatus === 'PENDING_FOR_APPROVAL') || allTcs[req.params.release][item].WorkingStatus === 'CREATED') {
+                tcs.push(allTcs[req.params.release][item]);
+            }
+        })
+    }
+    res.send(tcs);
+})
+app.get('/user/:release/assignTcs/:email', (req, res) => {
+    let tcs = [];
+    if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
+        assignedTCs[req.params.release][req.params.email].forEach(item => {
+            if ((allTcs[req.params.release][item].WorkingStatus === 'UNASSIGNED') || allTcs[req.params.release][item].WorkingStatus.search('COMPLETED') >= 0) {
+                tcs.push(allTcs[req.params.release][item]);
+            }
+        })
+    }
+    res.send(tcs);
+})
+app.get('/user/:release/myRegression/:email', (req, res) => {
+    let tcs = [];
+    if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
+        assignedTCs[req.params.release][req.params.email].forEach(item => {
+            if ((allTcs[req.params.release][item].WorkingStatus === 'MANUAL_ASSIGNED')) {
+                tcs.push(allTcs[req.params.release][item]);
+            }
+        })
+    }
+    res.send(tcs);
+})
 app.get('/test/:release/tcinfo/details/id/:id', (req, res) => {
     if (allTcs && allTcs[req.params.release] && allTcs[req.params.release][req.params.id]) {
         res.send(allTcs[req.params.release][req.params.id])
@@ -461,7 +502,7 @@ function addAssignee(tc, release) {
     if (!assignedTCs[release]) {
         assignedTCs[release] = { 'ADMIN': [] };
     }
-    if (!tc.Assignee || tc.Assignee === 'UNASSIGNED' || tc.Status.search('COMPLETED') >= 0 || tc.Status === 'BUG') {
+    if (!tc.Assignee || tc.Assignee === 'UNASSIGNED' || tc.WorkingStatus.search('COMPLETED') >= 0) {
         tc.Assignee = 'ADMIN';
     }
     if (assignedTCs[release][tc.Assignee] && !assignedTCs[release][tc.Assignee].includes(tc.TcID)) {
@@ -475,7 +516,7 @@ function removeAssignee(tc, release) {
     if (!assignedTCs[release]) {
         return;
     }
-    if (!tc.Assignee || tc.Assignee === 'UNASSIGNED' || tc.Status.search('COMPLETED') >= 0 || tc.Status === 'BUG') {
+    if (!tc.Assignee || tc.Assignee === 'UNASSIGNED' || tc.WorkingStatus.search('COMPLETED') >= 0) {
         tc.Assignee = 'ADMIN';
     }
     if (assignedTCs[release] && assignedTCs[release][tc.Assignee]) {
@@ -483,6 +524,19 @@ function removeAssignee(tc, release) {
         assignedTCs[release][tc.Assignee].splice(index, 1);
     }
 }
+app.put('/test/:release/tcinfo/details/all', (req, res) => {
+    if (req.body.data) {
+        req.body.data.forEach(data => {
+            removeAssignee(allTcs[req.params.release][data.TcID], req.params.release);
+            allTcs[req.params.release][data.TcID].Assignee = data.Assignee;
+            allTcs[req.params.release][data.TcID].WorkingStatus = data.WorkingStatus;
+            addAssignee(allTcs[req.params.release][data.TcID], req.params.release)
+        })
+        res.send({ message: 'ok' });
+    } else {
+        res.status(401).send({ 'message': 'Failed to update TCs' });
+    }
+});
 app.put('/test/:release/tcinfo/details/id/:id', (req, res) => {
     if (allTcs && allTcs[req.params.release] && allTcs[req.params.release][req.params.id] &&
         allTcs[req.params.release][req.params.id].TcID === req.body.TcID) {
@@ -640,13 +694,13 @@ const server = app.listen('5051');
 
 var gracefulShutdown = function () {
     console.log("Shutting down....");
-    // jsonfile.writeFileSync('./users.json', users);
-    // console.log('updated users')
-    // jsonfile.writeFileSync('./currentAssigned.json', assignedTCs);
-    // console.log('updated assigned')
-    // jsonfile.writeFileSync('./releases.json', releases);
-    // console.log('updated releases')
-    // jsonfile.writeFileSync('./tcCompleteSort.json', allTcs);
+    jsonfile.writeFileSync('./users.json', users);
+    console.log('updated users')
+    jsonfile.writeFileSync('./currentAssigned.json', assignedTCs);
+    console.log('updated assigned')
+    jsonfile.writeFileSync('./releases.json', releases);
+    console.log('updated releases')
+    jsonfile.writeFileSync('./tcCompleteSort.json', allTcs);
 
     // jsonfile.writeFileSync('./releases.json', updatedReleases);
     // jsonfile.writeFileSync('./tcCompleteSort.json', tcs);

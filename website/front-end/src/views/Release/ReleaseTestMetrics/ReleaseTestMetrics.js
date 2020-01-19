@@ -8,7 +8,6 @@ import {
     , Modal, ModalHeader, ModalBody, ModalFooter, Progress, Popover, PopoverBody,
 } from 'reactstrap';
 import { connect } from 'react-redux';
-import AppTable from '../../../components/AppTable/AppTable';
 import { getCurrentRelease, getTCStrategyForUISubDomainsScenario } from '../../../reducers/release.reducer';
 import {
     getTCStrategyForUIDomains, getTCStrategyForUISubDomains, alldomains, getTCStatusForSunburst,
@@ -21,13 +20,13 @@ import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 import { saveTestCase, saveTestCaseStatus, saveSingleTestCase } from '../../../actions';
 import AgGrid from '../../../components/AgGrid/AgGrid';
-import UpdateTCOptions from './UpdateTCOptions';
-import Multiselect from 'react-bootstrap-multiselect';
 import './ReleaseTestMetrics.scss'
-// import sunburst from '../../../reducers/domains.js'
 import Sunburst from '../components/Sunburst';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import CreateTC from './CreateTC';
+import PendingForApproval from '../PendingForApproval/PendingForApproval';
+import MyTcsForRegression from '../MyTcsForRegression/MyTcsForRegression';
+import AssignTcs from '../AssignTcs/AssignTcs';
 const options = {
     tooltips: {
         enabled: false,
@@ -139,7 +138,7 @@ class ReleaseTestMetrics extends Component {
         console.log(this.newOP);
     }
     render() {
-        let users = this.props.users && this.props.users.filter(item => item.role !== 'EXEC');
+        let users = this.props.users && this.props.users.filter(item => item.role !== 'EXECUTIVE');
         let statuses = this.props.selectedRelease.StatusOptions
 
         let cards = this.props.selectedRelease.CardType ? this.props.selectedRelease.CardType.map(item => ({ value: item })) : [];
@@ -277,10 +276,31 @@ class ReleaseTestMetrics extends Component {
                     this.props.currentUser &&
                     <CreateTC isEditing={true} update={() => this.save()}></CreateTC>
                 }
-                {/* {
+                {
+                    // this.props.currentUser && this.props.currentUser.isAdmin &&
+                    // <UpdateTCOptions></UpdateTCOptions>
+                }
+                {
+                    this.props.currentUser && this.props.currentUser.isAdmin &&
+                    <PendingForApproval></PendingForApproval>
+                }
+                {
+                    this.props.currentUser && this.props.currentUser.isAdmin &&
+                    <AssignTcs></AssignTcs>
+                }
+                {
+                    // this.props.currentUser && this.props.currentUser.role === 'QA' &&
                     this.props.currentUser &&
-                    <UpdateTCOptions></UpdateTCOptions>
+                    <MyTcsForRegression></MyTcsForRegression>
+                }
+                {/* {
+                    this.props.currentUser && this.props.currentUser.role === 'QA' &&
+                    <MyTcsForAutomation></MyTcsForAutomation>
                 } */}
+                {
+                    this.props.currentUser && (this.props.currentUser.role === 'QA' || this.props.currentUser.role === 'DEVELOPER') &&
+                    <MyTcsPendingForApproval></MyTcsPendingForApproval>
+                }
 
                 <Modal isOpen={this.state.modal} toggle={() => this.toggle()}>
                     <ModalHeader toggle={() => this.toggle()}>Confirmation</ModalHeader>

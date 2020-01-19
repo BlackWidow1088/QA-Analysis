@@ -291,16 +291,6 @@ class AdminGrid extends Component {
         this.getTC(e.data);
     }
     getTcs() {
-        // axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}`)
-        //     .then(all => {
-        //         if (all.data && all.data.length) {
-        //             this.setState({ domain: null, subDomain: null, data: null, rowSelect: false })
-        //             this.props.saveTestCase({ data: all.data, id: this.props.selectedRelease.ReleaseNumber });
-        //             this.deselect();
-        //             setTimeout(this.gridApi.refreshView(), 0)
-
-        //         }
-        //     })
         if (this.props.user && this.props.user.email) {
             axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/assigned/${this.props.user.email}`)
                 .then(res => {

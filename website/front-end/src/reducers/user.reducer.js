@@ -11,12 +11,20 @@ import {
     SAVE_USER_NOTIFICATIONS,
     CLEAR_USER_DATA,
     SAVE_OPEN_WORK, SAVE_CLOSED_WORK, SAVE_USERS,
-    SAVE_USER_DETAILS
+    SAVE_USER_DETAILS,
+    SAVE_PENDING_APPROVAL,
+    SAVE_MY_REGRESSION,
+    SAVE_ASSIGN_TCS,
+    SAVE_MY_PENDING_APPROVAL
 } from '../actions';
 
 const initialState = {
     users: [],
     details: [],
+    pendingApproval: [],
+    myPendingApproval: [],
+    myRegression: [],
+    assignTcs: [],
     notifications: [],
     openWork: [],
     closedWork: []
@@ -102,10 +110,52 @@ function details(state = initialState.details, action) {
     }
 }
 
+function pendingApproval(state = initialState.pendingApproval, action) {
+    switch (action.type) {
+        case SAVE_PENDING_APPROVAL:
+            state = action.payload;
+            return state;
+        default:
+            return state;
+    }
+}
+function myRegression(state = initialState.myRegression, action) {
+    switch (action.type) {
+        case SAVE_MY_REGRESSION:
+            state = action.payload;
+            return state;
+        default:
+            return state;
+    }
+}
+function assignTcs(state = initialState.myRegression, action) {
+    switch (action.type) {
+        case SAVE_ASSIGN_TCS:
+            state = action.payload;
+            return state;
+        default:
+            return state;
+    }
+}
+function myPendingApproval(state = initialState.myPendingApproval, action) {
+    switch (action.type) {
+        case SAVE_MY_PENDING_APPROVAL:
+            state = action.payload;
+            return state;
+        default:
+            return state;
+    }
+}
+
+
 export default combineReducers({
     notifications,
     users,
-    details
+    details,
+    pendingApproval,
+    myPendingApproval,
+    myRegression,
+    assignTcs
 });
 
 // ////////////////////

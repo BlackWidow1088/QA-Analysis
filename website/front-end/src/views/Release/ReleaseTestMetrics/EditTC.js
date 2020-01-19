@@ -19,6 +19,16 @@ import { saveTestCase, saveTestCaseStatus, saveSingleTestCase, updateTCEdit } fr
 import Multiselect from 'react-bootstrap-multiselect';
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 class EditTC extends Component {
+    WorkingStatusOptions = [
+        'CREATED',
+        'UNAPPROVED',
+        'UNASSIGNED',
+        'MANUAL_ASSIGNED',
+        'AUTO_ASSIGNED',
+        'MANUAL_COMPLETED',
+        'AUTO_COMPLETED',
+        'PENDING_FOR_APPROVAL'
+    ]
     constructor(props) {
         super(props);
         this.state = {
@@ -27,19 +37,6 @@ class EditTC extends Component {
             edited: {},
         }
     }
-    // componentWillReceiveProps(newProps) {
-    //     if (newProps) {
-    //         if (!this.props || (this.props && this.props.TcID !== newProps.TcID)) {
-    //             this.props.updateTCEdit( { Domain: '' } });
-    //         }
-    //         if ((!this.props && newProps.sendCntr > 0) || (this.props && newProps.sendCntr !== this.props.sendCntr)) {
-    //             this.props.sendData(this.props.testcaseEdit);
-    //         }
-    //     }
-    // }
-    toggleDelete = () => {
-        this.setState({ delete: !this.state.delete })
-    };
     selectMultiselect(field, event, checked, select) {
         let value = event.val();
         switch (field) {
@@ -98,8 +95,8 @@ class EditTC extends Component {
     }
     render() {
 
-        let users = this.props.users && this.props.users.filter(item => item.role !== 'EXEC');
-        let statuses = this.props.selectedRelease.StatusOptions
+        let users = this.props.users && this.props.users.filter(item => item.role !== 'EXECUTIVE');
+        let statuses = this.WorkingStatusOptions
 
         let cards = this.props.selectedRelease.CardType ? this.props.selectedRelease.CardType.map(item => ({ value: item, selected: this.props.testcaseEdit.CardType && this.props.testcaseEdit.CardType.includes(item) })) : [];
         let servers = this.props.selectedRelease.ServerType ? this.props.selectedRelease.ServerType.map(item => ({ value: item, selected: this.props.testcaseEdit.ServerType && this.props.testcaseEdit.ServerType.includes(item) })) : [];
@@ -117,9 +114,6 @@ class EditTC extends Component {
                     }}>
                         <div class="row">
                             <div class='col-md-12'>
-
-
-
                                 <span className='rp-app-table-value'>TC ID: {this.props.testcaseDetail.TcID}</span>
                                 <span></span>
                                 {/* {
@@ -143,100 +137,47 @@ class EditTC extends Component {
                                             color: '#04381a',
                                             marginRight: '1rem'
                                         }}> {this.props.testcaseDetail.Created}</span>
-
-                                        {/* <div style={{ display: 'inlineBlock' }}> */}
-                                        {/* <span className='rp-app-table-label' style={{ marginRight: '0.5rem' }}>Status
-                                        {
-                                                this.props.testcaseEdit.errors['Status'] &&
-                                                <i className='fa fa-exclamation-circle rp-error-icon'>{this.props.testcaseEdit.errors['Status']}</i>
-                                            }
-                                        </span>
-                                        {
-                                            !this.props.isEditing ?
-                                                <span className='rp-edit-TC-span'>{this.props.testcaseDetail && this.props.testcaseDetail.Status}</span>
-                                                :
-                                                <Input style={{ borderColor: this.props.testcaseEdit.errors['Domain'] ? 'red' : '', display: 'inline', width: '5rem' }} className='rp-app-table-value' type="select" id="Status" name="Status" value={this.props.testcaseEdit && this.props.testcaseEdit.Status}
-                                                    onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, Status: e.target.value, errors: { ...this.props.testcaseEdit.errors, Status: null } })} >
-                                                    {
-                                                        this.props.selectedRelease.StatusOptions &&
-                                                        this.props.selectedRelease.StatusOptions.map(item => <option value={item}>{item}</option>)
-                                                    }
-                                                </Input>
-                                        } */}
-
                                     </div>
-
                                 </div>
-                                {
-                                    this.props.currentUser && this.props.currentUser.email &&
-                                    <React.Fragment>
-                                        {
-                                            this.props.isEditing ?
-                                                <Fragment>
-                                                    <Button title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.props.toggle()} >
-                                                        <i className="fa fa-check-square-o"></i>
-                                                    </Button>
-                                                    <Button size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.props.edit(false)} >
-                                                        <i className="fa fa-undo"></i>
-                                                    </Button>
-                                                </Fragment>
-                                                :
-                                                <Fragment>
-
-                                                    <Button size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.toggleDelete()} >
-                                                        <i className="fa fa-trash-o"></i>
-                                                    </Button>
-                                                    <Button size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.props.edit(true)} >
-                                                        <i className="fa fa-pencil-square-o"></i>
-                                                    </Button>
-                                                </Fragment>
-
-                                        }
-                                    </React.Fragment>
-                                }
-
-
                             </div>
-
                         </div>
-
                     </div>
                     <FormGroup row className="my-0" style={{ marginTop: '1rem' }}>
                         <Col xs="6" md="4" lg="3">
                             <FormGroup className='rp-app-table-value'>
-                                <Label className='rp-app-table-label' htmlFor="Status">
+                                <Label className='rp-app-table-label' htmlFor="WorkingStatus">
                                     Working Status
                                     {
-                                        this.props.testcaseEdit.errors['Status'] &&
-                                        <i className='fa fa-exclamation-circle rp-error-icon'>{this.props.testcaseEdit.errors['Status']}</i>
+                                        this.props.testcaseEdit.errors['WorkingStatus'] &&
+                                        <i className='fa fa-exclamation-circle rp-error-icon'>{this.props.testcaseEdit.errors['WorkingStatus']}</i>
                                     }
                                 </Label>
                                 {
-                                    !this.props.isEditing || (!this.props.currentUser.isAdmin && (this.props.testcaseDetail.Status === 'CREATED' || this.props.testcaseDetail.Status === 'UNAPPROVED')) ?
-                                        <div className='rp-app-table-value'><span className='rp-edit-TC-span'>{this.props.testcaseDetail && this.props.testcaseDetail.Status}</span></div>
+                                    !this.props.isEditing || (!this.props.currentUser.isAdmin && (this.props.testcaseDetail.WorkingStatus === 'CREATED' || this.props.testcaseDetail.WorkingStatus === 'UNAPPROVED')) ?
+                                        <div className='rp-app-table-value'><span className='rp-edit-TC-span'>{this.props.testcaseDetail && this.props.testcaseDetail.WorkingStatus}</span></div>
                                         :
-                                        <Input style={{ borderColor: this.props.testcaseEdit.errors['Status'] ? 'red' : '' }} className='rp-app-table-value' type="select" id="Status" name="Status" value={this.props.testcaseEdit && this.props.testcaseEdit.Status}
+                                        <Input style={{ borderColor: this.props.testcaseEdit.errors['WorkingStatus'] ? 'red' : '' }} className='rp-app-table-value' type="select" id="WorkingStatus" name="WorkingStatus" value={this.props.testcaseEdit && this.props.testcaseEdit.WorkingStatus}
                                             onChange={(e) => {
                                                 this.setState({ statusChange: true });
-                                                this.props.updateTCEdit({ ...this.props.testcaseEdit, Status: e.target.value, errors: { ...this.props.testcaseEdit.errors, Status: null } })
+                                                this.props.updateTCEdit({ ...this.props.testcaseEdit, WorkingStatus: e.target.value, errors: { ...this.props.testcaseEdit.errors, WorkingStatus: null } })
                                             }} >
                                             {
-                                                this.props.selectedRelease.StatusOptions &&
-                                                this.props.selectedRelease.StatusOptions.map(item => <option value={item}>{item}</option>)
+                                                this.WorkingStatusOptions &&
+                                                this.WorkingStatusOptions.map(item => <option value={item}>{item}</option>)
                                             }
                                         </Input>
                                 }
                             </FormGroup>
                             <Collapse isOpen={this.state.statusChange}>
                                 {
-                                    this.props.testcaseEdit.Status && this.props.testcaseEdit.Status.search('COMPLETED') > 0 ?
+                                    this.props.testcaseEdit.WorkingStatus && this.props.testcaseEdit.WorkingStatus.search('COMPLETED') > 0 ?
                                         <React.Fragment>
                                             <div>
                                                 <span className='rp-app-table-label'>Result</span>
                                                 <div style={{ display: 'inlineBlock' }}>
-                                                    <Input type="select" onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, StatusChangeComments: { ...this.props.StatusChangeComments, Result: e.target.value }, errors: { ...this.props.testcaseEdit.errors, StatusChangeComments: null } })} >
-                                                        <option value="Pass">Pass</option>
+                                                    <Input type="select" onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, Status: e.target.value, StatusChangeComments: { ...this.props.StatusChangeComments, Result: e.target.value }, errors: { ...this.props.testcaseEdit.errors, StatusChangeComments: null } })} >
                                                         <option value="Fail">Fail</option>
+                                                        <option value="Pass">Pass</option>
                                                     </Input>
                                                 </div>
                                             </div>
@@ -461,7 +402,7 @@ class EditTC extends Component {
                                             </FormGroup>
                                         </Col>))
                                 }
-                                <Col xs="6" md="3" lg="3">
+                                {/* <Col xs="6" md="3" lg="3">
                                     <FormGroup className='rp-app-table-value'>
                                         <Label className='rp-app-table-label' htmlFor='Master' >Include in Master {
                                             this.props.testcaseEdit.errors.Master &&
@@ -478,7 +419,7 @@ class EditTC extends Component {
                                                 </Input>
                                         }
                                     </FormGroup>
-                                </Col>
+                                </Col> */}
                                 <Col xs="6" md="3" lg="3">
                                     <FormGroup className='rp-app-table-value'>
                                         <Label className='rp-app-table-label' htmlFor='Master' >Priority {
@@ -508,25 +449,7 @@ class EditTC extends Component {
                         }
                     </FormGroup>
                 </React.Fragment>
-                <Modal isOpen={this.state.delete} toggle={() => this.toggleDelete()}>
-                    {
-                        <ModalHeader toggle={() => this.toggleDelete()}>{
-                            'Delete Confirmation'
-                        }</ModalHeader>
-                    }
-                    <ModalBody>
-                        {
-                            `Are you sure you want to delete ${this.props.testcaseEdit.TcID} ?`
-                        }
 
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={() => { this.props.delete(); this.toggleDelete(); }}>Ok</Button>{' '}
-                        {
-                            <Button color="secondary" onClick={() => this.toggleDelete()}>Cancel</Button>
-                        }
-                    </ModalFooter>
-                </Modal>
             </div >)
     }
 }

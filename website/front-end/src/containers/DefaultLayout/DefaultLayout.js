@@ -61,6 +61,8 @@ class DefaultLayout extends Component {
     let name = user.w3.ig;
     axios.post('/user/login', { email: email, name: name })
       .then(res => {
+        console.log('received from user')
+        console.log(res);
         if (res.data && res.data.role === 'ADMIN') {
           this.props.logInSuccess({ email: email, isAdmin: true, role: res.data.role, name: name });
         } else {

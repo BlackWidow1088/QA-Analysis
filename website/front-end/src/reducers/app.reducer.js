@@ -10,12 +10,14 @@ import navigation from '../_nav';
 import {
     UPDATE_NAV,
     REMOVE_FROM_NAV,
-    RELEASE_STATUS_PAGE
+    RELEASE_STATUS_PAGE,
+    SAVE_MULTI_PENDING_APPROVAL
 } from '../actions';
 
 const initialState = {
     navigation: navigation,
-    statusPage: null
+    statusPage: null,
+    multiPendingApproval: {}
 };
 
 
@@ -64,9 +66,19 @@ function statusPage(state = initialState.statusPage, action) {
             return state;
     }
 }
+function multiPendingApproval(state = initialState.multiPendingApproval, action) {
+    switch (action.type) {
+        case SAVE_MULTI_PENDING_APPROVAL:
+            return { ...state, ...action.payload };
+
+        default:
+            return state;
+    }
+}
 
 export default combineReducers({
     navs,
-    statusPage
+    statusPage,
+    multiPendingApproval
 });
 
