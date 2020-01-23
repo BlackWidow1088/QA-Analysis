@@ -238,8 +238,8 @@ class UserTC extends Component {
                                             onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, Domain: e.target.value, errors: { ...this.props.testcaseEdit.errors, Domain: null } })} >
                                             <option value=''>Select Domain</option>
                                             {
-                                                this.props.selectedRelease.AvailableDomainOptions &&
-                                                Object.keys(this.props.selectedRelease.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
+                                                this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions &&
+                                                Object.keys(this.props.selectedRelease.TcAggregate.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
                                             }
                                         </Input>
                                 }
@@ -263,8 +263,8 @@ class UserTC extends Component {
                                                 onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, SubDomain: e.target.value, errors: { ...this.props.testcaseEdit.errors, SubDomain: null } })} >
                                                 <option value=''>Select Sub Domain</option>
                                                 {
-                                                    this.props.selectedRelease.AvailableDomainOptions &&
-                                                    this.props.selectedRelease.AvailableDomainOptions[this.props.testcaseEdit.Domain].map(item => <option value={item}>{item}</option>)
+                                                    this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions &&
+                                                    this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions[this.props.testcaseEdit.Domain].map(item => <option value={item}>{item}</option>)
                                                 }
                                             </Input>
                                     }

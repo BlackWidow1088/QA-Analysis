@@ -143,6 +143,7 @@ class DefaultLayout extends Component {
     if (this.props.allReleases.length === 0) {
       axios.get(`/api/release/all`)
         .then(res => {
+          console.log(res.data);
           res.data.forEach(item => {
             // this.props.updateNavBar({ id: item.ReleaseNumber });
 
@@ -182,7 +183,7 @@ class DefaultLayout extends Component {
               user={this.props.currentUser}
               selectedReleaseNumber={this.props.selectedRelease.ReleaseNumber}
               releases={this.props.allReleases &&
-                this.props.allReleases.filter(item => item.ReleaseNumber !== 'master').map(item => item.ReleaseNumber)
+                this.props.allReleases.map(item => item.ReleaseNumber)
               }
               onReleaseChange={(release) => {
                 console.log(release);

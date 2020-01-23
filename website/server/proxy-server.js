@@ -24,7 +24,7 @@ var VAGSERV = ['/vag'];
 // var DATA_URL = 'http://localhost:8000';
 var DATA_URL = 'http://localhost:5051';
 // var DATA_URL = 'http://172.16.19.57:8000';
-// var DATA_URL = 'http://192.168.1.30:8000';
+// var DATA_URL = 'http://192.168.1.24:8000';
 // var DATA_URL = 'http://172.16.19.57:8000';
 var JIRA_URL = 'http://localhost:5051';
 var USER_URL = 'http://localhost:5051';
@@ -33,7 +33,7 @@ var VAGSERV_URL = 'http://@vagserv3:8000'
 
 
 
-var proxy = httpProxy.createProxyServer({ changeOrigin: true, timeout: 30000 });
+var proxy = httpProxy.createProxyServer({ changeOrigin: true, timeout: 60000 });
 
 try {
 

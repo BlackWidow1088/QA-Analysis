@@ -130,13 +130,13 @@ class ManageRelease extends Component {
         let formattedDates = {};
         dates.forEach(item => {
             if (data[item]) {
-                let date = new Date(data[item]);
-                formattedDates[item] = date.toISOString();
+                let date = new Date(data[item]).toISOString().split('T');
+                formattedDates[item] = `${date[0]} ${date[1].substring(0, date[1].length-1)}`;
             }
-        })
+        });
         data = { ...data, ...formattedDates };
         let arrays = [
-            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers', 'EngineerCount',
+            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers', 'Engineers',
         ]
         let formattedArrays = {};
         arrays.forEach(item => {
@@ -149,14 +149,6 @@ class ManageRelease extends Component {
         })
         console.log('priority ')
         data = { ...data, ...formattedArrays };
-        // if (isNaN(data.EngineerCount)) {
-        //     data.EngineerCount = 0;
-        // } else {
-        //     data.EngineerCount = parseInt(data.EngineerCount);
-        // }
-        // if (!data.EngineerCount) {
-        //     data.EngineerCount = 0;
-        // }
         if (isNaN(data.QARateOfProgress)) {
             data.QARateOfProgress = 0;
         } else {
@@ -165,9 +157,9 @@ class ManageRelease extends Component {
         if (!data.QARateOfProgress) {
             data.QARateOfProgress = 0;
         }
-        console.log('saved data ', data);
         axios.post(`/api/release`, { ...data })
             .then(single => {
+                alert('successfully added the release');
                 axios.get(`/api/release/all`)
                     .then(res => {
                         res.data.forEach(item => {
@@ -332,7 +324,7 @@ class ManageRelease extends Component {
                                                             <option value=''>Select Priority</option>
                                                             {
 
-                                                                ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+                                                                ['P0','P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
                                                                     <option value={item}>{item}</option>
                                                                 )
                                                             }

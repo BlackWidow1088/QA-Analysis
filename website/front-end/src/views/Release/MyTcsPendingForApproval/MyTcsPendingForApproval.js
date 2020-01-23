@@ -14,15 +14,15 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import EditMyPendingForApproval from './EditMyPendingApproval';
 // import EditTC from '../../views/Release/ReleaseTestMetrics/EditTC';
 
 class MyTcsPendingForApproval extends Component {
-    editedRows = {};
+    changeLog = {};
     workingStatusOptions = [{ value: 'APPROVED', text: 'APPROVE' }, { value: 'UNAPPROVED', text: 'UNAPPROVE' }];
     constructor(props) {
         super(props);
         this.state = {
-            multi: { Assignee: null },
             rowsChecked: {},
             rowSelect: false,
             isEditing: false,
@@ -79,7 +79,6 @@ class MyTcsPendingForApproval extends Component {
                 },
                 {
                     headerName: "Sub Domain", field: "SubDomain", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100',
-
                 },
                 {
                     headerName: "Tc ID", field: "TcID", sortable: true, filter: true, cellStyle: this.renderEditedCell
@@ -89,9 +88,6 @@ class MyTcsPendingForApproval extends Component {
                 },
                 {
                     headerName: "Card Type", field: "CardType", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100'
-                },
-                {
-                    headerName: "Priority", field: "Priority", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100'
                 },
                 {
                     headerName: "Assignee", field: "Assignee", sortable: true, filter: true, cellStyle: this.renderEditedCell, width: '100'
@@ -131,21 +127,6 @@ class MyTcsPendingForApproval extends Component {
         this.props.updateTCEdit({ Master: true, errors: {}, original: null });
     }
     renderEditedCell = (params) => {
-        let editedInRow = this.editedRows[`${params.data.TcID}_${params.data.CardType}`] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field].originalValue !== params.value;
-        let restored = this.editedRows[`${params.data.TcID}_${params.data.CardType}`] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field].originalValue === params.value;
-        if (editedInRow) {
-            this.isAnyChanged = true;
-            this.editedRows[`${params.data.TcID}_${params.data.CardType}`].Changed = true;
-            return {
-                backgroundColor: 'rgb(209, 255, 82)',
-                borderStyle: 'solid',
-                borderWidth: '1px',
-                borderColor: 'rgb(255, 166, 0)'
-            };
-        }
-        if (restored) {
-            this.editedRows[`${params.data.TcID}_${params.data.CardType}`].Changed = false;
-        }
         return { backgroundColor: '' };
     }
     onGridReady = params => {
@@ -153,30 +134,10 @@ class MyTcsPendingForApproval extends Component {
         this.gridColumnApi = params.columnApi;
         params.api.sizeColumnsToFit();
     };
-    onCellEditing = (params, field, value) => {
-        if (this.editedRows[`${params.TcID}_${params.CardType}`]) {
-            if (this.editedRows[`${params.TcID}_${params.CardType}`][field]) {
-                this.editedRows[`${params.TcID}_${params.CardType}`][field] =
-                    { ...this.editedRows[`${params.TcID}_${params.CardType}`][field], oldValue: params[field], newValue: value }
-            } else {
-                this.editedRows[`${params.TcID}_${params.CardType}`] =
-                    { ...this.editedRows[`${params.TcID}_${params.CardType}`], [field]: { oldValue: params[field], originalValue: params[field], newValue: value } }
-            }
-        } else {
-            this.editedRows[`${params.TcID}_${params.CardType}`] = {
-                TcID: { oldValue: `${params.TcID}`, originalValue: `${params.TcID}`, newValue: `${params.TcID}` },
-                CardType: { oldValue: `${params.CardType}`, originalValue: `${params.CardType}`, newValue: `${params.CardType}` },
-                [field]: { oldValue: params[field], originalValue: params[field], newValue: value }
-            }
-        }
-    }
     onFilterTextBoxChanged(value) {
         this.deselect();
         this.setState({ domain: null, subDomain: null, CardType: null, rowSelect: false });
         this.gridApi.setQuickFilter(value);
-    }
-    onActivityFilterTextBoxChanged(value) {
-        this.activityGridApi.setQuickFilter(value);
     }
     filterData({ Domain, SubDomain, CardType }) {
         return this.props.data.filter(item => {
@@ -214,16 +175,15 @@ class MyTcsPendingForApproval extends Component {
         this.setState({ CardType: cardType, data: this.filterData({ Domain: this.state.domain, SubDomain: this.state.subDomain, CardType: cardType }), rowSelect: false });
     }
     rowSelect(e) {
-        console.log(console.log(e));
         this.setState({ rowSelect: true, toggleMessage: null })
         this.props.updateTCEdit({ Master: true, errors: {} });
         this.getTC(e.data);
     }
     getTcs() {
-        setTimeout(() => axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/myPendingApproval/${this.props.user.email} `)
+        setTimeout(() => axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/myPendingApproval/user/${this.props.user.email} `)
             .then(res => {
                 if (this.props.user && this.props.user.isAdmin) {
-                    axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/myPendingApproval/ADMIN`)
+                    axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/myPendingApproval/user/ADMIN`)
                         .then(admin => {
                             this.props.saveUserMyPendingApproval([...admin.data, ...res.data]);
                             this.deselect();
@@ -241,56 +201,68 @@ class MyTcsPendingForApproval extends Component {
         this.setState({ isEditing: false });
     }
 
-    save() {
-        let data = { ...this.props.testcaseEdit };
-        let dates = [
-            'TargetedReleaseDate', 'ActualReleaseDate', 'TargetedCodeFreezeDate',
-            'UpgradeTestingStartDate', 'QAStartDate', 'ActualCodeFreezeDate', 'TargetedQAStartDate'
-        ]
-        let formattedDates = {};
-        dates.forEach(item => {
-            if (data[item]) {
-                let date = new Date(data[item]);
-                formattedDates[item] = date.toISOString()
-            }
-        })
-        let DateTC = new Date().toISOString();
-        let release = data['Master'] ? `${this.props.selectedRelease.ReleaseNumber}, master` : this.props.selectedRelease.ReleaseNumber;
-
-        let Status = 'PENDING_FOR_APPROVAL';
-        data.Status = Status;
-        let header = `${Status}: ${release}, REPORTER: ${this.props.user.email} `;
-
-        let Assignee = data.Assignee ? data.Assignee : 'UNASSIGNED';
-
-        let arrays = ['CardType', 'ServerType', 'OrchestrationPlatform'];
-        let formattedArrays = {};
-        arrays.forEach(item => {
-            if (!data[item]) {
-                formattedArrays[item] = [];
-            }
-            if (data[item] && !Array.isArray(data[item])) {
-                formattedArrays[item] = data[item].split(',');
+    textFields = [
+        'Domain', 'SubDomain', 'Scenario', 'TcID', 'TcName', 'Tag', 'Assignee',
+        'Description', 'Steps', 'ExpectationBehavior', 'Notes'
+    ];
+    arrayFields = ['CardType', 'ServerType', 'OrchestrationPlatform']
+    whichFieldsUpdated(old, latest) {
+        let changes = {};
+        this.textFields.forEach(item => {
+            if(old[item] !== latest[item]) {
+                changes[item] = {old: old[item], new: latest[item]}
             }
         });
-        let details = {
-            old: { ...data.original, original: '', StatusChangeComments: '', Activity: '', LatestE2EBuilds: '', ManualBuilds: '', AutoBuilds: '' },
-            new: { ...data, ...formattedDates, original: '', StatusChangeComments: '', ...formattedArrays, Assignee, Activity: '', LatestE2EBuilds: '', ManualBuilds: '', AutoBuilds: '' }
+        this.arrayFields.forEach(item => {
+            if(!old[item] && latest[item]) {
+                changes[item] = {old: '', new: latest[item]}
+            } else if(!latest[item] && old[item]) {
+                changes[item] = {old: old[item], new: ''}
+            } else if(old[item] && latest[item]){
+                let arrayChange = latest[item].filter(each => old[item].includes(each));
+                if(arrayChange.length > 0) {
+                    changes[item] = {old: old[item], new: latest[item]}
+                }
+            }
+        });
+        return changes;
+    }
+    joinArrays(array) {
+        if (!array) {
+            array = [];
         }
-        let Activity = {
-            "Date": DateTC,
-            "Header": header,
-            "Details": details,
-            StatusChangeComments: data.StatusChangeComment
+        if (array && !Array.isArray(array)) {
+            array = array.split(',');
+        }
+        return array;
+    }
+    save() {
+        let data = {};
+        // tc info meta fields
+        data.OldWorkingStatus = this.props.tcDetails.WorkingStatus;
+        // tc info fields
+        this.textFields.map(item => data[item] = this.props.testcaseEdit[item]);
+        this.arrayFields.forEach(item => data[item] = this.joinArrays(this.props.testcaseEdit[item]));
+        data.Assignee = data.Assignee ? data.Assignee : 'ADMIN';
+        data.TcName = 'TC NOT AUTOMATED';
+        // tc status fields
+        data.CurrentStatus = 'NotTested';
+
+            data.WorkingStatus = 'UPDATED';
+            if(!(data.Assignee && data.Assignee !== 'ADMIN')) {
+                data.Assignee = 'ADMIN';
+            }
+        data.Activity={
+            "Date": new Date().toISOString(),
+            "Header": `${data.WorkingStatus}: ${this.props.selectedRelease.ReleaseNumber}, master, REPORTER: ${this.props.user.email} `,
+            "Details": this.changeLog,
+            "StatusChangeComments": ''
         };
-        data.ManualBuilds = [];
-        data.AutoBuilds = [];
-        data = { ...data, original: '', StatusChangeComments: '', ...formattedDates, ...formattedArrays, Activity, Assignee };
-        console.log('data after updating TC');
-        console.log(data);
-        axios.put(`/test/${this.props.selectedRelease.ReleaseNumber}/tcinfo/details/id/${data.TcID}`, { ...data })
+        
+
+        axios.put(`/user/${this.props.selectedRelease.ReleaseNumber}/myPendingApproval/tcinfo/${data.TcID}`, { ...data })
             .then(res => {
-                this.setState({ addTC: { Master: true, Domain: '' }, errors: {}, toggleMessage: `TC ${this.props.testcaseEdit.TcID} Updated Successfully` });
+                this.setState( {errors: {}, toggleMessage: `TC ${this.props.testcaseEdit.TcID} Updated Successfully` });
                 this.deselect();
                 this.toggle();
 
@@ -321,6 +293,7 @@ class MyTcsPendingForApproval extends Component {
     }
     confirmToggle() {
         let errors = null;
+        this.changeLog = {};
         ['Domain', 'SubDomain', 'TcID', 'CardType']
             .forEach(item => {
                 if (!errors) {
@@ -330,12 +303,16 @@ class MyTcsPendingForApproval extends Component {
                     }
                 }
             });
-        if (!errors) {
-            this.setState({ toggleMessage: null })
-            this.toggle();
-        } else {
-            this.setState({ errors: errors })
-        }
+            if (!isNaN(this.props.testcaseEdit['TcID'])) {
+                errors = { ...this.props.testcaseEdit.errors, TcID: 'Cannot be a number' };
+            }
+            if (!errors) {
+                this.changeLog = this.whichFieldsUpdated(this.props.tcDetails, this.props.testcaseEdit);
+                this.setState({ toggleMessage: null })
+                this.toggle();
+            } else {
+                this.setState({ errors: errors })
+            }
     }
     delete() {
         if (this.props.testcaseEdit.TcID) {
@@ -403,7 +380,7 @@ class MyTcsPendingForApproval extends Component {
                                                     <Input value={this.state.domain} onChange={(e) => this.onSelectDomain(e.target.value)} type="select" name="selectDomain" id="selectDomain">
                                                         <option value=''>Select Domain</option>
                                                         {
-                                                            this.props.selectedRelease.AvailableDomainOptions && Object.keys(this.props.selectedRelease.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
+                                                            this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions && Object.keys(this.props.selectedRelease.TcAggregate.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
                                                         }
                                                     </Input>
                                                 </div>
@@ -414,7 +391,7 @@ class MyTcsPendingForApproval extends Component {
                                                     <Input value={this.state.subDomain} onChange={(e) => this.onSelectSubDomain(e.target.value)} type="select" name="subDomains" id="subDomains">
                                                         <option value=''>Select Sub Domain</option>
                                                         {
-                                                            this.state.domain && this.props.selectedRelease.AvailableDomainOptions[this.state.domain].map(item => <option value={item}>{item}</option>)
+                                                            this.state.domain && this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions[this.state.domain].map(item => <option value={item}>{item}</option>)
                                                         }
                                                     </Input>
                                                 </div>
@@ -478,6 +455,16 @@ class MyTcsPendingForApproval extends Component {
                                     {
                                         this.props.tcDetails && this.props.tcDetails.TcID &&
                                         <React.Fragment>
+                                        <FormGroup row className="my-0" style={{ marginTop: '1rem' }}>
+                                                <Col xs="6" md="4" lg="3">
+                                                    <FormGroup className='rp-app-table-value'>
+                                                        <Label className='rp-app-table-label' htmlFor="CurrentWorkingStatus">
+                                                            Current Working Status
+                                                        </Label>
+                                                        <div className='rp-app-table-value'><span className='rp-edit-TC-span'>{this.props.tcDetails && this.props.tcDetails.WorkingStatus}</span></div>
+                                                    </FormGroup>
+                                                </Col>
+                                        </FormGroup>
                                             <FormGroup row className="my-0">
                                                 {
                                                     [
@@ -499,7 +486,7 @@ class MyTcsPendingForApproval extends Component {
                                                                         <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '', backgroundColor: 'white' }} className='rp-app-table-value' type='textarea' rows='9' value={this.props.tcDetails && this.props.tcDetails[item.field]}></Input>
                                                                         :
                                                                         <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '' }} className='rp-app-table-value' placeholder={'Add ' + item.header} type="textarea" rows='4' id={item.field} value={this.props.testcaseEdit && this.props.testcaseEdit[item.field]}
-                                                                            onChange={(e) => this.setState({ addTC: { ...this.props.testcaseEdit, [item.field]: e.target.value }, errors: { ...this.props.testcaseEdit.errors, [item.field]: null } })} >
+                                                                            onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, [item.field]: e.target.value, errors: { ...this.props.testcaseEdit.errors, [item.field]: null } })} >
 
                                                                         </Input>
                                                                 }
@@ -509,19 +496,12 @@ class MyTcsPendingForApproval extends Component {
                                                 }
                                             </FormGroup>
                                             {/* <EditTC isEditing={this.state.isEditing}></EditTC> */}
-
+                                                <EditMyPendingForApproval isEditing={this.state.isEditing}></EditMyPendingForApproval>
 
                                             <Row>
                                                 <Col lg="6">
                                                     <div className='rp-app-table-title'>Activity</div>
                                                     <div style={{ width: (window.screen.width * ((1 - 0.418) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
-                                                        <div class="test-header">
-                                                            <div class="row">
-                                                                <div class="col-md-3">
-                                                                    <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onActivityFilterTextBoxChanged(e.target.value)} />
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                         <div style={{ width: "100%", height: "100%" }}>
                                                             <div
                                                                 id="activityGrid"
@@ -532,7 +512,6 @@ class MyTcsPendingForApproval extends Component {
                                                                 className="ag-theme-balham"
                                                             >
                                                                 <AgGridReact
-                                                                    onRowClicked={(e) => this.setState({ activity: e.data })}
                                                                     modules={this.state.modules}
                                                                     columnDefs={this.state.activityColumnDefs}
                                                                     defaultColDef={this.state.defaultColDef}

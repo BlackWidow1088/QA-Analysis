@@ -1,7 +1,7 @@
 /**
  * mock server for serving sunburst data to angular client
  */
-
+// while passing information send only those TCS which are not CREATED,UPDATED,DELETED OR NON-APPROVED
 const express = require('express');
 const jsonfile = require('jsonfile')
 let releases = jsonfile.readFileSync('./releases.json');
@@ -157,13 +157,13 @@ function assignPriority(priority, release) {
 
 // updatedReleases.forEach(item => {
 //     if (item.ReleaseNumber === 'master') {
-//         item.AvailableDomainOptions = domainsMaster;
+//         item.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions = domainsMaster;
 //         item.StatusOptions = statusOptions;
 //         item.TagOptions = ["DAILY", "WEEKLY", "MONTHLY"]
 //         item.TcAggregate = masterAggr;
 //     }
 //     if (item.ReleaseNumber === '2.3.0') {
-//         item.AvailableDomainOptions = domains230;
+//         item.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions = domains230;
 //         item.StatusOptions = statusOptions;
 //         item.TagOptions = ["DAILY", "WEEKLY", "MONTHLY"]
 //     }
@@ -446,40 +446,205 @@ app.use('/user/login', (req, res) => {
 app.get('/users', (req, res) => {
     res.send(users);
 })
-app.get('/user/:release/assigned/:email', (req, res) => {
+
+// GET ALL TCs of this release
+app.get('/api/tcinfo/:release', (req, res) => {
+    console.log('called')
+    if (allTcs && allTcs[req.params.release]) {
+        let data = Object.keys(allTcs[req.params.release]).map(item => allTcs[req.params.release][item]);
+
+        res.send(data.filter(item => item ? true : false));
+    } else {
+        res.send([]);
+    }
+});
+
+app.post('/api/tcinfo/:release', (req, res) => {
+    if (allTcs && allTcs[req.params.release]) {
+        if (allTcs[req.params.release][req.body.TcID]) {
+            res.status(401).send({ 'message': 'Duplicate TcID' });
+            return;
+        } else {
+            allTcs[req.params.release][req.body.TcID] = {...req.body, Activity: [req.body.Activity], LatestE2EBuilds: []};
+            allTcs['master'][req.body.TcID] = {...req.body,Activity: [req.body.Activity], LatestE2EBuilds: [], WorkingStatus: 'UNASSIGNED', Assignee: 'ADMIN', CurrentStatus: 'NotTested', Build:''};
+        }
+    } else {
+        allTcs[req.params.release] = { [req.body.TcID]: {...req.body, Activity: [req.body.Activity], LatestE2EBuilds: [] } };
+        allTcs['master'][req.body.TcID] = {...req.body,Activity: [req.body.Activity], LatestE2EBuilds: [], WorkingStatus: 'UNASSIGNED', Assignee: 'ADMIN', CurrentStatus: 'NotTested', Build:''};
+    }
+    // addAssignee(allTcs[req.params.release][req.body.TcID], req.params.release)
+    res.send({ message: 'ok' });
+});
+
+app.put('/api/:release/tcinfo/id/:id', (req, res) => {
+    if (allTcs && allTcs[req.params.release] && allTcs[req.params.release][req.params.id] &&
+        allTcs[req.params.release][req.params.id].TcID === req.body.TcID) {
+            allTcs[req.params.release][req.body.TcID] = {...req.body, 
+                Activity: [...allTcs[req.params.release][req.body.TcID].Activity, req.body.Activity],
+                LatestE2EBuilds: [...allTcs[req.params.release][req.body.TcID].LatestE2EBuilds, req.body.LatestE2EBuilds]
+            };
+            allTcs['master'][req.body.TcID] = {...req.body,Activity: [req.body.Activity], LatestE2EBuilds: [], WorkingStatus: 'UNASSIGNED', Assignee: 'ADMIN', CurrentStatus: 'NotTested', Build:''};
+            res.send({ message: 'ok' });
+        } else {
+            res.status(404).send({'message' : 'TC not found'})
+        }
+});
+
+app.delete('/api/:release/tcinfo/id/:id', (req, res) => {
+    if (allTcs && allTcs[req.params.release] && allTcs[req.params.release][req.params.id] &&
+        allTcs[req.params.release][req.params.id].TcID === req.body.TcID) {
+            allTcs[req.params.release][req.body.TcID] = null;
+            allTcs['master'][req.body.TcID] = null;
+                res.send({ message: 'ok' });
+    } else {
+        res.status(404).send({'message' : 'TC not found'})
+    }
+});
+
+
+
+
+// only create TC will use this api
+// Status: CREATED -> /pendingForApproval
+    // Test cases:
+    // TcID: role,assignee: workingstatus,assignee
+    // D10: QA,NULL : CREATED,ADMIN  /pendingForApproval /myPendingApproval
+    // D11: QA,achavan: CREATED,achavan /pendingForApproval /myPendingApproval
+    // D12: ADMIN,NULL: UNASSIGNED,ADMIN /assignTcs
+    // D13: ADMIN,achavan: MANUAL_ASSIGNED,achavan /myRegression
+    // D14: ADMIN,ADMIN: UNASSIGNED,ADMIN /assignTcs
+// ACTUAL
+// app.post('/api/tcinfo/:release', (req, res) => {
+//     if (allTcs && allTcs[req.params.release]) {
+//         if (allTcs[req.params.release][req.body.TcID]) {
+//             res.status(401).send({ 'message': 'Duplicate TcID' });
+//             return;
+//         } else {
+//             allTcs[req.params.release][req.body.TcID] = {...req.body, Activity: [req.body.Activity], LatestE2EBuilds: []};
+//         }
+//     } else {
+//         allTcs[req.params.release] = { [req.body.TcID]: {...req.body, Activity: [req.body.Activity], LatestE2EBuilds: [] } };
+//     }
+//     if(req.body.Role === 'ADMIN') {
+//         allTcs['master'][req.body.TcID] = {...req.body, WorkingStatus: 'UNASSIGNED', Assignee: 'ADMIN'};
+//     }
+//     addAssignee(allTcs[req.params.release][req.body.TcID], req.params.release)
+//     res.send({ message: 'ok' });
+// });
+
+
+// GET ALL PENDING TCS FOR APPROVAL TO ADMIN FROM OTHER USERS
+app.get('/user/:release/pendingApproval/user/:email', (req, res) => {
     let tcs = [];
     if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
         assignedTCs[req.params.release][req.params.email].forEach(item => {
-            tcs.push(allTcs[req.params.release][item]);
+            if ((allTcs[req.params.release][item].WorkingStatus === 'UPDATED') || (allTcs[req.params.release][item].WorkingStatus === 'DELETED') || allTcs[req.params.release][item].WorkingStatus === 'CREATED') {
+                tcs.push(allTcs[req.params.release][item]);
+            }
         })
     }
-    console.log('tcs to send');
-    console.log(tcs);
-    console.log(assignedTCs);
     res.send(tcs);
-})
-app.get('/user/:release/pendingApproval/:email', (req, res) => {
+});
+
+// UPDATE PENDING TC WITH APPROVED/NONAPPROVED FROM ADMIN
+app.put('/user/:release/pendingApproval/tcinfo/:id', (req, res) => {
+    if(allTcs[req.params.release] && allTcs[req.params.release][req.params.id]) {
+        if(req.body.WorkingStatus === 'APPROVED') {
+        switch(req.body.OldWorkingStatus) {
+            case 'CREATED':
+            case 'UPDATED':
+                allTcs['master'][req.params.id] = {...req.body, WorkingStatus: 'UNASSIGNED', Assignee: 'ADMIN', LatestE2EBuilds: []};
+                if(allTcs[req.params.release][req.params.id].Assignee && allTcs[req.params.release][req.params.id].Assignee !== 'ADMIN') {
+                    allTcs[req.params.release][req.params.id] = {...req.body, LatestE2EBuilds: [], Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity], WorkingStatus: 'MANUAL_ASSIGNED'};
+                } else {
+                    allTcs[req.params.release][req.params.id] = {...req.body, LatestE2EBuilds: [], Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity], WorkingStatus: 'UNASSIGNED', Assignee: 'ADMIN'};
+                }
+                res.send({ message: 'ok' });
+                break;
+            case 'DELETED':
+                if (allTcs[req.params.release][req.params.id].TcID === req.params.id) {
+                    removeAssignee(allTcs[req.params.release][req.params.id], req.params.release);
+                    allTcs[req.params.release][req.params.id] = null;
+                }
+                res.send({ message: 'ok' });
+                break;
+            default:
+                res.status(404).send({'message' : 'Invalid Working Status'});
+                break;
+
+        }
+    } else if(req.body.WorkingStatus === 'UNAPPROVED') {
+        allTcs[req.params.release][req.params.id] = {...req.body, Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity], LatestE2EBuilds: []};
+    }
+        res.send('ok');
+    } else {
+        //error
+        res.status(404).send({'message' : 'TC Not found'});
+    }
+});
+
+// GET ALL PENDING TCS FOR USER TO GET APPROVED BY ADMIN
+app.get('/user/:release/myPendingApproval/user/:email', (req, res) => {
     let tcs = [];
     if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
         assignedTCs[req.params.release][req.params.email].forEach(item => {
-            if ((allTcs[req.params.release][item].WorkingStatus === 'PENDING_FOR_APPROVAL') || allTcs[req.params.release][item].WorkingStatus === 'CREATED') {
+            if ((allTcs[req.params.release][item].WorkingStatus === 'UNAPPROVED') || (allTcs[req.params.release][item].WorkingStatus === 'UPDATED') || (allTcs[req.params.release][item].WorkingStatus === 'DELETED') || allTcs[req.params.release][item].WorkingStatus === 'CREATED') {
+                tcs.push(allTcs[req.params.release][item]);
+            }
+        })
+    }
+    res.send(tcs);
+});
+
+// UPDATE MY PENDING APPROVAL TCS
+app.put('/user/:release/myPendingApproval/tcinfo/:id', (req, res) => {
+    if(allTcs[req.params.release] && allTcs[req.params.release][req.params.id]) {
+        allTcs[req.params.release][req.params.id] = {...req.body, Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity], LatestE2EBuilds: []};
+        res.send('ok');
+    } else {
+        //error
+        res.status(404).send({'message' : 'TC Not found'});
+    }
+});
+
+//  GET REGRESSION TCS  FOR ASSIGNINING
+app.get('/user/:release/assignTcs/user/:email', (req, res) => {
+    let tcs = [];
+    if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
+        assignedTCs[req.params.release][req.params.email].forEach(item => {
+            if ((allTcs[req.params.release][item].WorkingStatus === 'UNASSIGNED')) {
                 tcs.push(allTcs[req.params.release][item]);
             }
         })
     }
     res.send(tcs);
 })
-app.get('/user/:release/assignTcs/:email', (req, res) => {
-    let tcs = [];
-    if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
-        assignedTCs[req.params.release][req.params.email].forEach(item => {
-            if ((allTcs[req.params.release][item].WorkingStatus === 'UNASSIGNED') || allTcs[req.params.release][item].WorkingStatus.search('COMPLETED') >= 0) {
-                tcs.push(allTcs[req.params.release][item]);
-            }
-        })
+//  UPDATE SINGLE REGRESSION TC  FOR ASSIGNINING
+app.put('/user/:release/assignTcs/tcinfo/:id', (req, res) => {
+    if(allTcs[req.params.release] && allTcs[req.params.release][req.params.id]) {
+        allTcs[req.params.release][req.params.id] = {...req.body, Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity], LatestE2EBuilds: []};
+        res.send('ok');
+    } else {
+        //error
+        res.status(404).send({'message' : 'TC Not found'});
     }
-    res.send(tcs);
 })
+//  UPDATE ALL REGRESSION TCS  FOR ASSIGNINING
+app.put('/user/:release/assignTcs/alltcinfo', (req, res) => {
+    if (req.body.data) {
+        req.body.data.forEach(data => {
+            removeAssignee(allTcs[req.params.release][data.TcID], req.params.release);
+            allTcs[req.params.release][data.TcID].Assignee = data.Assignee;
+            allTcs[req.params.release][data.TcID].WorkingStatus = data.WorkingStatus;
+            allTcs[req.params.release][data.TcID].Activity = [...allTcs[req.params.release][data.TcID].Activity, data.Activity]
+            addAssignee(allTcs[req.params.release][data.TcID], req.params.release)
+        })
+        res.send({ message: 'ok' });
+    } else {
+        res.status(401).send({ 'message': 'Failed to update TCs' });
+    }
+})
+
 app.get('/user/:release/myRegression/:email', (req, res) => {
     let tcs = [];
     if (assignedTCs[req.params.release] && assignedTCs[req.params.release][req.params.email]) {
@@ -490,6 +655,26 @@ app.get('/user/:release/myRegression/:email', (req, res) => {
         })
     }
     res.send(tcs);
+})
+// UPDATE MY REGRESSION TC
+app.put('/user/:release/myRegression/tcinfo/:id', (req, res) => {
+    if(allTcs[req.params.release] && allTcs[req.params.release][req.params.id]) {
+        if(req.body.WorkingStatus === 'MANUAL_COMPLETED') {
+            allTcs[req.params.release][req.params.id] = {...req.body, 
+                Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity], 
+                LatestE2EBuilds: [...allTcs[req.params.release][req.params.id].LatestE2EBuilds, req.body.LatestE2EBuilds],
+            };
+            console.log(allTcs[req.params.release][req.params.id]);
+        } else {
+            allTcs[req.params.release][req.params.id] = {...req.body, 
+                Activity: [...allTcs[req.params.release][req.params.id].Activity, req.body.Activity],
+            };
+        }
+        res.send('ok');
+    } else {
+        //error
+        res.status(404).send({'message' : 'TC Not found'});
+    }
 })
 app.get('/test/:release/tcinfo/details/id/:id', (req, res) => {
     if (allTcs && allTcs[req.params.release] && allTcs[req.params.release][req.params.id]) {
@@ -502,7 +687,7 @@ function addAssignee(tc, release) {
     if (!assignedTCs[release]) {
         assignedTCs[release] = { 'ADMIN': [] };
     }
-    if (!tc.Assignee || tc.Assignee === 'UNASSIGNED' || tc.WorkingStatus.search('COMPLETED') >= 0) {
+    if (!tc.Assignee || tc.WorkingStatus.search('COMPLETED') >= 0) {
         tc.Assignee = 'ADMIN';
     }
     if (assignedTCs[release][tc.Assignee] && !assignedTCs[release][tc.Assignee].includes(tc.TcID)) {
@@ -516,7 +701,7 @@ function removeAssignee(tc, release) {
     if (!assignedTCs[release]) {
         return;
     }
-    if (!tc.Assignee || tc.Assignee === 'UNASSIGNED' || tc.WorkingStatus.search('COMPLETED') >= 0) {
+    if (!tc.Assignee || tc.WorkingStatus.search('COMPLETED') >= 0) {
         tc.Assignee = 'ADMIN';
     }
     if (assignedTCs[release] && assignedTCs[release][tc.Assignee]) {
@@ -645,48 +830,7 @@ app.delete('/api/release/:release', (req, res) => {
 
 });
 
-app.post('/api/tcinfo/:release', (req, res) => {
-    if (allTcs && allTcs[req.params.release]) {
-        if (allTcs[req.params.release][req.body.TcID]) {
-            res.status(401).send({ 'message': 'Duplicate TcID' });
-        } else if (allTcs[req.params.release][req.body.TcName]) {
-            res.status(401).send({ 'message': 'Duplicate TcName' });
-        } else {
 
-
-            allTcs[req.params.release][req.body.TcID] = req.body;
-            if (allTcs[req.params.release][req.body.TcID].TcName === '') {
-                allTcs[req.params.release][req.body.TcID].TcName = 'TC NOT AUTOMATED'
-            }
-            allTcs[req.params.release][req.body.TcID].CurrentStatus = 'NotTested'
-            // if (req.body.Master) {
-            //     allTcs['master'][req.body.TcID] = req.body;
-            // }
-            addAssignee(allTcs[req.params.release][req.body.TcID], req.params.release)
-            // jsonfile.writeFileSync('./tcDetails.json', allTcs);
-            res.send({ message: 'ok' });
-        }
-    } else {
-        allTcs[req.params.release] = { [req.body.TcID]: req.body };
-        // if (req.body.Master) {
-        //     allTcs['master'][req.body.TcID] = req.body;
-        // }
-        allTcs[req.params.release][req.body.TcID].CurrentStatus = 'NotTested'
-        addAssignee(allTcs[req.params.release][req.body.TcID], req.params.release)
-        // jsonfile.writeFileSync('./tcDetails.json', allTcs);
-        res.send({ message: 'ok' });
-    }
-});
-app.get('/api/tcinfo/:release', (req, res) => {
-    console.log('called')
-    if (allTcs && allTcs[req.params.release]) {
-        let data = Object.keys(allTcs[req.params.release]).map(item => allTcs[req.params.release][item]);
-
-        res.send(data.filter(item => item ? true : false));
-    } else {
-        res.send([]);
-    }
-});
 // app.use('/', express.static('./build'));
 // app.use('*', express.static('./build'));
 console.log('Mock Invar listening on port 5051');

@@ -15,12 +15,12 @@ import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 import CheckBoxRenderer from '../components/CheckBoxRenderer';
+import EditAssignRegression from './EditAssignRegression';
 // import EditTC from '../../views/Release/ReleaseTestMetrics/EditTC';
 
 class AssignTcs extends Component {
     editedRows = {};
     isAnyChanged = false;
-    workingStatusOptions = [{ value: 'APPROVED', text: 'APPROVE' }, { value: 'UNAPPROVED', text: 'UNAPPROVE' }];
     constructor(props) {
         super(props);
         this.state = {
@@ -171,23 +171,6 @@ class AssignTcs extends Component {
         this.props.saveSingleTestCase({});
         this.props.updateTCEdit({ Master: true, errors: {}, original: null });
     }
-    // selectAll() {
-    //     this.gridApi.selectAll();
-    // }
-    // renderCheckBox = (params) => {
-    //     return (
-    //         <Input type="checkbox" onChange={() => this.onCheckBoxChange(params)} />
-    //     )
-    //     // return `<input type='checkbox' onChange={(e) => this.onCheckBoxChange(${params})} ${params.value ? 'checked' : ''} />`
-    // }
-    // onCheckBoxChange = (params) => {
-    //     params.value = !params.value;
-    //     if (params.value) {
-    //         this.rowsChecked[params.data.TcID] = true;
-    //     } else {
-    //         this.rowsChecked[params.data.TcID] = false;
-    //     }
-    // }
     renderEditedCell = (params) => {
         let editedInRow = this.editedRows[`${params.data.TcID}_${params.data.CardType}`] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field].originalValue !== params.value;
         let restored = this.editedRows[`${params.data.TcID}_${params.data.CardType}`] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field] && this.editedRows[`${params.data.TcID}_${params.data.CardType}`][params.colDef.field].originalValue === params.value;
@@ -251,20 +234,10 @@ class AssignTcs extends Component {
 
     }
 
-    getEditedCells() {
-        var cellDefs = this.gridApi.getEditingCells();
-        console.log('edited cells ', cellDefs);
-    }
     onFilterTextBoxChanged(value) {
         this.deselect();
         this.setState({ domain: null, subDomain: null, CardType: null, rowSelect: false });
         this.gridApi.setQuickFilter(value);
-    }
-    onE2EFilterTextBoxChanged(value) {
-        this.E2EGridApi.setQuickFilter(value);
-    }
-    onActivityFilterTextBoxChanged(value) {
-        this.activityGridApi.setQuickFilter(value);
     }
     filterData({ Domain, SubDomain, CardType }) {
         return this.props.data.filter(item => {
@@ -308,10 +281,10 @@ class AssignTcs extends Component {
         this.getTC(e.data);
     }
     getTcs() {
-        setTimeout(() => axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/assignTcs/${this.props.user.email} `)
+        setTimeout(() => axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/assignTcs/user/${this.props.user.email} `)
             .then(res => {
                 if (this.props.user && this.props.user.isAdmin) {
-                    axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/assignTcs/ADMIN`)
+                    axios.get(`/user/${this.props.selectedRelease.ReleaseNumber}/assignTcs/user/ADMIN`)
                         .then(admin => {
                             this.props.saveAssignTcs([...admin.data, ...res.data]);
                             this.deselect();
@@ -332,13 +305,20 @@ class AssignTcs extends Component {
         let items = [];
         Object.keys(this.editedRows).forEach(item => {
             if (this.editedRows[item] && this.editedRows[item].Changed) {
+                let assignee = this.editedRows[item].Assignee.newValue && this.editedRows[item].Assignee.newValue !== 'ADMIN' 
+                ? this.editedRows[item].Assignee.newValue : 'ADMIN';
+                let ws = assignee === 'ADMIN' ? 'UNASSIGNED' : 'MANUAL_ASSIGNED'
                 items.push({
-                    TcID: this.editedRows[item].TcID.newValue, CardType: this.editedRows[item].CardType.newValue, Assignee: this.editedRows[item].Assignee.newValue,
-                    WorkingStatus: this.editedRows[item].WorkingStatus.newValue
+                    TcID: this.editedRows[item].TcID.newValue, CardType: this.editedRows[item].CardType.newValue, Assignee: assignee,
+                    WorkingStatus: ws, 
+                    Activity: {   "Date": new Date().toISOString(),
+                    "Header": `${ws}: ${this.props.selectedRelease.ReleaseNumber}, master, REPORTER: ${this.props.user.email} `,
+                    "Details": {},
+                    "StatusChangeComments": 'MANUAL_ASSIGNED'}
                 })
             }
         });
-        axios.put(`/test/${this.props.selectedRelease.ReleaseNumber}/tcinfo/details/all`, { data: items })
+        axios.put(`/user/${this.props.selectedRelease.ReleaseNumber}/assignTcs/alltcinfo`, { data: items })
             .then(res => {
                 this.setState({ errors: {}, toggleMessage: `TCs Updated Successfully` });
                 this.toggle();
@@ -370,83 +350,56 @@ class AssignTcs extends Component {
         this.setState({ rowSelect: false, toggleMessage: null, isEditing: false })
     }
 
-    save() {
-        let data = { ...this.props.testcaseEdit };
-        console.log('data for creating tc');
-        console.log(data);
-        let dates = [
-            'TargetedReleaseDate', 'ActualReleaseDate', 'TargetedCodeFreezeDate',
-            'UpgradeTestingStartDate', 'QAStartDate', 'ActualCodeFreezeDate', 'TargetedQAStartDate'
-        ]
-        let formattedDates = {};
-        dates.forEach(item => {
-            if (data[item]) {
-                let date = new Date(data[item]);
-                formattedDates[item] = date.toISOString()
-            }
-        })
-        let DateTC = new Date().toISOString();
-        let release = data['Master'] ? `${this.props.selectedRelease.ReleaseNumber}, master` : this.props.selectedRelease.ReleaseNumber;
-
-        let Status = 'UPDATED';
-        if (data.original.Status === 'UNAPPROVED') {
-            data.Status = 'CREATED';
-        }
-        if (data.Status !== data.original.Status) {
-            Status = data.Status
-        }
-        let header = `${Status}: ${release}, REPORTER: ${this.props.user.email} `;
-
-        let Assignee = data.Assignee ? data.Assignee : 'UNASSIGNED';
-
-        let arrays = ['CardType', 'ServerType', 'OrchestrationPlatform'];
-        let formattedArrays = {};
-        arrays.forEach(item => {
-            if (!data[item]) {
-                formattedArrays[item] = [];
-            }
-            if (data[item] && !Array.isArray(data[item])) {
-                formattedArrays[item] = data[item].split(',');
+    textFields = [
+        'Domain', 'SubDomain', 'Scenario', 'TcID', 'TcName', 'Tag', 'Assignee',
+        'Description', 'Steps', 'ExpectationBehavior', 'Notes'
+    ];
+    arrayFields = ['CardType', 'ServerType', 'OrchestrationPlatform']
+    whichFieldsUpdated(old, latest) {
+        let changes = {};
+        this.textFields.forEach(item => {
+            if(old[item] !== latest[item]) {
+                changes[item] = {old: old[item], new: latest[item]}
             }
         });
-        let details = {
-            old: { ...data.original, original: '', StatusChangeComments: '', Activity: '', LatestE2EBuilds: '', ManualBuilds: '', AutoBuilds: '' },
-            new: { ...data, ...formattedDates, original: '', StatusChangeComments: '', ...formattedArrays, Assignee, Activity: '', LatestE2EBuilds: '', ManualBuilds: '', AutoBuilds: '' }
+        this.arrayFields.forEach(item => {
+            if(!old[item] && latest[item]) {
+                changes[item] = {old: '', new: latest[item]}
+            } else if(!latest[item] && old[item]) {
+                changes[item] = {old: old[item], new: ''}
+            } else if(old[item] && latest[item]){
+                let arrayChange = latest[item].filter(each => old[item].includes(each));
+                if(arrayChange.length > 0) {
+                    changes[item] = {old: old[item], new: latest[item]}
+                }
+            }
+        });
+        return changes;
+    }
+    joinArrays(array) {
+        if (!array) {
+            array = [];
         }
-        let Activity = {
-            "Date": DateTC,
-            "Header": header,
-            "Details": details,
+        if (array && !Array.isArray(array)) {
+            array = array.split(',');
+        }
+        return array;
+    }
+    save() {
+        let data = {};
+        data.OldWorkingStatus = this.props.tcDetails.WorkingStatus;
+        // tc info fields
+        this.textFields.map(item => data[item] = this.props.testcaseEdit[item]);
+        this.arrayFields.forEach(item => data[item] = this.joinArrays(this.props.testcaseEdit[item]));
+
+        data.WorkingStatus = 'MANUAL_ASSIGNED';
+        data.Activity={
+            "Date": new Date().toISOString(),
+            "Header": `${data.WorkingStatus}: ${this.props.selectedRelease.ReleaseNumber}, master, REPORTER: ${this.props.user.email} `,
+            "Details": this.changeLog,
+            "StatusChangeComments": ''
         };
-        data.ManualBuilds = [];
-        data.AutoBuilds = [];
-        if (data.Status === 'MANUAL_COMPLETED') {
-            data.StatusChangeComments = {
-                ...data.StatusChangeComments,
-                Result: data.StatusChangeComments.Result ? data.StatusChangeComments.Result : 'Fail',
-                Assignee: this.props.user.email,
-                Date: new Date().toISOString()
-            }
-            data.ManualBuilds = [data.StatusChangeComments];
-            Activity.StatusChangeComments = 'MANUAL_COMPLETED'
-        } else if (data.Status === 'AUTO_COMPLETED') {
-            data.StatusChangeComments = {
-                ...data.StatusChangeComments,
-                Result: data.StatusChangeComments.Result ? data.StatusChangeComments.Result : 'Fail',
-                Assignee: this.props.user.email,
-                Date: new Date().toISOString()
-            }
-            data.AutoBuilds = [data.StatusChangeComments];
-            Activity.StatusChangeComments = 'AUTO_COMPLETED'
-        } else if (data.Status === 'REVIEWED') {
-            Activity.StatusChangeComments = 'REVIEWED'
-        } else {
-            Activity.StatusChangeComments = data.StatusChangeComments
-        }
-
-
-        data = { ...data, original: '', StatusChangeComments: '', ...formattedDates, ...formattedArrays, Activity, Assignee };
-        axios.put(`/test/${this.props.selectedRelease.ReleaseNumber}/tcinfo/details/id/${data.TcID}`, { ...data })
+        axios.put(`/user/${this.props.selectedRelease.ReleaseNumber}/assignTcs/tcinfo/${data.TcID}`, { ...data })
             .then(res => {
                 this.setState({ addTC: { Master: true, Domain: '' }, errors: {}, toggleMessage: `TC ${this.props.testcaseEdit.TcID} Updated Successfully` });
                 this.deselect();
@@ -479,6 +432,7 @@ class AssignTcs extends Component {
     }
     confirmToggle() {
         let errors = null;
+        this.changeLog = {};
         ['Domain', 'SubDomain', 'TcID', 'CardType']
             .forEach(item => {
                 if (!errors) {
@@ -488,12 +442,19 @@ class AssignTcs extends Component {
                     }
                 }
             });
-        if (!errors) {
-            this.setState({ toggleMessage: null })
-            this.toggle();
-        } else {
-            this.setState({ errors: errors })
-        }
+            if (!isNaN(this.props.testcaseEdit['TcID'])) {
+                errors = { ...this.props.testcaseEdit.errors, TcID: 'Cannot be a number' };
+            }
+            if(!this.props.testcaseEdit['Assignee'] || this.props.testcaseEdit['Assignee'] === 'ADMIN') {
+                errors = { ...this.props.testcaseEdit.errors, Assignee: 'Cannot be empty or ADMIN' };
+            }
+            if (!errors) {
+                this.changeLog = this.whichFieldsUpdated(this.props.testcaseDetail, this.props.testcaseEdit);
+                this.setState({ toggleMessage: null })
+                this.toggle();
+            } else {
+                this.setState({ errors: errors })
+            }
     }
     delete() {
         if (this.props.testcaseEdit.TcID) {
@@ -567,7 +528,7 @@ class AssignTcs extends Component {
                                                     <Input value={this.state.domain} onChange={(e) => this.onSelectDomain(e.target.value)} type="select" name="selectDomain" id="selectDomain">
                                                         <option value=''>Select Domain</option>
                                                         {
-                                                            this.props.selectedRelease.AvailableDomainOptions && Object.keys(this.props.selectedRelease.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
+                                                            this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions && Object.keys(this.props.selectedRelease.TcAggregate.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
                                                         }
                                                     </Input>
                                                 </div>
@@ -578,7 +539,7 @@ class AssignTcs extends Component {
                                                     <Input value={this.state.subDomain} onChange={(e) => this.onSelectSubDomain(e.target.value)} type="select" name="subDomains" id="subDomains">
                                                         <option value=''>Select Sub Domain</option>
                                                         {
-                                                            this.state.domain && this.props.selectedRelease.AvailableDomainOptions[this.state.domain].map(item => <option value={item}>{item}</option>)
+                                                            this.state.domain && this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions[this.state.domain].map(item => <option value={item}>{item}</option>)
                                                         }
                                                     </Input>
                                                 </div>
@@ -593,8 +554,7 @@ class AssignTcs extends Component {
                                                         <PopoverBody>
                                                             {
                                                                 [
-                                                                    { header: 'Manual Assignee', workingStatus: 'MANUAL_ASSIGNED', labels: 'ManualAssignee' },
-                                                                    // { header: 'Auto Assignee', workingStatus: 'AUTO_ASSIGNED', labels: 'AutoAssignee' },
+                                                                    { header: 'Manual Assignee', labels: 'ManualAssignee' }
                                                                 ].map(each => <FormGroup className='rp-app-table-value'>
                                                                     <Label className='rp-app-table-label' htmlFor={each.labels}>
                                                                         {each.header}
@@ -603,18 +563,18 @@ class AssignTcs extends Component {
                                                                         let selectedRows = this.gridApi.getSelectedRows();
                                                                         if (e.target.value && e.target.value !== '') {
                                                                             selectedRows.forEach(item => {
-
+                                                                                let ws = e.target.value && e.target.value !== 'ADMIN'? 'MANUAL_ASSIGNED' : 'UNASSIGNED';
                                                                                 this.onCellEditing(item, ['Assignee', 'WorkingStatus'], [
                                                                                     e.target.value,
-                                                                                    each.workingStatus])
+                                                                                    ws
+                                                                                ])
                                                                                 item.Assignee = e.target.value;
-                                                                                item.WorkingStatus = each.workingStatus;
+                                                                                item.WorkingStatus = ws;
                                                                             })
                                                                         }
                                                                         this.setState({ multi: { ...this.state.multi, [each.labels]: e.target.value } })
                                                                         setTimeout(this.gridApi.refreshView(), 0);
                                                                     }} type="select" id={`select_${each.labels}`}>
-                                                                        <option value=''>Select {each.header}</option>
                                                                         <option value='ADMIN'>ADMIN</option>
                                                                         {
                                                                             this.props.users && this.props.users.map(item => <option value={item.email}>{item.email}</option>)
@@ -673,6 +633,7 @@ class AssignTcs extends Component {
                                 </div>
                                 <Collapse isOpen={this.state.rowSelect}>
                                     {
+                                        this.props.tcDetails && this.props.tcDetails.TcID &&
                                         <React.Fragment>
                                             {
                                                 this.state.isEditing ?
@@ -696,11 +657,17 @@ class AssignTcs extends Component {
                                                     </Fragment>
 
                                             }
-                                        </React.Fragment>
-                                    }
-                                    {
-                                        this.props.tcDetails && this.props.tcDetails.TcID &&
-                                        <React.Fragment>
+                                                    <FormGroup row className="my-0" style={{ marginTop: '1rem' }}>
+                                                <Col xs="6" md="4" lg="3">
+                                                    <FormGroup className='rp-app-table-value'>
+                                                        <Label className='rp-app-table-label' htmlFor="CurrentWorkingStatus">
+                                                            Current Working Status
+                                                        </Label>
+                                                        <div className='rp-app-table-value'><span className='rp-edit-TC-span'>{this.props.tcDetails && this.props.tcDetails.WorkingStatus}</span></div>
+                                                    </FormGroup>
+                                                </Col>
+                                            
+                                        </FormGroup>
                                             <FormGroup row className="my-0">
                                                 {
                                                     [
@@ -722,7 +689,7 @@ class AssignTcs extends Component {
                                                                         <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '', backgroundColor: 'white' }} className='rp-app-table-value' type='textarea' rows='9' value={this.props.tcDetails && this.props.tcDetails[item.field]}></Input>
                                                                         :
                                                                         <Input style={{ borderColor: this.props.testcaseEdit.errors[item.field] ? 'red' : '' }} className='rp-app-table-value' placeholder={'Add ' + item.header} type="textarea" rows='4' id={item.field} value={this.props.testcaseEdit && this.props.testcaseEdit[item.field]}
-                                                                            onChange={(e) => this.setState({ addTC: { ...this.props.testcaseEdit, [item.field]: e.target.value }, errors: { ...this.props.testcaseEdit.errors, [item.field]: null } })} >
+                                                                        onChange={(e) => this.props.updateTCEdit({ ...this.props.testcaseEdit, [item.field]: e.target.value, errors: { ...this.props.testcaseEdit.errors, [item.field]: null } })} >
 
                                                                         </Input>
                                                                 }
@@ -733,18 +700,10 @@ class AssignTcs extends Component {
                                             </FormGroup>
                                             {/* <EditTC isEditing={this.state.isEditing}></EditTC> */}
 
-
+                                                <EditAssignRegression isEditing={this.state.isEditing}></EditAssignRegression>
                                             <Row>
                                                 <Col lg="6">
                                                     <div className='rp-app-table-title'>Test Status</div>
-
-                                                    <div class="test-header">
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onE2EFilterTextBoxChanged(e.target.value)} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                     <div style={{ width: (window.screen.width * ((1 - 0.418) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
                                                         <div style={{ width: "100%", height: "100%" }}>
                                                             <div
@@ -771,13 +730,6 @@ class AssignTcs extends Component {
                                                 <Col lg="6">
                                                     <div className='rp-app-table-title'>Activity</div>
                                                     <div style={{ width: (window.screen.width * ((1 - 0.418) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
-                                                        <div class="test-header">
-                                                            <div class="row">
-                                                                <div class="col-md-3">
-                                                                    <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onActivityFilterTextBoxChanged(e.target.value)} />
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                         <div style={{ width: "100%", height: "100%" }}>
                                                             <div
                                                                 id="activityGrid"

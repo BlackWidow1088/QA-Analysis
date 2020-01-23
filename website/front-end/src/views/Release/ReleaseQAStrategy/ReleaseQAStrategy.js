@@ -44,7 +44,7 @@ class ReleaseQAStrategy extends Component {
             open: {},
             width: window.screen.availWidth > 1700 ? 500 : 380,
             basic: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false },
-            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, EngineerCount: false } },
+            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, Engineers: false } },
             domainSelected: false,
             items: []
         }
@@ -105,7 +105,7 @@ class ReleaseQAStrategy extends Component {
                                         { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: this.props.tcStrategy ? this.props.tcStrategy.notApplicable : 0 },
 
                                         { key: 'Setups Used', restrictEdit: true, field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.length : 0 },
-                                        { key: 'Engineers', field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount : 0 },
+                                        { key: 'Engineers', field: 'Engineers', value: this.props.selectedRelease.Engineers ? this.props.selectedRelease.Engineers : 0 },
                                         { key: 'QA Start Date', field: 'QAStartDate', value: this.props.selectedRelease.QAStartDate, type: 'date' },
                                         { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: this.props.selectedRelease.TargetedCodeFreezeDate, type: 'date' },
                                         { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: this.props.selectedRelease.UpgradeMetrics ? this.props.selectedRelease.UpgradeMetrics.length : '' },
@@ -161,7 +161,7 @@ class ReleaseQAStrategy extends Component {
                                                 { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: each.tcNA },
 
                                                 { key: 'Setups Used', restrictEdit: true, field: 'SetupsUsed', value: each.SetupsUsed.length },
-                                                { key: 'Engineers', field: 'EngineerCount', value: each.Engineer.length },
+                                                { key: 'Engineers', field: 'Engineers', value: each.Engineer.length },
                                                 { key: 'QA Start Date', field: 'QAStartDate', value: each.startdate },
                                                 { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: each.freezedate },
                                                 { key: 'Upgrade Metrics Count', restrictEdit: true, field: 'UpgradeMetrics', value: each.upgrade },

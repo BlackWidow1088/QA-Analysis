@@ -32,7 +32,7 @@ const brandSuccess = getStyle('--success')
 const brandInfo = getStyle('--info')
 const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
-
+//  TODO: dates after updating only while displaying are wrong in release summary
 const Status = {
     Fail: 'Fail',
     Pass: 'Pass',
@@ -146,7 +146,7 @@ class ReleaseSummary extends Component {
             jenkinsBuildLink: '',
             editReleaseStatusOptions: [TABLE_OPTIONS.EDIT],
             basic: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false },
-            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, EngineerCount: false } },
+            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, Engineers: false } },
             qaStatus: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false },
             screen: {
                 tcStrategyTitleStyle: window.screen.availWidth > 1400 ?
@@ -297,7 +297,7 @@ class ReleaseSummary extends Component {
             jenkinsBuildLink: '',
             editReleaseStatusOptions: [TABLE_OPTIONS.EDIT],
             basic: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {} },
-            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, EngineerCount: false } }
+            qaStrategy: { editOptions: [TABLE_OPTIONS.EDIT], editing: false, updated: {}, open: false, collapseOpen: { SetupsUsed: false, Engineers: false } }
 
         });
     }
@@ -311,13 +311,13 @@ class ReleaseSummary extends Component {
         let formattedDates = {};
         dates.forEach(item => {
             if (data[item]) {
-                let date = new Date(data[item]);
-                formattedDates[item] = date.toISOString()
+                let date = new Date(data[item]).toISOString().split('T');
+                formattedDates[item] = `${date[0]} ${date[1].substring(0, date[1].length-1)}`;
             }
         })
         data = { ...data, ...formattedDates };
         let arrays = [
-            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers', 'EngineerCount'
+            'ServerType', 'CardType', 'BuildNumberList', 'SetupsUsed', 'UpgradeMetrics', 'Customers', 'Engineers'
         ]
         let formattedArrays = {};
 
@@ -332,13 +332,13 @@ class ReleaseSummary extends Component {
         data = { ...data, ...formattedArrays };
 
 
-        // if (isNaN(data.EngineerCount)) {
-        //     data.EngineerCount = 0;
+        // if (isNaN(data.Engineers)) {
+        //     data.Engineers = 0;
         // } else {
-        //     data.EngineerCount = parseInt(data.EngineerCount);
+        //     data.Engineers = parseInt(data.Engineers);
         // }
-        // if (!data.EngineerCount) {
-        //     data.EngineerCount = 0;
+        // if (!data.Engineers) {
+        //     data.Engineers = 0;
         // }
         if (isNaN(data.QARateOfProgress)) {
             data.QARateOfProgress = 0;
@@ -562,7 +562,7 @@ class ReleaseSummary extends Component {
                                                         onChange={(e) => this.setState({ basic: { ...this.state.basic, updated: { ...this.state.basic.updated, Priority: e.target.value } } })}>
                                                         <option value=''>Select Priority</option>
                                                         {
-                                                            ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
+                                                            ['P0','P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9'].map(item =>
                                                                 <option value={item}>{item}</option>
                                                             )
                                                         }
@@ -823,7 +823,7 @@ class ReleaseSummary extends Component {
                                         { key: 'Test Cases Not Applicable', restrictEdit: true, field: 'na', value: this.props.tcStrategy ? this.props.tcStrategy.notApplicable : 0 },
                                         { key: 'QA Start Date', field: 'QAStartDate', value: this.props.selectedRelease.QAStartDate, type: 'date' },
                                         { key: 'Target Code Freeze Date', field: 'TargetedCodeFreezeDate', value: this.props.selectedRelease.TargetedCodeFreezeDate, type: 'date' },
-                                        { key: 'Expected rate of Progress per week', field: 'QARateOfProgress', value: this.props.selectedRelease.QARateOfProgress ? this.props.selectedRelease.QARateOfProgress : 0 },
+                                        // { key: 'Expected rate of Progress per week', field: 'QARateOfProgress', value: this.props.selectedRelease.QARateOfProgress ? this.props.selectedRelease.QARateOfProgress : 0 },
 
                                     ].map((item, index) => {
                                         return (
@@ -903,7 +903,7 @@ class ReleaseSummary extends Component {
                                 {
                                     [
                                         { key: 'Setups Used', restrictEdit: false, field: 'SetupsUsed', value: this.props.selectedRelease.SetupsUsed ? this.props.selectedRelease.SetupsUsed.length : 0 },
-                                        { key: 'Engineers', restrictEdit: false, field: 'EngineerCount', value: this.props.selectedRelease.EngineerCount ? this.props.selectedRelease.EngineerCount.length : 0 },
+                                        { key: 'Engineers', restrictEdit: false, field: 'Engineers', value: this.props.selectedRelease.Engineers ? this.props.selectedRelease.Engineers.length : 0 },
                                         { key: 'Upgrade Metrics', restrictEdit: false, field: 'UpgradeMetrics', value: this.props.selectedRelease.UpgradeMetrics ? this.props.selectedRelease.UpgradeMetrics.length : 0 }
                                     ].map(item =>
                                         <React.Fragment>
@@ -1024,7 +1024,7 @@ class ReleaseSummary extends Component {
                             <tbody>
                                 {
                                     [
-                                        { key: 'Actual rate of Progress per week', field: 'ActualQARateOfProgress', value: this.props.selectedRelease.ReleaseNumber === '2.3.0' ? 87.85 : 0 },
+                                        // { key: 'Actual rate of Progress per week', field: 'ActualQARateOfProgress', value: this.props.selectedRelease.ReleaseNumber === '2.3.0' ? 87.85 : 0 },
                                         { key: 'Test Cases required to run again', restrictEdit: true, field: 'run', value: this.props.tcStrategy ? this.props.tcStrategy.needToRun : 0 },
                                     ].map((item, index) => {
                                         return (

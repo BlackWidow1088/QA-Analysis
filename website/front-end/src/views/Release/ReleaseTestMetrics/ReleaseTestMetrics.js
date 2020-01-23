@@ -19,14 +19,16 @@ import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 import { saveTestCase, saveTestCaseStatus, saveSingleTestCase } from '../../../actions';
-import AgGrid from '../../../components/AgGrid/AgGrid';
+import TestCases from '../../../components/TestCases/TestCases';
 import './ReleaseTestMetrics.scss'
 import Sunburst from '../components/Sunburst';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
-import CreateTC from './CreateTC';
+import CreateTCs from '../CreateTCs/CreateTCs';
 import PendingForApproval from '../PendingForApproval/PendingForApproval';
 import MyTcsForRegression from '../MyTcsForRegression/MyTcsForRegression';
 import AssignTcs from '../AssignTcs/AssignTcs';
+import MyTcsPendingForApproval from '../MyTcsPendingForApproval/MyTcsPendingForApproval';
+import AddOptions from '../AddOptions/AddOptions';
 const options = {
     tooltips: {
         enabled: false,
@@ -57,7 +59,7 @@ class ReleaseTestMetrics extends Component {
         this.getTcs();
     }
     getTcs() {
-        axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}`)
+        axios.get(`/api/wholetcinfo/${this.props.selectedRelease.ReleaseNumber}`)
             .then(all => {
                 console.log('all tc count');
                 console.log(all.data.length)
@@ -270,36 +272,40 @@ class ReleaseTestMetrics extends Component {
                         </Row> */}
                     </Col>
                 </Row>
-                <AgGrid></AgGrid>
+                <TestCases></TestCases>
 
                 {
                     this.props.currentUser &&
-                    <CreateTC isEditing={true} update={() => this.save()}></CreateTC>
+                    <CreateTCs isEditing={true} update={() => this.save()}></CreateTCs>
                 }
                 {
                     // this.props.currentUser && this.props.currentUser.isAdmin &&
                     // <UpdateTCOptions></UpdateTCOptions>
                 }
-                {
+                {/* {
                     this.props.currentUser && this.props.currentUser.isAdmin &&
                     <PendingForApproval></PendingForApproval>
-                }
-                {
+                } */}
+                {/* {
                     this.props.currentUser && this.props.currentUser.isAdmin &&
                     <AssignTcs></AssignTcs>
-                }
-                {
+                } */}
+                {/* {
                     // this.props.currentUser && this.props.currentUser.role === 'QA' &&
                     this.props.currentUser &&
                     <MyTcsForRegression></MyTcsForRegression>
-                }
+                } */}
                 {/* {
                     this.props.currentUser && this.props.currentUser.role === 'QA' &&
                     <MyTcsForAutomation></MyTcsForAutomation>
                 } */}
-                {
-                    this.props.currentUser && (this.props.currentUser.role === 'QA' || this.props.currentUser.role === 'DEVELOPER') &&
+                {/* {
+                    // this.props.currentUser && (this.props.currentUser.role === 'QA' || this.props.currentUser.role === 'DEVELOPER') &&
                     <MyTcsPendingForApproval></MyTcsPendingForApproval>
+                } */}
+                     {
+                    this.props.currentUser && this.props.currentUser.email && 
+                    <AddOptions></AddOptions>
                 }
 
                 <Modal isOpen={this.state.modal} toggle={() => this.toggle()}>

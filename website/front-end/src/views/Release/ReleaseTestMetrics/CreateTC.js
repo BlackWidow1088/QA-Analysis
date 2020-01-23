@@ -19,6 +19,8 @@ import { saveTestCase, saveTestCaseStatus, saveSingleTestCase } from '../../../a
 import Multiselect from 'react-bootstrap-multiselect';
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 class CreateTC extends Component {
+    // [field] : {old,new}
+    changeLog = {};
     constructor(props) {
         super(props);
         this.state = {
@@ -30,49 +32,83 @@ class CreateTC extends Component {
         }
     }
     toggle = () => this.setState({ modal: !this.state.modal });
-    save() {
-        let data = { ...this.state.addTC };
-        console.log('data for creating tc');
-        console.log(data);
-        let dates = [
-            'TargetedReleaseDate', 'ActualReleaseDate', 'TargetedCodeFreezeDate',
-            'UpgradeTestingStartDate', 'QAStartDate', 'ActualCodeFreezeDate', 'TargetedQAStartDate'
-        ]
-        let formattedDates = {};
-        dates.forEach(item => {
-            if (data[item]) {
-                let date = new Date(data[item]);
-                formattedDates[item] = date.toISOString()
-            }
-        })
-        let DateTC = new Date().toISOString();
-        let Created = this.props.currentUser.email;
-        let release = data['Master'] ? `${this.props.selectedRelease.ReleaseNumber},master` : this.props.selectedRelease.ReleaseNumber;
 
-        let Status = 'CREATED';
-        let header = `${Status}: ${release}, REPORTER: ${this.props.currentUser.email}`;
-        let Activity = [{
-            "Date": DateTC,
-            "Header": header,
-            "Details": {}
-        }];
-        let Assignee = this.state.addTC.Assignee ? this.state.addTC.Assignee : 'UNASSIGNED';
 
-        let arrays = ['CardType', 'ServerType', 'OrchestrationPlatform'];
-        let formattedArrays = {};
-        arrays.forEach(item => {
-            if (!data[item]) {
-                formattedArrays[item] = [];
-            }
-            if (data[item] && !Array.isArray(data[item])) {
-                formattedArrays[item] = data[item].split(',');
+    textFields = [
+        'Domain', 'SubDomain', 'Scenario', 'TcID', 'TcName', 'Tag', 'Assignee',
+        'Description', 'Steps', 'ExpectationBehavior', 'Notes'
+    ];
+    arrayFields = ['CardType', 'ServerType', 'OrchestrationPlatform']
+    whichFieldsUpdated(old, latest) {
+        let changes = {};
+        this.textFields.forEach(item => {
+            if(old[item] !== latest[item]) {
+                changes[item] = {old: old[item], new: latest[item]}
             }
         });
+        this.arrayFields.forEach(item => {
+            if(!old[item] && latest[item]) {
+                changes[item] = {old: '', new: latest[item]}
+            } else if(!latest[item] && old[item]) {
+                changes[item] = {old: old[item], new: ''}
+            } else if(old[item] && latest[item]){
+                let arrayChange = latest[item].filter(each => old[item].includes(each));
+                if(arrayChange.length > 0) {
+                    changes[item] = {old: old[item], new: latest[item]}
+                }
+            }
+        });
+        return changes;
+    }
+    joinArrays(array) {
+        if (!array) {
+            array = [];
+        }
+        if (array && !Array.isArray(array)) {
+            array = array.split(',');
+        }
+        return array;
+    }
 
-        data.AutoBuilds = [];
-        data.ManualBuilds = [];
-        data = { ...data, original: '', ...formattedDates, ...formattedArrays, Activity, Status, Created, Date: DateTC, Assignee };
-        console.log('saved data ', data);
+    save() {
+        let data = {};
+        // tc info meta fields
+        let date = new Date(data[item]).toISOString().split('T');
+        data.DateTC = `${date[0]} ${date[1].substring(0, date[1].length-1)}`;
+
+        data.Created = this.props.currentUser.email;
+        data.Role = this.props.currentUser.role;
+        // data.Role = 'QA';
+        data.OldWorkingStatus = 'NOTCREATED';
+        // tc info fields
+        this.textFields.map(item => data[item] = this.state.addTC[item]);
+        this.arrayFields.forEach(item => data[item] = this.joinArrays(this.state.addTC[item]));
+        data.Assignee = data.Assignee ? data.Assignee : 'ADMIN';
+        data.TcName = 'TC NOT AUTOMATED';
+        // tc status fields
+        data.CurrentStatus = 'NotTested';
+
+        if(data.Role === 'ADMIN') {
+            if(data.Assignee && data.Assignee !== 'ADMIN') {
+                data.WorkingStatus = 'MANUAL_ASSIGNED';
+            } else {
+                data.WorkingStatus = 'UNASSIGNED';
+                data.Assignee = 'ADMIN';
+            }
+        } else {
+            data.WorkingStatus = 'CREATED';
+            if(!(data.Assignee && data.Assignee !== 'ADMIN')) {
+                data.Assignee = 'ADMIN';
+            }
+        }
+        data.Activity={
+            "Date": data.DateTC,
+            "Header": `${data.WorkingStatus}: ${this.props.selectedRelease.ReleaseNumber}, master, REPORTER: ${this.props.currentUser.email} `,
+            "Details": this.changeLog,
+            "StatusChangeComments": ''
+        };
+
+
         axios.post(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}`, { ...data })
             .then(res => {
                 this.getTcs();
@@ -87,7 +123,7 @@ class CreateTC extends Component {
                         if (!found && message.search(item) !== -1) {
                             found = true;
                             let msg = { [item]: `Invalid ${item}` };
-                            if (item === 'TcID' || item === 'TcName') {
+                            if (item === 'TcID') {
                                 msg = { [item]: `Invalid or Duplicate ${item}` };
                             }
                             this.setState({ errors: msg, toggleMessage: `Error: ${error.message}` });
@@ -104,6 +140,7 @@ class CreateTC extends Component {
     }
     confirmToggle() {
         let errors = null;
+        this.changeLog = {};
         ['Domain', 'SubDomain', 'TcID', 'CardType']
             .forEach(item => {
                 if (!errors) {
@@ -117,6 +154,7 @@ class CreateTC extends Component {
             errors = { ...this.state.errors, TcID: 'Cannot be a number' };
         }
         if (!errors) {
+            this.changeLog = this.whichFieldsUpdated({}, this.state.addTC);
             this.setState({ toggleMessage: null })
             this.toggle();
         } else {
@@ -186,8 +224,7 @@ class CreateTC extends Component {
     }
     render() {
 
-        let users = this.props.users && this.props.users.filter(item => item.role !== 'EXEC').map(item => item.email);
-        let statuses = this.props.selectedRelease.StatusOptions
+        let users = this.props.users && this.props.users.filter(item => item.role !== 'EXECUTIVE').map(item => item.email);
 
         let cards = this.props.selectedRelease.CardType ? this.props.selectedRelease.CardType.map(item => ({ value: item, selected: this.state.addTC.CardType && this.state.addTC.CardType.includes(item) })) : [];
         let servers = this.props.selectedRelease.ServerType ? this.props.selectedRelease.ServerType.map(item => ({ value: item, selected: this.state.addTC.ServerType && this.state.addTC.ServerType.includes(item) })) : [];
@@ -251,8 +288,8 @@ class CreateTC extends Component {
                                                         onChange={(e) => this.setState({ addTC: { ...this.state.addTC, Domain: e.target.value }, errors: { ...this.state.errors, Domain: null } })} >
                                                         <option value=''>Select Domain</option>
                                                         {
-                                                            this.props.selectedRelease.AvailableDomainOptions &&
-                                                            Object.keys(this.props.selectedRelease.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
+                                                            this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions &&
+                                                            Object.keys(this.props.selectedRelease.TcAggregate.AvailableDomainOptions).map(item => <option value={item}>{item}</option>)
                                                         }
                                                     </Input>
                                             }
@@ -276,8 +313,8 @@ class CreateTC extends Component {
                                                             onChange={(e) => this.setState({ addTC: { ...this.state.addTC, SubDomain: e.target.value }, errors: { ...this.state.errors, SubDomain: null } })} >
                                                             <option value=''>Select Sub Domain</option>
                                                             {
-                                                                this.props.selectedRelease.AvailableDomainOptions &&
-                                                                this.props.selectedRelease.AvailableDomainOptions[this.state.addTC.Domain].map(item => <option value={item}>{item}</option>)
+                                                                this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions &&
+                                                                this.props.selectedRelease.TcAggregate && this.props.selectedRelease.TcAggregate.AvailableDomainOptions[this.state.addTC.Domain].map(item => <option value={item}>{item}</option>)
                                                             }
                                                         </Input>
                                                 }
@@ -315,9 +352,7 @@ class CreateTC extends Component {
                                             {
                                                 [
                                                     { field: 'Scenario', header: 'Scenario *', type: 'text' },
-                                                    { field: 'TcID', header: 'Tc ID *', type: 'text', },
-                                                    { field: 'TcName', header: 'Tc Name *', type: 'text', restrictWidth: false },
-
+                                                    { field: 'TcID', header: 'Tc ID *', type: 'text', }
                                                 ].map((item, index) => (
                                                     <Col xs="6" md="3" lg="3">
                                                         <FormGroup className='rp-app-table-value'>
@@ -340,7 +375,7 @@ class CreateTC extends Component {
                                             }
                                             <Col xs="6" md="3" lg="3">
                                                 <FormGroup className='rp-app-table-value'>
-                                                    <Label className='rp-app-table-label' htmlFor='TAG'>E2E Test Tag {
+                                                    <Label className='rp-app-table-label' htmlFor='TAG'>Tag {
                                                         this.state.errors.Tag &&
                                                         <i className='fa fa-exclamation-circle rp-error-icon'>{this.state.errors.Tag}</i>
                                                     }</Label>
@@ -381,7 +416,8 @@ class CreateTC extends Component {
                                                                                 addTC: { ...this.state.addTC, [item.field]: e.target.value },
                                                                                 errors: { ...this.state.errors, [item.field]: null }
                                                                             })} >
-                                                                        <option value={`Select ${item.header}`}></option>
+                                                                        <option value=''>{`Select ${item.header}`}</option>
+                                                                        <option value='ADMIN'>ADMIN</option>
                                                                         {
                                                                             users &&
                                                                             users.map(item => <option value={item}>{item}</option>)
@@ -391,26 +427,6 @@ class CreateTC extends Component {
                                                         </FormGroup>
                                                     </Col>))
                                             }
-                                            <Col xs="6" md="3" lg="3">
-                                                <FormGroup className='rp-app-table-value'>
-                                                    <Label className='rp-app-table-label' htmlFor='Master' >Include in Master {
-                                                        this.state.errors.Master &&
-                                                        <i className='fa fa-exclamation-circle rp-error-icon'>{this.state.errors.Master}</i>
-                                                    }</Label>
-                                                    {
-                                                        !this.props.isEditing ?
-                                                            <span className='rp-app-table-value'>{this.props.testcaseDetail && this.props.testcaseDetail.Master ? 'Yes' : 'No'}</span>
-                                                            :
-                                                            <Input style={{ borderColor: this.state.errors.Master ? 'red' : '' }} className='rp-app-table-value' type="select" id="Master" name="Master" value={this.state.addTC && this.state.addTC.Master}
-                                                                onChange={(e) => this.setState({ addTC: { ...this.state.addTC, Master: e.target.value }, errors: { ...this.state.errors, Master: null } })} >
-                                                                <option value={true}>Yes</option>
-                                                                <option value={false}>No</option>
-                                                            </Input>
-                                                    }
-                                                </FormGroup>
-                                            </Col>
-
-
                                         </React.Fragment>
                                     }
                                 </FormGroup>
