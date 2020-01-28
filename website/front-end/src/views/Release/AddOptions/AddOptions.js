@@ -65,9 +65,9 @@ class AddOptions extends Component {
                                                 <div className='rp-icon-button'><i className="fa fa-plus-circle"></i></div>
                                                 <span className='rp-app-table-title'>Add Options</span>
                                             </div>
-                                            <Button style={{ position: 'absolute', right: '1rem' }} title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.confirmToggle()} >
+                                            {/* <Button style={{ position: 'absolute', right: '1rem' }} title="Save" size="md" color="transparent" className="float-right rp-rb-save-btn" onClick={() => this.confirmToggle()} >
                                                 <i className="fa fa-check-square-o"></i>
-                                            </Button>
+                                            </Button> */}
                                         </div>
 
 

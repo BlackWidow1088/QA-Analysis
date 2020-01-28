@@ -123,7 +123,6 @@ class ReleaseTestCase extends Component {
             return true;
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
-            return false;
             this.setState({ domainSelected: node.data.name, doughnuts: null });
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
                 .then(all => {
@@ -138,8 +137,8 @@ class ReleaseTestCase extends Component {
                             });
                     }
                 })
+                return false;
         }
-
     }
     sectionSelect(e) {
         this.setState({ selected: e.rule.name, svgKey: this.state.svgKey + 1 })
@@ -151,8 +150,6 @@ class ReleaseTestCase extends Component {
                 <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'marginLeft': '1.5rem' }}>
                         <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ metricsOpen: !this.state.metricsOpen })}>
-                            <div class="row">
-                                <div class='col-md-6'>
                                     <div class='row'>
                                         <div class='col-md-6 col-lg-6'>
                                             {
@@ -166,20 +163,9 @@ class ReleaseTestCase extends Component {
 
                                             <div className='rp-icon-button'><i className="fa fa-area-chart"></i></div>
                                             <span className='rp-app-table-title'>Test Case Status</span>
+                                
                                         </div>
-                                        {/* {
-                                            this.props.bug && Object.keys(this.props.bug.bugCount.all).map(item =>
-                                                <div class='col-md-2'>
-                                                    <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
-                                                        <small class="text-muted">{item.toUpperCase()}</small><br></br>
-                                                        <strong class="h5">{this.props.bug.bugCount.all[item]}</strong>
-                                                    </div>
-                                                </div>
-                                            )
-                                        } */}
                                     </div>
-                                </div>
-                            </div>
                         </div>
                         <Collapse isOpen={this.state.metricsOpen}>
                             <React.Fragment>
@@ -197,6 +183,7 @@ class ReleaseTestCase extends Component {
                                                 labelFunc={(node) => node.data.name}
                                             />
                                         </div>
+                                    
                                         {/* <div className="main-container">
                                             <div>
                                                 <SunburstComponent key={this.state.svgKey} sectionSelect={(e) => this.sectionSelect(e)} data={sunburstData[this.state.selected]}></SunburstComponent>
@@ -205,7 +192,14 @@ class ReleaseTestCase extends Component {
 
                                     </Col>
                                     <Col xs="11" sm="11" md="11" lg="8">
-                                        <Row style={{ marginLeft: '0.5rem' }}>
+                                    {
+                                            this.state.domainSelected && 
+                                            <div style={{textAlign:'center'}}>
+                                                 <strong class="h4">{this.state.domainSelected}</strong>
+                                           
+                                        </div>
+                                        }
+                                        <Row style={{ marginLeft: '2.5rem' }}>
                                             {
                                                 this.state.domainSelected &&
                                                 !this.state.doughnuts &&
@@ -240,10 +234,10 @@ class ReleaseTestCase extends Component {
                                                             <Col xs="12" sm="12" md="6" lg="6">
                                                                 <div className="chart-wrapper">
                                                                     <div class='row' style={{ padding: '10px', margin: 'auto' }}>
-                                                                        <div style={this.state.tcSummaryTitleStyle}>
+                                                                        {/* <div style={this.state.tcSummaryTitleStyle}>
                                                                             <div>Total</div>
                                                                             <div style={{ fontSize: '15px' }}>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
-                                                                        </div>
+                                                                        </div> */}
 
                                                                         <Doughnut data={item.data} style={{ textAlign: 'center' }} />
 
@@ -257,7 +251,7 @@ class ReleaseTestCase extends Component {
 
 
                                                                 <div className='rp-tc-dougnut-text'>
-                                                                    {item && item.title}
+                                                                    <span>{item && `${item.title}   `}</span><span style={{fontSize:'14px'}}>({item && (item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3])})</span>
                                                                 </div>
                                                             </Col>
                                                         )
@@ -307,14 +301,17 @@ class ReleaseTestCase extends Component {
                                                 if (index >= 4) {
                                                     return (<Col xs="12" sm="12" md="4" lg="4">
                                                         <div className="chart-wrapper">
-                                                            <div style={this.state.tcSummaryTitleStyle}>
+                                                            {/* <div style={this.state.tcSummaryTitleStyle}>
                                                                 <div>Total</div>
                                                                 <div>{item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3]}</div>
-                                                            </div>
+                                                            </div> */}
                                                             <Doughnut data={item.data} />
                                                         </div>
-                                                        <div className='rp-tc-dougnut-text'>
+                                                        {/* <div className='rp-tc-dougnut-text'>
                                                             {item && item.title}
+                                                        </div> */}
+                                                        <div className='rp-tc-dougnut-text'>
+                                                                    <span>{item && `${item.title}   `}</span><span style={{fontSize:'14px'}}>({item && (item.data.datasets[0].data[0] + item.data.datasets[0].data[1] + item.data.datasets[0].data[2] + item.data.datasets[0].data[3])})</span>
                                                         </div>
                                                     </Col>)
                                                 }

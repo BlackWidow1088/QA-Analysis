@@ -97,11 +97,11 @@ class TestCases extends Component {
                     checkboxSelection: true,
                     headerName: "Tc ID", field: "TcID", sortable: true, filter: true, cellStyle: this.renderEditedCell,
                     editable: false,
-                    cellClass: 'cell-wrap-text',
+                    width:180
                 },
                 {
                     headerName: "Description", field: "Description", sortable: true, filter: true, cellStyle: this.renderEditedCell,
-                    width: '500',
+                    width: '420',
                     editable: false,
                     cellClass: 'cell-wrap-text',
                     autoHeight: true
@@ -196,8 +196,11 @@ class TestCases extends Component {
         }
     }
     getRowHeight = (params) =>  {
+        if(params.data && params.data.Description) {
+            return 28 * (Math.floor(params.data.Description.length / 60) + 1);
+        }
         // assuming 50 characters per line, working how how many lines we need
-        return 28 * (Math.floor(params.data.Description.length / 60) + 1);
+        return 28;
     }
     getTC(e) {
         axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}/id/${e.TcID}/card/${e.CardType}`)
@@ -593,7 +596,8 @@ class TestCases extends Component {
                         </div>
                         <Collapse isOpen={this.state.tcOpen}>
                             <div>
-                                <div style={{ width: (window.screen.width * (1 - 0.248)) + 'px', height: '250px', marginBottom: '6rem' }}>
+                                {/* <div style={{ width: (window.screen.width * (1 - 0.248) - 20) + 'px', height: '250px', marginBottom: '6rem' }}> */}
+                                <div style={{ width: '100%', height: '250px', marginBottom: '6rem' }}>
                                     <div class="test-header">
                                         <div class="row">
                                             {
@@ -632,14 +636,14 @@ class TestCases extends Component {
                                             <div class="col-md-3">
                                                 <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onFilterTextBoxChanged(e.target.value)} />
                                             </div>
-                                            <div class="col-md-2">
+                                            {/* <div class="col-md-2">
                                                 <span>
-                                                    <Button id="PopoverAssign" type="button">Choose</Button>
+                                                    <Button id="PopoverAssign" type="button">Apply Multiple</Button>
                                                     <UncontrolledPopover trigger="legacy" placement="bottom" target="PopoverAssign" id="PopoverAssignButton">
                                                         <PopoverBody>
                                                             {
                                                                 [
-                                                                    { header: 'Manual Assignee', labels: 'ManualAssignee' }
+                                                                    { header: 'Priority', labels: 'Priority' }
                                                                 ].map(each => <FormGroup className='rp-app-table-value'>
                                                                     <Label className='rp-app-table-label' htmlFor={each.labels}>
                                                                         {each.header}
@@ -648,6 +652,8 @@ class TestCases extends Component {
                                                                         let selectedRows = this.gridApi.getSelectedRows();
                                                                         if (e.target.value && e.target.value !== '') {
                                                                             selectedRows.forEach(item => {
+                                                                                item.Priority = e.target.value;
+
                                                                                 let ws = e.target.value && e.target.value !== 'ADMIN'? 'MANUAL_ASSIGNED' : 'UNASSIGNED';
                                                                                 this.onCellEditing(item, ['Assignee', 'WorkingStatus'], [
                                                                                     e.target.value,
@@ -660,6 +666,9 @@ class TestCases extends Component {
                                                                         this.setState({ multi: { ...this.state.multi, [each.labels]: e.target.value } })
                                                                         setTimeout(this.gridApi.refreshView(), 0);
                                                                     }} type="select" id={`select_${each.labels}`}>
+                                                                        {
+                                                                            ['P0','P1','P2','P3','P4','P5','P6','P7','P8','P9'].map(item => <option value={item}>{item}</option>)
+                                                                        }
                                                                         <option value='ADMIN'>ADMIN</option>
                                                                         {
                                                                             this.props.users && this.props.users.map(item => <option value={item.email}>{item.email}</option>)
@@ -688,8 +697,8 @@ class TestCases extends Component {
 
 
 
-                                                {/* <Input type="text" id="filter-text-box" placeholder="Filter..." onChange={(e) => this.onFilterTextBoxChanged(e.target.value)} /> */}
-                                            </div>
+                                              
+                                            </div> */}
 
 
                                         </div>
@@ -768,10 +777,63 @@ class TestCases extends Component {
                                         <React.Fragment>
                                                                     <div class="row">
                             <div class='col-md-12'>
-                                <span className='rp-app-table-value'>TC ID: {this.props.tcDetails.TcID}</span>
-                                <span className='rp-app-table-value'>Current Status: {this.props.tcDetails.StatusList[0].Result}</span>
-                                <span className='rp-app-table-value'>Current Build: {this.props.tcDetails.StatusList[0].Build}</span>
-                                <span className='rp-app-table-value'>Card Type: {this.props.tcDetails.StatusList[0].CardType}</span>
+                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <div className={`c-callout c-callout-total`}>
+                                                        <small class="text-muted">TC ID</small><br></br>
+                                                        <strong class="h4">{this.props.tcDetails.TcID}</strong>
+                                                    </div>
+                                                </div>
+                                                {
+                                                    this.props.tcDetails && this.props.tcDetails.StatusList[0] && this.props.tcDetails.StatusList[0].Result ?
+                                                    <div class="col-sm-3">
+                                                    <div className={`c-callout c-callout-${this.props.tcDetails.StatusList[0].Result.toLowerCase()}`}>
+                                                        <small class="text-muted">Current Status</small><br></br>
+                                                        <strong class="h4">{this.props.tcDetails.StatusList[0].Result}</strong>
+                                                    </div>
+                                                    </div> :
+                                                    <div class="col-sm-3">
+                                                    <div className={`c-callout c-callout-nottested`}>
+                                                        <small class="text-muted">Current Status</small><br></br>
+                                                        <strong class="h4">NOT TESTED</strong>
+                                                    </div>
+                                                    </div> 
+                                                }
+    { this.props.tcDetails && this.props.tcDetails.StatusList[0] && this.props.tcDetails.StatusList[0].Build ?
+        <div class="col-sm-3">
+                                                <div className={`c-callout c-callout-total`}>
+                                                        <small class="text-muted">Current Build</small><br></br>
+                                                        <strong class="h4">{this.props.tcDetails.StatusList[0].Build}</strong>
+                                                    </div>
+                                                </div> :
+                                                                                                    <div class="col-sm-3">
+                                                                                                    <div className={`c-callout c-callout-nottested`}>
+                                                                                                        <small class="text-muted">Current Build</small><br></br>
+                                                                                                        <strong class="h4">NOT AVAILABLE</strong>
+                                                                                                    </div>
+                                                                                                    </div> 
+    }
+        { this.props.tcDetails && this.props.tcDetails.StatusList[0] && this.props.tcDetails.StatusList[0].CardType ?
+        <div class="col-sm-3">
+                                                <div className={`c-callout c-callout-total`}>
+                                                        <small class="text-muted">Card Type</small><br></br>
+                                                        <strong class="h4">{this.props.tcDetails.StatusList[0].CardType}</strong>
+                                                    </div>
+                                                </div> :
+                                                                                                    <div class="col-sm-3">
+                                                                                                    <div className={`c-callout c-callout-nottested`}>
+                                                                                                        <small class="text-muted">CardType</small><br></br>
+                                                                                                        <strong class="h4">NOT AVAILABLE</strong>
+                                                                                                    </div>
+                                                                                                    </div> 
+    }
+                                                
+
+                                            </div>
+                                {/* <span className='rp-app-table-value'>TC ID: {this.props.tcDetails.TcID}</span>
+                                <span style={{marginLeft: '2rem'}} className='rp-app-table-value'>Current Status: {this.props.tcDetails.StatusList[0].Result}</span>
+                                <span style={{marginLeft: '2rem'}} className='rp-app-table-value'>Current Build: {this.props.tcDetails.StatusList[0].Build}</span>
+                                <span style={{marginLeft: '2rem'}} className='rp-app-table-value'>Card Type: {this.props.tcDetails.StatusList[0].CardType}</span> */}
                                 {/* <div style={{ display: 'inline', marginLeft: '2rem' }}>
                                     <div style={{ display: 'inline' }}>
                                         <span>Created on </span><span style={{
@@ -827,7 +889,7 @@ class TestCases extends Component {
                                             <Row>
                                                 <Col lg="6">
                                                     <div className='rp-app-table-title'>Test Status</div>
-                                                    <div style={{ width: (window.screen.width * ((1 - 0.418) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
+                                                    <div style={{ width: '80%', height: '150px', marginBottom: '3rem' }}>
                                                         <div style={{ width: "100%", height: "100%" }}>
                                                             <div
                                                                 id="e2eGrid"
@@ -851,8 +913,9 @@ class TestCases extends Component {
 
                                                 </Col>
                                                 <Col lg="6">
-                                                            <div className='rp-app-table-title'>Activity</div>
-                                                            <div style={{ width: (window.screen.width * ((1 - 0.418) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}>
+                                                            <div className='rp-app-table-title'>Test Case History</div>
+                                                            {/* <div style={{ width: (window.screen.width * ((1 - 0.418) / 2)) + 'px', height: '150px', marginBottom: '3rem' }}> */}
+                                                            <div style={{ width: '80%', height: '150px', marginBottom: '3rem' }}>
                                                                 <div style={{ width: "100%", height: "100%" }}>
                                                                     <div
                                                                         id="activityGrid"
@@ -867,7 +930,7 @@ class TestCases extends Component {
                                                                             modules={this.state.modules}
                                                                             columnDefs={this.state.activityColumnDefs}
                                                                             defaultColDef={this.state.defaultColDef}
-                                                                            rowData={this.props.tcDetails ? this.props.tcDetails.Activity : []}
+                                                                            rowData={[]}
                                                                         />
                                                                     </div>
                                                                 </div>

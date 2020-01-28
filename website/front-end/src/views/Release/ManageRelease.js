@@ -160,8 +160,10 @@ class ManageRelease extends Component {
         axios.post(`/api/release`, { ...data })
             .then(single => {
                 alert('successfully added the release');
+                this.props.history.push('/release/summary');
                 axios.get(`/api/release/all`)
                     .then(res => {
+                        
                         res.data.forEach(item => {
                             // this.props.updateNavBar({ id: item.ReleaseNumber });
 
@@ -171,7 +173,7 @@ class ManageRelease extends Component {
                         // if (res.data[res.data.length - 1]) {
                         //     this.props.releaseChange({ id: res.data[res.data.length - 1].ReleaseNumber });
                         // }
-                        this.props.history.push('/release/summary');
+                       
                         this.reset();
                     }, error => {
                     });
@@ -314,7 +316,7 @@ class ManageRelease extends Component {
                                                     )
                                                 })
                                             }
-                                            <tr>
+                                            {/* <tr>
                                                 <React.Fragment>
                                                     <td className='rp-app-table-key'>Priority</td>
 
@@ -334,7 +336,7 @@ class ManageRelease extends Component {
 
                                                 </React.Fragment>
 
-                                            </tr>
+                                            </tr> */}
                                         </tbody>
                                     </Table>
                                 </Col>

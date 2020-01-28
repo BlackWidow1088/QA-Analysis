@@ -309,8 +309,11 @@ class ReleaseSummary extends Component {
             'UpgradeTestingStartDate', 'QAStartDate', 'ActualCodeFreezeDate', 'TargetedQAStartDate'
         ]
         let formattedDates = {};
+      
         dates.forEach(item => {
             if (data[item]) {
+                console.log('item');
+                console.log(data[item]);
                 let date = new Date(data[item]).toISOString().split('T');
                 formattedDates[item] = `${date[0]} ${date[1].substring(0, date[1].length-1)}`;
             }

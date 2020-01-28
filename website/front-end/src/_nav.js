@@ -12,7 +12,7 @@ export default {
       icon: 'fa fa-bars',
     },
     {
-      name: 'QA Strategy',
+      name: 'QA Updates',
       url: '/release/qastrategy',
       icon: 'fa fa-cogs',
     },

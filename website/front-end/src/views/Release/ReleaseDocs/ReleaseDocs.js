@@ -31,7 +31,20 @@ class ReleaseDocs extends Component {
     }
     render() {
         return (
+            <React.Fragment>
+                            {
+                !this.state.show &&
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%'
+                }}>
+                    NO RECORDS AVAILABLE
+                </div>
+            }
+           
             <Row>
+
                 {
                     this.state.show &&
                     [
@@ -60,7 +73,7 @@ class ReleaseDocs extends Component {
                         )
                 }
             </Row>
-
+            </React.Fragment>
 
             // <Card className="text-white bg-danger">
             //     <CardBody className="pb-0">

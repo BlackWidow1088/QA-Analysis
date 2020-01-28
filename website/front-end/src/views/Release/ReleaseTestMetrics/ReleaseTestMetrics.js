@@ -97,7 +97,6 @@ class ReleaseTestMetrics extends Component {
             return true;
         }
         if (!alldomains.includes(node.data.name) && node.data.name !== 'domains') {
-            return false;
             this.setState({ domainSelected: node.data.name, doughnuts: null, doughnutsDist: null })
             axios.get('/api/' + this.props.selectedRelease.ReleaseNumber + '/tcinfo/domain/' + node.data.name)
                 .then(all => {
@@ -126,7 +125,6 @@ class ReleaseTestMetrics extends Component {
 
             return false;
         }
-        return true;
     }
 
     selectCardTypes(event, checked, select) {
@@ -150,8 +148,7 @@ class ReleaseTestMetrics extends Component {
                 <Row>
                     <Col xs="11" sm="11" md="11" lg="11" className="rp-summary-tables" style={{ 'margin-left': '1.5rem' }}>
                         <div className='rp-app-table-header' style={{ cursor: 'pointer' }} onClick={() => this.setState({ metricsOpen: !this.state.metricsOpen })}>
-                            <div class="row">
-                                <div class='col-md-6'>
+                      
                                     <div class='row'>
                                         <div class='col-md-6 col-lg-6'>
                                             {
@@ -166,19 +163,7 @@ class ReleaseTestMetrics extends Component {
                                             <div className='rp-icon-button'><i className="fa fa-compass"></i></div>
                                             <span className='rp-app-table-title'>Test Case Distribution</span>
                                         </div>
-                                        {/* {
-                                            this.props.bug && Object.keys(this.props.bug.bugCount.all).map(item =>
-                                                <div class='col-md-2'>
-                                                    <div className={`c-callout c-callout-${item.toLowerCase()}`} style={{ marginTop: '0', marginBottom: '0' }}>
-                                                        <small class="text-muted">{item.toUpperCase()}</small><br></br>
-                                                        <strong class="h5">{this.props.bug.bugCount.all[item]}</strong>
-                                                    </div>
-                                                </div>
-                                            )s
-                                        } */}
                                     </div>
-                                </div>
-                            </div>
                         </div>
                         <Collapse isOpen={this.state.metricsOpen}>
                             <Row>
@@ -202,9 +187,16 @@ class ReleaseTestMetrics extends Component {
                                         !(this.state.doughnuts || this.state.doughnutsDist) &&
                                         loading()
                                     }
+                               {
+                                            this.state.domainSelected && 
+                                            <div style={{textAlign:'center'}}>
+                                                 <strong class="h4">{this.state.domainSelected}</strong>
+                                           
+                                        </div>
+                                        }
                                     {
                                         !this.state.domainSelected &&
-                                        <Row style={{ marginLeft: '0.5rem' }}>
+                                        <Row style={{ marginLeft: '2.5rem' }}>
                                             {
                                                 this.state.doughnutsDist &&
                                                 this.state.doughnutsDist.map((item, index) => {
@@ -227,7 +219,7 @@ class ReleaseTestMetrics extends Component {
                                         </Row>
                                     }
 
-                                    <Row style={{ marginLeft: '0.5rem' }}>
+                                    <Row style={{ marginLeft: '2.5rem' }}>
                                         {
                                             this.state.doughnuts &&
                                             this.state.doughnuts.map((item, index) => {
@@ -303,10 +295,10 @@ class ReleaseTestMetrics extends Component {
                     // this.props.currentUser && (this.props.currentUser.role === 'QA' || this.props.currentUser.role === 'DEVELOPER') &&
                     <MyTcsPendingForApproval></MyTcsPendingForApproval>
                 } */}
-                     {
+                     {/* {
                     this.props.currentUser && this.props.currentUser.email && 
                     <AddOptions></AddOptions>
-                }
+                } */}
 
                 <Modal isOpen={this.state.modal} toggle={() => this.toggle()}>
                     <ModalHeader toggle={() => this.toggle()}>Confirmation</ModalHeader>

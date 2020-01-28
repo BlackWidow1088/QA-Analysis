@@ -497,6 +497,12 @@ html:not([dir=rtl]) .c-callout-info {
 html:not([dir=rtl]) .c-callout-not-a-bug {
   border-left-color: #2eb85c !important;
 }
+html:not([dir=rtl]) .c-callout-pass {
+  border-left-color: #2eb85c !important;
+}
+html:not([dir=rtl]) .c-callout-fail {
+  border-left-color: #e55353 !important;
+}
 
 .text-muted {
   color: $app-secondary-color !important;

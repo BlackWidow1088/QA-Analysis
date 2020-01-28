@@ -70,10 +70,10 @@ class DefaultHeader extends Component {
             this.props.currentUser &&
             <NavItem className="px-3">
               <UncontrolledDropdown nav direction="down">
-                <DropdownToggle nav>
+                {/* <DropdownToggle nav>
                   <i className="icon-bell"></i>
-                  {/* <img src={userIcon} className="img-avatar" alt={this.props.currentUser && this.props.currentUser.email} title={this.props.currentUser && this.props.currentUser.email} /> */}
-                </DropdownToggle>
+                  <img src={userIcon} className="img-avatar" alt={this.props.currentUser && this.props.currentUser.email} title={this.props.currentUser && this.props.currentUser.email} />
+                </DropdownToggle> */}
                 <DropdownMenu right>
                   {
                     this.props.notifications && this.props.notifications.map(item =>

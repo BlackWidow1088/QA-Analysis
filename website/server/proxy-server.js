@@ -21,15 +21,17 @@ var USER = ['/user'];
 var JIRA = ['/rest'];
 var TEST = ['/test'];
 var VAGSERV = ['/vag'];
-// var DATA_URL = 'http://localhost:8000';
-var DATA_URL = 'http://localhost:5051';
+//  var DATA_URL = 'http://localhost:8000';
+//  var DATA_URL = 'http://localhost:5051';
 // var DATA_URL = 'http://172.16.19.57:8000';
-// var DATA_URL = 'http://192.168.1.24:8000';
+// var DATA_URL = 'http://192.168.1.34:8000';
 // var DATA_URL = 'http://172.16.19.57:8000';
+// var DATA_URL = 'http://@vagserv3:8000';
+var DATA_URL = 'http://release:8000';
 var JIRA_URL = 'http://localhost:5051';
 var USER_URL = 'http://localhost:5051';
 var TEST_URL = 'http://localhost:5051';
-var VAGSERV_URL = 'http://@vagserv3:8000'
+// var VAGSERV_URL = 'http://@vagserv3:8000'
 
 
 

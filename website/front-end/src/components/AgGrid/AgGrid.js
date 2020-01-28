@@ -332,7 +332,7 @@ class AgGrid extends Component {
         this.getTC(e.data);
     }
     getTcs() {
-        axios.get(`/api/tcinfo/${this.props.selectedRelease.ReleaseNumber}`)
+        axios.get(`/api/wholetcinfo/${this.props.selectedRelease.ReleaseNumber}`)
             .then(all => {
                 if (all.data && all.data.length) {
                     this.setState({ domain: null, subDomain: null, CardType: null, data: null, rowSelect: false })

@@ -111,6 +111,9 @@ class EditTC extends Component {
                         paddingTop: '1rem'
                     }}>
                     </div>
+                    {
+                        this.props.isEditing &&
+                    
                     <FormGroup row className="my-0" style={{ marginTop: '1rem' }}>
                     
                                        <Col xs="6" md="4" lg="3">
@@ -165,6 +168,7 @@ class EditTC extends Component {
                                              </Col>
                                 
                     </FormGroup>
+    }
                     {/* <FormGroup row className="my-0" style={{ marginTop: '1rem' }}>
                         <Col xs="6" md="4" lg="3">
                             <FormGroup className='rp-app-table-value'>

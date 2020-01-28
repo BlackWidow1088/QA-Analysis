@@ -130,7 +130,11 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
             cardTypes[item.CardType] = [item];
         }
     });
-
+    let totalPass = 0;
+    let totalFail  = 0;
+    let totalSkip = 0;
+    let totalNA = 0;
+    let totalNT = 0;
     Object.keys(cardTypes).forEach(cardType => {
         let scenarios = {};
         data.forEach(item => {
@@ -152,18 +156,23 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
                 // scenarios[item.SubDomain].Tested += 1;
                 if (item.Result === 'Pass') {
                     scenarios[item.SubDomain].Pass += 1
+                    totalPass += 1;
                 }
                 if (item.Result === 'Fail') {
                     scenarios[item.SubDomain].Fail += 1
+                    totalFail += 1;
                 }
                 if (item.Result === 'Skip') {
                     scenarios[item.SubDomain].Skip += 1;
+                    totalSkip += 1;
                 }
                 if (item.Result === 'NotApplicable') {
                     scenarios[item.SubDomain].NotApplicable += 1;
+                    totalNA += 1;
                 }
                 if (item.Result === 'Not Tested') {
                     scenarios[item.SubDomain].NotTested += 1;
+                    totalNT += 1;
                 }
             } else {
                 console.log('DATA IS INVALID');
@@ -178,25 +187,25 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
         let labels = [];
         let datasets = [
             {
-                label: 'Pass',
+                label: 'Pass ('+totalPass+')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
             },
             {
-                label: 'Blocked',
+                label: 'Blocked ('+totalSkip+')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
             },
             {
-                label: 'Fail',
+                label: 'Fail ('+totalFail+')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
             },
             {
-                label: 'Not Tested',
+                label: 'Not Tested ('+totalNT+')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
@@ -230,16 +239,7 @@ export const getEachTCStatusScenario = ({ data, domain, all }) => {
 }
 
 
-// "id": 7600,
-// "TcName": "LocalStorage.Basic",
-// "Build": "2.3.0-98",
-// "CardType": "BOS",
-// "Result": "Pass",
-// "Bugs": "-1",
-// "Date": "2019-12-30",
-// "Domain": "Storage-Tests",
-// "SubDomain": "Limit Testing",
-// "TcID": "S_Limit-1.0"
+
 export const getEachTCStrategyScenario = ({ data, domain, release }) => {
     if (!data) {
         return;
@@ -261,7 +261,7 @@ export const getEachTCStrategyScenario = ({ data, domain, release }) => {
                 if (scenarios[item.SubDomain]) {
                     scenarios[item.SubDomain].Total += 1;
                 } else {
-                    scenarios[item.SubDomain] = { auto: 0, manual: 0, Total: 1, NotApplicable: 0 }
+                    scenarios[item.SubDomain] = { auto: 0, manual: 0, Total: 1, NotTested: 0 }
                 }
             }
         })
@@ -275,8 +275,8 @@ export const getEachTCStrategyScenario = ({ data, domain, release }) => {
                     scenarios[item.SubDomain].manual += 1
                     totalManual += 1;
                 }
-                if (item.Result === 'Not Applicable') {
-                    scenarios[item.SubDomain].NotApplicable += 1;
+                if (item.Result === 'Not Tested') {
+                    scenarios[item.SubDomain].NotTested += 1;
                     totalNA += 1;
                 }
             } else {
@@ -313,7 +313,7 @@ export const getEachTCStrategyScenario = ({ data, domain, release }) => {
             //     hoverBackgroundColor: []
             // },
             {
-                label: 'Not Applicable (' + totalNA + ')',
+                label: 'Not Tested (' + totalNA + ')',
                 data: [],
                 backgroundColor: [],
                 hoverBackgroundColor: []
@@ -331,8 +331,8 @@ export const getEachTCStrategyScenario = ({ data, domain, release }) => {
             let manual = scenarios[item].manual;
             // let fail = scenarios[item].Fail;
             // let nottested = scenarios[item].Total - scenarios[item].Tested;
-            let na = scenarios[item].NotApplicable;
-            let total = scenarios[item].auto + scenarios[item].manual + scenarios[item].NotApplicable;
+            let na = scenarios[item].NotTested;
+            let total = scenarios[item].auto + scenarios[item].manual + scenarios[item].NotTested;
             labels.push(item + ' (' + total + ')');
             datasets[0].data.push(auto);
             datasets[1].data.push(manual);
@@ -348,6 +348,115 @@ export const getEachTCStrategyScenario = ({ data, domain, release }) => {
     });
     return doughnuts;
 }
+
+// export const getEachTCStrategyScenario = ({ data, domain, release }) => {
+//     if (!data) {
+//         return;
+//     }
+//     let doughnuts = [];
+//     let cardTypes = {};
+//     let totalAuto = 0, totalManual = 0, totalNA = 0;
+//     data.forEach(item => {
+//         if (cardTypes[item.CardType]) {
+//             cardTypes[item.CardType].push(item);
+//         } else {
+//             cardTypes[item.CardType] = [item];
+//         }
+//     });
+//     Object.keys(cardTypes).forEach(cardType => {
+//         let scenarios = {};
+//         data.forEach(item => {
+//             if (item.CardType === cardType) {
+//                 if (scenarios[item.SubDomain]) {
+//                     scenarios[item.SubDomain].Total += 1;
+//                 } else {
+//                     scenarios[item.SubDomain] = { auto: 0, manual: 0, Total: 1, NotApplicable: 0 }
+//                 }
+//             }
+//         })
+//         cardTypes[cardType].forEach(item => {
+//             if (scenarios[item.SubDomain]) {
+//                 if ((item.Result === 'Pass' || item.Result === 'Fail') && item.TcName !== 'TC NOT AUTOMATED') {
+//                     scenarios[item.SubDomain].auto += 1
+//                     totalAuto += 1;
+//                 }
+//                 if ((item.Result === 'Pass' || item.Result === 'Fail') && item.TcName === 'TC NOT AUTOMATED') {
+//                     scenarios[item.SubDomain].manual += 1
+//                     totalManual += 1;
+//                 }
+//                 if (item.Result === 'Not Applicable') {
+//                     scenarios[item.SubDomain].NotApplicable += 1;
+//                     totalNA += 1;
+//                 }
+//             } else {
+//                 console.log('DATA IS INVALID');
+//             }
+//         });
+//         // Object.keys(scenarios).forEach(item => {
+//         //     scenarios[item].NotTested = scenarios[item].Total - (scenarios[item].auto + scenarios[item].manual)
+//         // })
+//         // {
+//         //     "id": 8, "TcName": "RbacStaticProvision.PodWithLSAndValidateIOPSWithMultipleQosforLocalNRemoteAuth",
+//         //         "Build": "2.3.0-48", "Result": "Pass", "Bugs": "-1",
+//         //             "Date": "2019-12-21", "Domain": "StoragePVC", "SubDomain": "PVC_Rbac", "TcID": "PVC_Rbac_S-1.0"
+//         // },
+//         let doughnut = { data: { labels: [], datasets: [] }, title: cardType };
+//         let labels = [];
+//         let datasets = [
+//             {
+//                 label: 'Auto (' + totalAuto + ')',
+//                 data: [],
+//                 backgroundColor: [],
+//                 hoverBackgroundColor: []
+//             },
+//             {
+//                 label: 'Manual (' + totalManual + ')',
+//                 data: [],
+//                 backgroundColor: [],
+//                 hoverBackgroundColor: []
+//             },
+//             // {
+//             //     label: 'Fail',
+//             //     data: [],
+//             //     backgroundColor: [],
+//             //     hoverBackgroundColor: []
+//             // },
+//             {
+//                 label: 'Not Applicable (' + totalNA + ')',
+//                 data: [],
+//                 backgroundColor: [],
+//                 hoverBackgroundColor: []
+//             }
+//         ];
+//         for (let i = 0; i < datasets.length; i++) {
+//             Object.keys(scenarios).forEach((item, index) => {
+//                 datasets[i].backgroundColor.push(colors[i]);
+//                 datasets[i].hoverBackgroundColor.push(colors[i]);
+//             })
+//         }
+
+//         Object.keys(scenarios).forEach((item, index) => {
+//             let auto = scenarios[item].auto;
+//             let manual = scenarios[item].manual;
+//             // let fail = scenarios[item].Fail;
+//             // let nottested = scenarios[item].Total - scenarios[item].Tested;
+//             let na = scenarios[item].NotApplicable;
+//             let total = scenarios[item].auto + scenarios[item].manual + scenarios[item].NotApplicable;
+//             labels.push(item + ' (' + total + ')');
+//             datasets[0].data.push(auto);
+//             datasets[1].data.push(manual);
+//             datasets[2].data.push(na);
+//         });
+//         doughnut.data.labels = labels;
+//         doughnut.data.datasets = datasets;
+//         if (datasets[0].backgroundColor.length === 0) {
+//             doughnut.hide = true
+//         }
+//         doughnuts.push(doughnut);
+
+//     });
+//     return doughnuts;
+// }
 const colors = [
 
     '#36A2EB',

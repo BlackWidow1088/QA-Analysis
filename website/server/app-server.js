@@ -831,8 +831,8 @@ app.delete('/api/release/:release', (req, res) => {
 });
 
 
-// app.use('/', express.static('./build'));
-// app.use('*', express.static('./build'));
+//  app.use('/', express.static('./build'));
+//  app.use('*', express.static('./build'));
 console.log('Mock Invar listening on port 5051');
 const server = app.listen('5051');
 
